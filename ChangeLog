@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Jan  4 17:22:53 PST 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Use xmlBase package rather than xml
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Jan  4 17:22:38 PST 2005
 rdbModel/rdbModel/Management
 
