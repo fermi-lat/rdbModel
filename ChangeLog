@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 21 16:19:36 PDT 2004
+rdbModel/xml/connect
+
+Added Files:
+	mysqlConnection.dtd mysqlSlac.xml mysqlSlacT.xml 
+Log Message:
+Move xml connection files to subdirectory 
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 21 16:19:21 PDT 2004
 rdbModel/xml
 
