@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Jul 20 22:36:49 PDT 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h 
+Log Message:
+Add bool data member m_isPrimaryKey and access function
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Jul  8 12:40:02 PDT 2004
 rdbModel/doc
 
