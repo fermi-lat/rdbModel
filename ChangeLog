@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Mar  4 17:35:16 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h Datatype.h 
+Log Message:
+Add more services
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Mar  3 17:07:44 PST 2004
 rdbModel/src
 
