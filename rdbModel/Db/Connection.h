@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.1 2004/03/24 02:01:31 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.2 2004/03/27 01:38:46 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -7,7 +7,7 @@
 
 namespace rdbModel{
 
-  class ResultsHandle;
+  class ResultHandle;
   class Assertion;
   /** 
       Class to handle connection to an SQL database, or something very like
@@ -33,6 +33,7 @@ namespace rdbModel{
         Allowed operations will depend on userid, etc., specified 
         return true if successful
     */
+  public:
     Connection() {};
     virtual ~Connection() {};
     virtual bool open(const std::string& host, const std::string& userid,
@@ -102,7 +103,7 @@ namespace rdbModel{
       it publicly available so assertions belonging to a table
       can save the compiled version.
     */
-    bool compileAssertion(const Asssertion* a, std::string& sqlString)=0;
+    virtual bool compileAssertion(const Assertion* a, std::string& sqlString)=0;
 
   };
 

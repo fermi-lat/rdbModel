@@ -1,13 +1,15 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.1 2004/03/24 02:01:31 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.2 2004/03/27 01:38:46 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
 #include "rdbModel/Db/Connection.h"
+#include "rdbModel/Tables/Assertion.h"
+
+typedef struct st_mysql MYSQL;
 
 namespace rdbModel{
 
   class MysqlResults;
-  class Assertion;
   /** 
       Class to handle connection to a MySQL database
 
@@ -22,7 +24,7 @@ namespace rdbModel{
       Will be up to caller to insure that the userid has the right
       privilages for the operations caller intends to do.
   */
-  class MysqlConnection {
+  class MysqlConnection : public virtual Connection {
   public:
     /** Open a connection 
         Allowed operations will depend on userid, etc., specified 
@@ -82,11 +84,19 @@ namespace rdbModel{
       it publicly available so assertions belonging to a table
       can save the compiled version.
     */
-    bool compileAssertion(const Asssertion* a, std::string& sqlString) const;
+    virtual bool 
+    compileAssertion(const Assertion* a, std::string& sqlString) const;
   private:
     MYSQL* m_mysql;
     bool   m_connected;
-    bool   m_compileInit;
+    static bool   m_compileInit;
+    static void compileInit();
+    static bool compileComparison(Assertion::Operator* op, 
+                                  std::string& sqlString);
+    static bool compileOperator(Assertion::Operator* op, 
+                                std::string &sqlString);
+
+
   };
 
 }  // end namespace rdbModel
