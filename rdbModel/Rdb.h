@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.3 2004/03/06 01:11:49 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.4 2004/03/24 02:00:11 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -36,10 +36,11 @@ namespace rdbModel {
     virtual ~Rdb();
 
     /// This method gives back the DTDversion
-    std::string getDTDversion(){return m_DTDversion;};
+    const std::string& getDTDversion(){return m_DTDversion;};
     /// This method gives back the CVSid  
-    std::string getCVSid(){return m_CVSid;};
+    const std::string& getCVSid(){return m_CVSid;};
 
+    const std::string& getDbName(){return m_dbName;};
     // Not sure we want to expose this:
     // This method gives back a pointer to the tables vector
     //    std::vector <Table*>  getTables(){return m_tables;};  
@@ -51,6 +52,7 @@ namespace rdbModel {
     Index* getIndex(const std::string& tableName, 
                       const std::string& indexName) const;
 
+    unsigned int getNTable() const {return m_tables.size();}
     // There is no good way to look up assertions; they don't
     // have names.  For now assertions may only refer to a single
     // table, so access will be via Table object.
@@ -88,7 +90,7 @@ namespace rdbModel {
     std::vector<Table* > m_tables;  
   
     /// SQL database name (e.g., "calib") 
-    std::string m_dbsname;
+    std::string m_dbName;
     /// The DTDversion from the input xml description
     std::string m_DTDversion;
     /// The CVSid from the input xml description
