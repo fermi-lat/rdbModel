@@ -1,5 +1,5 @@
 <!--
-$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.2 2004/03/24 02:07:41 jrb Exp $
  /** @file 
   @anchor dtd
   dtd for describing contents of sql tables, including constraints
@@ -22,7 +22,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.1.1.1 20
 <!-- Might want to impose some sort of pattern on
      version attribute value -->
 <!ELEMENT table (col+, primary?, index*, assert*) >
-<!ATTLIST table name NMTOKEN #REQUIRED
+<!ATTLIST table name ID #REQUIRED
                 version NMTOKEN #REQUIRED
                 comment CDATA #IMPLIED  >
 
@@ -73,10 +73,10 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.1.1.1 20
                  primary (yes | no) "no"
                  >
 
-<!ENTITY  % operator "or | and |  exists | forAll | not | isNull | compare" >
+<!ENTITY  % operator "or | and |  exists | not | isNull | compare" >
                    <!-- <!ENTITY  % operand "%operator; | const | refer " > -->
 <!ELEMENT assert (%operator; ) >
-<!ATTLIST assert case (changeRow | globalCheck) #REQUIRED >
+<!ATTLIST assert case (changeRow | globalCheck | inherit) #REQUIRED >
 
 <!ELEMENT or ((%operator;) , (%operator;)+) >
 
@@ -84,15 +84,14 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.1.1.1 20
 
 <!ELEMENT not (%operator;) >
 
-<!-- compare compares two quantities from an ordered set,
-     or compares one quantity to NULL.  More generally, anything
-     which returns a value of "true" or "false" could go here.
-     Should maybe change the name to something like  "boolFunc"
- -->
 
+<!-- table name defaults to table containing assertion -->
 <!ELEMENT exists (%operator;) >
+<!ATTLIST exists tableName IDREF #IMPLIED>
 
-<!ELEMENT forAll (%operator;) >
+<!-- compare compares two quantities from an ordered set,
+     or compares one quantity to NULL.
+ -->
 
 <!ELEMENT isNull EMPTY>
 <!ATTLIST isNull col IDREF #REQUIRED>
@@ -112,4 +111,39 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.1.1.1 20
 
 
 
+<!--  Example of assertion including a quantifier:  there exists a row
+      with instrument = EM, calib_type = TKR_DeadChan, 
+      vstart < "1-10-2003", 
+      vend > "1-1-2004", \
+      completion = "OK"
+
+    <assert case="globalCheck">
+      <exists>
+        <assert case="inherit">
+          <and>
+            <equal>
+              <value val="EM">
+              <exists colName="instrument" />
+            </equal>
+            <equal>
+              <value val="TKR_DeadChan" />
+              <colRef val="calib_type" /> 
+            </equal>
+            <greaterThan>
+              <value val="1-10-2003" />
+              <colRef val = "vstart" />
+            </lessThan>
+            <lessThan>
+              <value val="1-1-"2004" />
+              <colRef val="vend" />
+            </lessThan>
+            <equal>
+              <value val="OK" />
+              <colRef val="completion" />
+            </equal>
+          </and>
+        </assert>
+      </exists>
+    </assert>
+-->
 
