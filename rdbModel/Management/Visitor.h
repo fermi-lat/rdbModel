@@ -1,9 +1,9 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.2 2004/03/04 01:06:32 jrb Exp $
 #ifndef RDBMODEL_VISITOR_H
 #define RDBMODEL_VISITOR_H
 #include <string>
 
-namespace rdbModel{
+namespace rdbModel {
 
   class Rdb;
   class Table;
@@ -25,18 +25,19 @@ namespace rdbModel{
    * D.Favretto and R.Giannitrapani 
    */
   class Visitor {
+  public:
     enum VisitorState {
       CONTINUE = 0,
       DONE = 1,         // visitor has had its fill of visiting
       ERROR = 2,        // error during visit; perhaps can continue, though
       ERRORABORT = 3    // error during visit; can't handle more
-    }
+    };
 
   public:
     /// This method says if the visitor is recursive or not
-    bool getRecursive(){return recursive;}
+    //    bool getRecursive(){return recursive;}
     /// This method sets if the visitor is recursive or not
-    void setRecursive(bool prec){recursive = prec;};
+    //    void setRecursive(bool prec){recursive = prec;};
     
     virtual VisitorState visitRdb(Rdb*) = 0;
     virtual VisitorState visitTable(Table*) = 0;
@@ -46,7 +47,7 @@ namespace rdbModel{
     
   protected:
     /// If this is true, the visitor is recursive, otherwise it is not.
-    bool recursive;
+    //    bool recursive;
   };
 }
 #endif // RDBMODEL_VISITOR_H
