@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 30 15:58:12 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx 
+Log Message:
+Support EXISTS (but not ANY or ALL)
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 30 15:58:00 PST 2004
 rdbModel/src/Management
 
