@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.15 2004/05/06 01:33:24 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.16 2004/05/07 23:31:50 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -15,8 +15,6 @@
 
 #include "xml/XmlParser.h"
 #include "xml/Dom.h"
-
-// #include "rdbModel/Management/Manager.h"
 
 #include "mysql.h"
 #include <iostream>
@@ -163,12 +161,12 @@ namespace rdbModel {
     std::string user = xml::Dom::getAttribute(conn, "user");
     std::string password = xml::Dom::getAttribute(conn, "password");
     std::string dbname = xml::Dom::getAttribute(conn, "dbname");
-    //    int port = xml::Dom::getIntAttribute(conn, "port");
+
     if (password.size() == 0 ) { // prompt for password?
       (*m_out) << "interactive login NYI " << std::endl;
       return false;
     }
-    //    return this->open(host, user, password, dbname, port);
+
     return this->open(host, user, password, dbname);
   }
 
@@ -197,9 +195,6 @@ namespace rdbModel {
     //         compare # of columns
     //         compare datatype description, other attributes of column
     //         compare indices
-
-  
-
 
 
   bool MysqlConnection::insertRow(const std::string& tableName, 
@@ -286,8 +281,9 @@ namespace rdbModel {
                                         const StringVector& getCols,
                                         const StringVector& orderCols,
                                         const Assertion* where,
-                                        int   rowLimit) {
-    std::string sqlString = "SELECT FROM " + tableName +  " ";
+                                        int   rowLimit,
+                                        int   rowOffset) {
+    std::string sqlString = "SELECT";
     unsigned nGet = getCols.size();
     unsigned nOrder = orderCols.size();
 
@@ -296,6 +292,7 @@ namespace rdbModel {
       sqlString += ",";
       sqlString += getCols[iGet];
     }
+    sqlString +=  " FROM " + tableName +  " ";
     if (where != 0) {
       sqlString += " WHERE ";
       bool ret = compileAssertion(where, sqlString);
@@ -309,9 +306,18 @@ namespace rdbModel {
       }
     }
     if (rowLimit > 0) {
+      // SQL format is LIMIT offset,limit      or
+      //               LIMIT limit             or
+      //               LIMIT limit   OFFSET offset  [don't use this one]
+      sqlString += " LIMIT ";
       std::string limitStr;
+      if (rowOffset > 0) {
+        facilities::Util::itoa(rowOffset, limitStr);
+        sqlString += limitStr + ",";
+      }
+      limitStr.clear();
       facilities::Util::itoa(rowLimit, limitStr);
-      sqlString += " LIMIT " + limitStr;
+      sqlString += limitStr;
     }
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
     if (mysqlRet) {
@@ -417,7 +423,6 @@ namespace rdbModel {
     const std::vector<Assertion::Operator*>& children = op->getChildren();
     unsigned nChild = children.size();
 
-    sqlString += "(";
     // For single-child operators NOT,  exists, operator symbol
     // goes 1st, then operand
     if (nChild <= 1) { // operator goes first
@@ -440,14 +445,18 @@ namespace rdbModel {
           + opSymbols[op->getOpType()];
         throw RdbException(msg);
       }
-      sqlString += ")";
 
       // Have an extra closing ")" for EXISTS with WHERE clause
       if (op->getOpType() == OPTYPEexists)       sqlString += ")";
 
       return ret;
     }
+
     // Otherwise put operator symbols between adjacent children.
+
+    // First open parentheses
+    sqlString += "(";
+
     std::string symbol = opSymbols[op->getOpType()];
 
     ret = compileOperator(children[0], sqlString);
@@ -467,6 +476,8 @@ namespace rdbModel {
         throw RdbException(msg);
       }
     }
+    // Finally close paren.
+    sqlString += ")";
     return ret;
   }
 
