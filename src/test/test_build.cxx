@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.1 2004/03/06 01:16:08 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.2 2004/03/07 08:21:50 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -9,7 +9,7 @@
 
 
 int main(int, char**) {
-  std::string infile("$(RDBMODELROOT)/xml/calibMetaDb.xml)");
+  std::string infile("$(RDBMODELROOT)/xml/calibMetaDb.xml");
 
   rdbModel::Manager* man = rdbModel::Manager::getManager();
 
