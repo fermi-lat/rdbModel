@@ -1,4 +1,4 @@
-$Header: $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/Manager.cxx,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -7,15 +7,9 @@ $Header: $
 
 #include "rdbModel/Management/Visitor.h"
 
-// #include "rdbModel/TablesVisitor.h"
-
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Management/Builder.h"
 #include "rdbModel/Rdb.h"
-// #include "detModel/Constants/Const.h"
-// #include "detModel/Constants/FloatConst.h"
-// #include "detModel/Constants/IntConst.h"
-// #include "detModel/Constants/DoubleConst.h"
 
 namespace rdbModel{
 
@@ -45,7 +39,7 @@ namespace rdbModel{
   
   }
 
-  int build() {
+  int Manager::build() {
     int errCode = m_builder->parseInput(m_filename);
 
     // Unlike geometry description/detModel, there is only one way to 
@@ -57,14 +51,14 @@ namespace rdbModel{
   }
   void Manager::startVisitor(Visitor* v)
   {
-    if (TablesVisitor* tv = dynamic_cast<TablesVisitor*>(v))      
-    {   // the only kind we support, at least for now
+    //    if (TablesVisitor* tv = dynamic_cast<TablesVisitor*>(v))      
+    //    {   // the only kind we support, at least for now
       
-      if (v->getRecursive())
-        m_rdb->accept(sv);
-      else
-        m_rdb->acceptNotRec(sv);
-    }
+    //      if (v->getRecursive())
+        m_rdb->accept(v);
+        //      else
+        //        m_rdb->acceptNotRec(sv);
+        //    }
   }
 
 }

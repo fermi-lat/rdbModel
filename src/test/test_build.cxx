@@ -1,4 +1,4 @@
-// $Header: $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.1 2004/03/06 01:16:08 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -8,10 +8,10 @@
 #include "rdbModel/Management/XercesBuilder.h"
 
 
-main(int, char**) {
+int main(int, char**) {
   std::string infile("$(RDBMODELROOT)/xml/calibMetaDb.xml)");
 
-  rdbModel::Manager* man = rdbModel::Manger::getManager();
+  rdbModel::Manager* man = rdbModel::Manager::getManager();
 
   man->setBuilder(new rdbModel::XercesBuilder);
   man->setInputSource(infile);
@@ -20,9 +20,9 @@ main(int, char**) {
   int errcode = man->build();
 
   if (!errcode) {
-    rdbModel::Rdb rdb = getRdb();
+    rdbModel::Rdb* rdb = man->getRdb();
   }
-
+  return 0;
 }
   
   

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.2 2004/03/05 01:35:16 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.3 2004/03/06 01:13:10 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -13,6 +13,7 @@ namespace rdbModel{
   public:
     // Include MySQL-supported types we might conceivably use
     enum TYPES {
+      TYPEnotFound = -1,
       TYPEenum = 0,
       TYPEdatetime,
       TYPEtimestamp,
