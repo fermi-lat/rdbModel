@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar 26 17:37:25 PST 2004
+rdbModel/rdbModel
+
+Added Files:
+	RdbException.h 
+Log Message:
+Derived from std::exception; base class for all rdbModel exceptions
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 23 18:07:41 PST 2004
 rdbModel/xml
 
