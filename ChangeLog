@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  1 18:59:41 PST 2004
+rdbModel/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Added v0r to MYSQLEXT use
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Mar 31 11:11:21 PST 2004
 rdbModel/src/Management
 
