@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Jul  8 12:38:37 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx MysqlResults.cxx 
+Log Message:
+Undo small, probably unintended, formatting changes
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Jul  8 12:38:14 PDT 2004
 rdbModel/cmt
 
