@@ -3,7 +3,7 @@
 <rdbms dbs="calib"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibMetaDb.xml,v 1.2 2004/04/03 00:22:54 jrb Exp $" 
+       CVSid= "$Id: calibMetaDb.xml,v 1.3 2004/04/06 07:29:48 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
@@ -104,6 +104,8 @@
       means that enduser is expected to supply a value, but  
       MySQL will use NULL (which for datetime translates to current
       time) in case no value is supplied
+
+      Correction:  NULL is just NULL. 
      -->
     <src  null="true" > 
       <from agent="enduser" />
