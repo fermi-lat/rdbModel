@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.18 2004/11/11 21:27:14 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.19 2005/01/05 01:23:07 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -14,7 +14,7 @@ namespace rdbModel {
   using XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument;
   using XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
 
-  XercesBuilder::XercesBuilder() : Builder(), m_rdb(0), m_doc(0) {
+  XercesBuilder::XercesBuilder() : Builder(), m_doc(0), m_rdb(0) {
   }
 
   unsigned int XercesBuilder::parseInput(const std::string& filename) {
