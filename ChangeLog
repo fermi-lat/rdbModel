@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Mar  3 17:06:33 PST 2004
+rdbModel/rdbModel/Management
+
+Modified Files:
+	Visitor.h 
+Log Message:
+Add a bunch more visit methods to interface
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Mar  3 17:05:57 PST 2004
 rdbModel/rdbModel
 
