@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Nov 11 13:26:29 PST 2004
+rdbModel/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+Add EOH line for MRvcmt tagging
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Nov 11 13:25:35 PST 2004
 rdbModel/cmt
 
