@@ -29,9 +29,9 @@ namespace rdbModel {
     if (clear) fields.clear();
 
     for (unsigned int iField = 0; iField < nFields; iField++) {
-     if (myRow[iField]) fields.push_back(std::string(myRow[iField]));
+      if (myRow[iField]) fields.push_back(std::string(myRow[iField]));
       else fields.push_back("");
-		}
+    }
 
     return true;
   }
