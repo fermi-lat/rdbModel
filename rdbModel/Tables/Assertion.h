@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.2 2004/03/04 01:07:11 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.3 2004/03/06 01:13:10 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -10,6 +10,18 @@ namespace rdbModel{
   class XercesBuilder;
   class Table;
 
+
+  /** 
+      Assertions are used in at least two ways:
+      1. As part of a table description.  The assertion describes a condition
+         which should be evaluated upon a particular event, such as when
+         a new element is to be inserted.  Such assertions stick around
+         for the life of the application instance.  If the assertion is
+         checked often, a pre-compiled version (dependent on the type
+         of connection) can save some time.  
+      2. As a WHERE clause in a client-institued UPDATE or SELECT. These
+         are only around long enough to do the UPDATE or SELECT.
+  */
   class Assertion {
     class Operator;         // nested class declared below
 
@@ -17,7 +29,8 @@ namespace rdbModel{
     // when does this assertion get applied?
     enum WHEN {
       WHENglobalCheck = 1,
-      WHENchangeRow
+      WHENchangeRow,
+      WHENwhere     // as a WHERE clause, used and then discarded
     };
     Assertion(Table* myTable=0) : m_op(0), m_myTable(myTable) 
     { m_sqlEquivalent.clear();};
@@ -25,7 +38,8 @@ namespace rdbModel{
     WHEN getWhen() const {return m_when;}
     Visitor::VisitorState accept(Visitor* v);
 
-    const std::string& getSql() const {return m_sqlEquivalent;}
+    /// 
+    const std::string& getPrecompiled() const {return m_compiled;}
     
     //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
@@ -37,20 +51,23 @@ namespace rdbModel{
     Operator* m_op;
     Table* m_myTable;
 
-    // parse op tree in constructor; save equivalent SQL expression
-    void makeSql();
-    std::string m_sqlEquivalent;  
+    /// Let's hope that, independent of connection type, std::string is
+    /// a reasonable choice for "compiled" form of the assertion
+    std::string m_compiled;  
 
     enum OPTYPE {
       OPTYPEor = 1,
       OPTYPEand,
       OPTYPEisNull,
       OPTYPEexists,
+      OPTYPEforAll,
       OPTYPEnot,
       OPTYPEequal,           // first of compare ops
       OPTYPEnotEqual,
       OPTYPElessThan,
-      OPTYPElessOrEqual
+      OPTYPEgreaterThan,
+      OPTYPElessOrEqual,
+      OPTYPEgreaterOrEqual
     };
 
     // Compare operators take two arguments.  One must be a column
