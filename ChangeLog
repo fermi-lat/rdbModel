@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Wed Apr  7 16:06:48 PDT 2004
+rdbModel
+
+Modified Files:
+	.cvsignore 
+Log Message:
+.cvsIgnore:  ignore Windows binary directories
+src/Tables/*.cxx, MysqlConnection.cxx, Visitor.h: Change values of enum 
+Visitor::VisitorState to identifiers Studio will accept
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 17:33:23 PDT 2004
 rdbModel/xml
 
