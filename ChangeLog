@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Apr 19 17:13:20 PDT 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx 
+Log Message:
+Add method Assertion::Operator::appendChild so that OR, AND operators can be
+built up incrementally
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Apr 19 17:13:02 PDT 2004
 rdbModel/rdbModel/Tables
 
