@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar 26 17:39:46 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h 
+Log Message:
+Add "get" methods so that MysqlConnection can turn assertion into WHERE clause
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar 26 17:38:46 PST 2004
 rdbModel/rdbModel/Db
 
