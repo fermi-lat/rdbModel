@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr 22 17:35:17 PDT 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Add new service Datatype::getInterval
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr 22 17:35:03 PDT 2004
 rdbModel/rdbModel/Tables
 
