@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v1r6p3 28-Feb-2005  jrb    Bug fix to Manager class destructor
    v1r6p2 24-Feb-2005  jrb    Add more-carefully-named files to describe
                               production, user and test databases.  Adjust
                               a couple column descriptions to match increased
