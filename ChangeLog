@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed Aug 25 10:25:47 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	calibMetaDb.xml calibUser.xml 
+Log Message:
+Modify descriptions of metadata_v2r1 in calib, calib_user databases to
+match new structure
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Aug 25 09:48:28 PDT 2004
 rdbModel/doc
 
