@@ -3,7 +3,7 @@
    @verbatim	   
 
    Coordinator: J. Bogart
-
+   v1r4    25-Aug-2004  jrb   Mods made to calib, calib_user db as well
    v1r3    25-Aug-2004  jrb   Support for mods in db structure, so far
                               just to calib_test
    v1r2p0   9-Aug-2004  jrb   Add TKR_Splits, TKR_TOTSignal calib. types
