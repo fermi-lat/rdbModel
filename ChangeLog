@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed May  5 18:34:16 PDT 2004
+rdbModel/xml
+
+Added Files:
+	calibTest.xml mysqlSlacT.xml 
+Log Message:
+Files used for calib_test database
+
+    *
+------------------------------------------------------------
 User: jrb  Wed May  5 18:33:47 PDT 2004
 rdbModel/src/test
 
