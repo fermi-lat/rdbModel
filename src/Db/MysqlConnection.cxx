@@ -1,13 +1,19 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.3 2004/03/28 08:24:27 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.4 2004/03/30 23:57:48 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
 
 #include "rdbModel/Db/MysqlConnection.h"
+#include "rdbModel/Rdb.h"
+#include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Assertion.h"
+#include "rdbModel/Tables/Column.h"
+#include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/Db/MysqlResults.h"
 #include "rdbModel/RdbException.h"
 #include "facilities/Util.h"
+
+// #include "rdbModel/Management/Manager.h"
 
 #include "mysql.h"
 #include <iostream>
@@ -48,6 +54,12 @@ namespace rdbModel {
                              const std::string& password,
                              const std::string& dbName,
                              unsigned int       port) {
+    if (dbName.size() == 0) {
+      std::cerr << 
+        "rdbModel::MysqlConnection::open : null db name not allowed!" <<
+        std::endl;
+      return false;
+    } 
 
     mysql_init(m_mysql);
     MYSQL *connected = mysql_real_connect(m_mysql, host.c_str(), user.c_str(),
@@ -58,6 +70,7 @@ namespace rdbModel {
       std::cout << "Successfully connected to MySQL host" << 
         host << std::endl;
       m_connected = true;
+      m_dbName = dbName;
     }
     else {
       std::cerr <<  "Failed to connect to MySQL host " << host <<
@@ -66,6 +79,33 @@ namespace rdbModel {
     }
     return m_connected;
   }
+
+
+  MATCH MysqlConnection::matchSchema(Rdb *rdb) {
+    if (!m_connected) return MATCHnoConnection;
+
+    // Check global characteristics; 
+    // Could do this via Manager; seems a bit artificial, bypass for now
+    m_visitorType = VISITORmatch;
+    m_matchReturn = MATCHequivalent;
+    unsigned int ret = rdb->accept(this);
+
+    if ((ret == Visitor::ERROR) || (ret == Visitor::ERRORABORT)) {
+      return MATCHfail;
+    }
+    else return m_matchReturn;
+  }
+
+
+
+    // For each table
+    //         compare # of columns
+    //         compare datatype description, other attributes of column
+    //         compare indices
+
+  
+
+
 
   bool MysqlConnection::insertRow(const std::string& tableName, 
                                   const StringVector& colNames, 
@@ -298,6 +338,151 @@ namespace rdbModel {
       }
     }
     return ret;
+  }
+
+  // Satisfy Visitor interface.  For now the only visitor is the
+  // one to check whether remote and local db descriptions match or
+  // are at least compatible enough to be used.
+  Visitor::VisitorState MysqlConnection::visitRdb(Rdb *rdb) {
+    
+    if (m_dbName != rdb->getDbName()) {
+      m_matchReturn = MATCHfail;
+      return Visitor::DONE;
+    }
+    
+    unsigned int nLocal = rdb->getNTable();
+
+    // Null pointer for 2nd argument means "list all tables"
+    
+    MYSQL_RES* res = mysql_list_tables(m_mysql, 0);
+    if (!res) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    unsigned int nRemote = mysql_num_rows(res);
+    mysql_free_result(res);
+
+    if (nRemote < nLocal) {
+      m_matchReturn = MATCHfail;
+      return Visitor::DONE;
+    }
+    else if (nRemote > nLocal) m_matchReturn = MATCHcompatible;
+
+    return Visitor::CONTINUE;
+  }
+
+  Visitor::VisitorState MysqlConnection::visitTable(Table* table) {
+    const std::string& tName = table->getName();
+
+    // Result set will have all fields for the table
+    if (m_tempRes) {
+      mysql_free_result(m_tempRes);
+      m_tempRes = 0;
+    }
+    m_primColName.clear();
+
+    std::string query = "SHOW COLUMNS FROM " + tName;
+
+    int ret = mysql_query(m_mysql, query.c_str());
+    if (ret) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+      
+    m_tempRes = mysql_store_result(m_mysql);
+    if (!m_tempRes) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    // Result set is a table with fields "Field"(the name) "Type" "Null"(yes
+    // or no) "Key" "Default", "Extra"  
+    // Make it easier for accept(Column* ) to find relevant information
+    unsigned int nRow = mysql_num_rows(m_tempRes);
+    m_colIx.clear();
+    for (unsigned iRow = 0; iRow < nRow; iRow++) {
+      MYSQL_ROW colDescrip = mysql_fetch_row(m_tempRes);
+      std::string name = std::string(colDescrip[0]);
+      m_colIx[name] = iRow;
+    }
+    return Visitor::CONTINUE;
+
+  }
+
+  Visitor::VisitorState MysqlConnection::visitColumn(Column* col) {
+    std::string myName = col->getName();
+    if (m_colIx.find(myName) == m_colIx.end()) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    unsigned int ix = m_colIx[myName];
+    mysql_data_seek(m_tempRes, ix);
+    MYSQL_ROW colDescrip = mysql_fetch_row(m_tempRes);
+
+    // Type
+    std::string sqlDtype = std::string(colDescrip[1]);
+    Datatype* dtype = col->getDatatype();
+    if (!checkDType(dtype, sqlDtype)) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    
+    // Null
+    bool nullable = (colDescrip[2] == "NULL");
+    if (nullable != col->nullAllowed()) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    // Key (PRI for primary, MUL if first in a multiple-field key
+    // Save primary key info, if any
+    if (colDescrip[3] == "PRI") {
+      m_primColName = myName;
+    }
+
+    // Extra (may say auto_increment)
+    bool autoInc = (colDescrip[4] == "auto_increment");
+    if (autoInc != col->isAutoIncrement()) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    return Visitor::CONTINUE;
+  }
+
+  bool MysqlConnection::checkDType(Datatype* dtype, 
+                                   const std::string& sqlType) {
+    switch (dtype->getType()) {
+    case Datatype::TYPEenum: {
+    }
+    case Datatype::TYPEdatetime: {
+    }
+    case Datatype::TYPEtimestamp: {
+    }
+    case Datatype::TYPEint: {
+    }
+    case Datatype::TYPEmediumint: {
+    }
+    case Datatype::TYPEsmallint: {
+    }
+    case Datatype::TYPEreal: {
+    }
+    case Datatype::TYPEdouble: {
+    }
+    case Datatype::TYPEvarchar: {
+    }
+    case Datatype::TYPEchar: {
+    }
+    }     // end switch
+    return true;
+  }
+
+
+
+  Visitor::VisitorState MysqlConnection::visitIndex(Index* ix) {
+    return Visitor::CONTINUE;
+    // might put something real here later
+  }
+
+  Visitor::VisitorState MysqlConnection::visitAssertion(Assertion*) {
+    return Visitor::CONTINUE;
   }
 
 } // end namespace rdbModel
