@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.16 2004/05/07 23:31:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.17 2004/05/18 23:13:40 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -228,6 +228,9 @@ namespace rdbModel {
       }
     }
 
+    (*m_out) << std::endl << "# About to issue  INSERT:" << std::endl;
+    (*m_out) << ins << std::endl;
+
     int mysqlRet = mysql_query(m_mysql, ins.c_str());
 
     if (mysqlRet) {
@@ -262,6 +265,8 @@ namespace rdbModel {
       bool ret = compileAssertion(where, sqlString);
       if (!ret) return 0;
     }
+    (*m_out) << std::endl << "# About to issue UPDATE:" << std::endl;
+    (*m_out) << sqlString << std::endl;
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
@@ -319,6 +324,9 @@ namespace rdbModel {
       facilities::Util::itoa(rowLimit, limitStr);
       sqlString += limitStr;
     }
+    (*m_out) << std::endl << "# About to issue SELECT:" << std::endl;
+    (*m_out) << sqlString << std::endl;
+
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
     if (mysqlRet) {
       std::string msg = 
@@ -336,6 +344,10 @@ namespace rdbModel {
   }
 
   ResultHandle* MysqlConnection::dbRequest(const std::string& request) {
+
+    (*m_out) << std::endl << "# About to issue SQL request:" << std::endl;
+    (*m_out) << request << std::endl;
+    
     int mysqlRet = mysql_query(m_mysql, request.c_str());
     if (mysqlRet) {
       std::string msg = 
@@ -526,6 +538,10 @@ namespace rdbModel {
 
     std::string query = "SHOW COLUMNS FROM " + tName;
 
+    (*m_out) << std::endl << "# About to issue SHOW COLUMNS request :" 
+             << std::endl;
+    (*m_out) << query << std::endl;
+    
     int ret = mysql_query(m_mysql, query.c_str());
     if (ret) {
       m_matchReturn = MATCHfail;
