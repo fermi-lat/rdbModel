@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.3 2004/03/28 08:22:51 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.4 2004/04/02 03:02:40 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -117,7 +117,7 @@ namespace rdbModel{
     static bool compileOperator(Assertion::Operator* op, 
                                 std::string &sqlString);
 
-    static bool checkDType(Datatype* dtype, const std::string& sqlType);
+    bool checkDType(Datatype* dtype, const std::string& sqlType);
 
     // Following collection of data members is only of interest while 
     // visit is in progress.
