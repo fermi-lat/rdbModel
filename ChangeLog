@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: riccardo  Fri Jul  2 07:21:41 PDT 2004
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Another small fix for right button press for context menu (still not really the ideal solution).
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Jul  1 08:54:28 PDT 2004
 rdbModel/doc
 
