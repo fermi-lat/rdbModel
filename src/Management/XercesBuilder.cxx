@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.10 2004/03/31 02:11:36 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.11 2004/03/31 19:11:21 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -33,7 +33,7 @@ namespace rdbModel {
 
     
     //  save attribute information associated with outermost (rdbms) element.
-    m_rdb->m_dbsname = xml::Dom::getAttribute(docElt, "dbs");
+    m_rdb->m_dbName = xml::Dom::getAttribute(docElt, "dbs");
 
     m_rdb->m_DTDversion = xml::Dom::getAttribute(docElt, "DTDversion");
 
