@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri May  7 16:31:16 PDT 2004
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Add argument nullColls (array of column names to be nulled) to insertRow
+method
+
+    *
+------------------------------------------------------------
 User: jrb  Wed May  5 18:34:16 PDT 2004
 rdbModel/xml
 
