@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Feb 28 16:12:13 PST 2005
+rdbModel/src/Management
+
+Modified Files:
+	Manager.cxx 
+Log Message:
+Do a better job in destructor
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v1r6p2, operation: add
 Package: rdbModel
