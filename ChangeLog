@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Apr  6 17:31:42 PDT 2004
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Define alternate "open" method which retrieves connection parameters from
+a file
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 00:29:48 PDT 2004
 rdbModel/xml
 
