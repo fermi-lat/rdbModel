@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  1 19:04:26 PST 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Implement matchSchema, Visitor interface
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr  1 19:03:50 PST 2004
 rdbModel/rdbModel/Tables
 
