@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  2 16:19:40 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Datatype.h 
+Log Message:
+Don't forget the "t" in "output"
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Apr  2 16:19:17 PST 2004
 rdbModel/rdbModel/Db
 
