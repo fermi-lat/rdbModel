@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 30 15:58:49 PST 2004
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.dtd 
+Log Message:
+Support EXISTS (but not ANY or ALL)
+Include example of an <assert> with <exists> child
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 30 15:58:12 PST 2004
 rdbModel/src/Tables
 
