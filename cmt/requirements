@@ -1,6 +1,6 @@
 package rdbModel
 
-# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.3 2004/03/07 08:19:45 jrb Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.4 2004/03/28 08:21:45 jrb Exp $
 version v1r0
 
 author Joanne Bogart <jrb@slac.stanford.edu>
@@ -8,7 +8,7 @@ author Joanne Bogart <jrb@slac.stanford.edu>
 use GlastPolicy  v5r*
 use xml          v4r*
 use facilities   v2r*
-use MYSQLEXT * IExternal
+use MYSQLEXT v0r* IExternal 
 
 apply_pattern shared_library
 
@@ -21,7 +21,7 @@ macro_append rdbModel_headers "" WIN32 " \
    ../rdbModel/Management/*.h \
    ../rdbModel/Db/*.h
 
-library rdbModel \
+library rdbModel  \
    Rdb.cxx \
    Tables/*.cxx \
    Management/*.cxx   \
