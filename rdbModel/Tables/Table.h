@@ -1,11 +1,11 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.3 2004/03/06 01:13:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.4 2004/03/24 02:05:08 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
 #include <string>
 #include "rdbModel/Management/Visitor.h"
 
-namespace rdbModel{
+namespace rdbModel {
 
   class Column;
   class Index;
