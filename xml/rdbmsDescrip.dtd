@@ -1,0 +1,111 @@
+<!--
+$Header:  $
+ /** @file 
+  @anchor dtd
+  dtd for describing contents of sql tables, including constraints
+  beyond those which can be readily expressed in SQL.  For each
+  table, describe its columns, primary index if any, and other indices.
+  It is also possible to define "assertions": statements about the
+  database which may be checked at a specified time, such as when a
+  new row is added.  For now, any individual assertion may only
+  refer to a single table.
+ */
+ -->
+
+
+<!ELEMENT rdbms (table+) >
+<!ATTLIST rdbms dbs NMTOKEN #REQUIRED     
+          DTDversion NMTOKEN #FIXED "1.0"
+          DTDexpected NMTOKEN #REQUIRED 
+          CVSid      CDATA #REQUIRED >
+
+<!-- Might want to impose some sort of pattern on
+     version attribute value -->
+<!ELEMENT table (col+, primary?, index*, assert*) >
+<!ATTLIST table name NMTOKEN #REQUIRED
+                version NMTOKEN #REQUIRED
+                comment CDATA #IMPLIED  >
+
+<!ELEMENT col (src, type, comment) >
+<!ATTLIST col name ID #REQUIRED >
+
+<!ELEMENT src  (default | from) >
+<!ATTLIST src null (true | false) #REQUIRED >
+
+<!ELEMENT from EMPTY>
+<!ATTLIST from agent (auto_increment | now | enduser | service) #REQUIRED >
+
+<!ELEMENT default EMPTY>
+<!ATTLIST default value NMTOKEN #REQUIRED>
+
+<!ELEMENT type (restriction?) >
+<!ATTLIST type typename (enum | datetime | timestamp | int | mediumint | 
+                         smallint | real | double | varchar | char ) #REQUIRED 
+               size     NMTOKEN #IMPLIED >
+
+<!ELEMENT restriction (nonnegative | positive | interval | enum | file) >
+
+<!ELEMENT nonnegative EMPTY >
+<!ELEMENT positive EMPTY >
+<!ELEMENT interval EMPTY >
+<!ATTLIST interval min NMTOKEN #REQUIRED
+                   max NMTOKEN #REQUIRED >
+
+<!ELEMENT enum  EMPTY>
+<!ATTLIST enum  values NMTOKENS #REQUIRED 
+                use   (prefer | require) #REQUIRED >
+
+<!-- Do we want an attribute which says "check to see if this file exists"?
+     Not sure.  The path is allowed to contain environment variables, 
+     so whether it appears to be legitimate may depend on process
+     environment.
+ -->
+<!ELEMENT file EMPTY>
+
+<!ELEMENT comment (#PCDATA) >
+
+<!ELEMENT primary EMPTY >
+<!ATTLIST primary col IDREF #REQUIRED >
+
+<!ELEMENT index EMPTY >
+<!ATTLIST index  name NMTOKEN #REQUIRED
+                 cols IDREFS  #REQUIRED >
+
+<!ENTITY  % operator "or | and |  exists | not | isNull | compare" >
+                   <!-- <!ENTITY  % operand "%operator; | const | refer " > -->
+<!ELEMENT assert (%operator; ) >
+<!ATTLIST assert case (changeRow | globalCheck) #REQUIRED >
+
+<!ELEMENT or ((%operator;) , (%operator;)+) >
+
+<!ELEMENT and ((%operator;) , (%operator;)+) >
+
+<!ELEMENT not (%operator;) >
+
+<!-- compare compares two quantities from an ordered set,
+     or compares one quantity to NULL.  More generally, anything
+     which returns a value of "true" or "false" could go here.
+     Should maybe change the name to something like  "boolFunc"
+ -->
+
+<!ELEMENT exists (%operator;) >
+
+<!ELEMENT isNull EMPTY>
+<!ATTLIST isNull col IDREF #REQUIRED>
+
+<!ELEMENT compare ((colRef, value) | (colRef, colRef) | (value, colRef)) >
+<!ATTLIST compare relation 
+                   (lessThan | greaterThan | equal | notEqual
+                         | lessOrEqual | greaterOrEqual ) #REQUIRED  >
+
+
+<!ELEMENT colRef EMPTY>
+<!ATTLIST colRef val IDREF #REQUIRED>
+
+<!ELEMENT value EMPTY>
+<!ATTLIST value val NMTOKEN #REQUIRED>
+ 
+
+
+
+

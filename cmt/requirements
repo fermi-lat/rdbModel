@@ -1,0 +1,8 @@
+package rdbModel
+
+# $Header:  $
+version v1r0
+
+authoer Joanne Bogart <jrb@slac.stanford.edu>
+
+use xml v4r*
