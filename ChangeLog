@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  9 18:16:27 PDT 2004
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Add test for open(..), close(..) open(..) sequence
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Apr  9 18:15:57 PDT 2004
 rdbModel/src/Db
 
