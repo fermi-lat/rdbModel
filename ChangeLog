@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Tue Apr  6 17:33:23 PDT 2004
+rdbModel/xml
+
+Added Files:
+	mysqlConnection.dtd mysqlSlac.xml 
+Log Message:
+mysqlSlac.xml: file containing connection parameters for calib. metadata dbs
+mysqlConnectionldtd: defines structure of above
+a file
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 17:32:26 PDT 2004
 rdbModel/src/test
 
