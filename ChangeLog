@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sun Mar 28 00:24:27 PST 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx MysqlResults.cxx 
+Log Message:
+Supply minimal services for talking to MySQL dbms
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Mar 28 00:23:42 PST 2004
 rdbModel/rdbModel/Tables
 
