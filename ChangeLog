@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 21 16:18:50 PDT 2004
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Connection xml files have moved; modify test program accordingly
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 21 16:12:33 PDT 2004
 rdbModel/xml/connect
 
