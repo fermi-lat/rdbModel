@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  9 18:15:57 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add optional arguments for output and error stream to constructor.
+Fix bug so that close and re-open works
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Apr  9 18:15:27 PDT 2004
 rdbModel/rdbModel/Db
 
