@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  9 18:15:27 PDT 2004
+rdbModel/rdbModel/Db
+
+Modified Files:
+	MysqlConnection.h 
+Log Message:
+Add optional arguments for output and error stream to constructor
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Apr  7 18:36:03 PDT 2004
 rdbModel/src/test
 
