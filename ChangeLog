@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 28 12:40:24 PDT 2004
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Added method    bool isConnected()
+Added nullCols argument to update method
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 21 16:19:36 PDT 2004
 rdbModel/xml/connect
 
