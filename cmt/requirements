@@ -1,8 +1,29 @@
 package rdbModel
 
-# $Header:  $
+# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 version v1r0
 
-authoer Joanne Bogart <jrb@slac.stanford.edu>
+author Joanne Bogart <jrb@slac.stanford.edu>
 
-use xml v4r*
+use GlastPolicy  v5r*
+use xml          v4r*
+use facilities   v2r*
+
+apply_pattern shared_library
+
+private
+
+apply_pattern package_headers
+
+macro_append rdbModel_headers "" WIN32 " \
+   ../rdbModel/Tables/*.h \
+   ../rdbModel/Management/*.h 
+
+library rdbModel \
+   Rdb.cxx \
+   Tables/*.cxx \
+   Management/*.cxx         \
+   ${rdbModel_headers}
+
+
+# application test_build  test/test_build.cxx
