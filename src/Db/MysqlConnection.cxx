@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.12 2004/04/10 01:15:57 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.13 2004/04/15 22:03:20 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -561,7 +561,8 @@ namespace rdbModel {
 
     // Field 4 is default
     // Extra (may say auto_increment)
-    bool autoInc = (colDescrip[5] == "auto_increment");
+    bool autoInc = 
+      (std::string(colDescrip[5]) == std::string("auto_increment"));
     if (autoInc != col->isAutoIncrement()) {
       m_matchReturn = MATCHfail;
       return Visitor::VERRORABORT;
