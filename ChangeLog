@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Jun 17 12:08:05 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	calibMetaDb.xml calibTest.xml 
+Log Message:
+Add EM2 to list of instruments in prompt; also add several new calib_type 
+possibilities
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jun  9 12:09:03 PDT 2004
 rdbModel/rdbModel/Tables
 
