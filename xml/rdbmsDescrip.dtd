@@ -1,5 +1,5 @@
 <!--
-$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.2 2004/03/24 02:07:41 jrb Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.3 2004/03/30 23:58:49 jrb Exp $
  /** @file 
   @anchor dtd
   dtd for describing contents of sql tables, including constraints
@@ -9,6 +9,11 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.2 2004/0
   database which may be checked at a specified time, such as when a
   new row is added.  For now, any individual assertion may only
   refer to a single table.
+
+  The format for datetime and timestamp fields is
+       yyyy-mm-dd hh:mm:ss
+
+  where only the first three fields are required.  
  */
  -->
 
@@ -32,8 +37,15 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.2 2004/0
 <!ELEMENT src  (default | from) >
 <!ATTLIST src null (true | false) #REQUIRED >
 
+<!-- The contents attribute is only of interest when agent="service".
+     The service is expected to fill columns when doing an INSERT 
+     in case contents="service_name" or contents="username" .  
+     In the first case the column value should be some string identifying
+     the service; in the second the value should be user id or other
+     identifying information of program user. -->
 <!ELEMENT from EMPTY>
-<!ATTLIST from agent (auto_increment | now | enduser | service) #REQUIRED >
+<!ATTLIST from agent (auto_increment | now | enduser | service) #REQUIRED 
+               contents (unspecified | service_name | username) "unspecified" >
 
 <!ELEMENT default EMPTY>
 <!ATTLIST default value NMTOKEN #REQUIRED>
@@ -113,8 +125,8 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.2 2004/0
 
 <!--  Example of assertion including a quantifier:  there exists a row
       with instrument = EM, calib_type = TKR_DeadChan, 
-      vstart < "1-10-2003", 
-      vend > "1-1-2004", \
+      vstart < "2003-10-1", 
+      vend > "2004-1-1", \
       completion = "OK"
 
     <assert case="globalCheck">
@@ -130,11 +142,11 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.2 2004/0
               <colRef val="calib_type" /> 
             </equal>
             <greaterThan>
-              <value val="1-10-2003" />
+              <value val="2003-10-1" />
               <colRef val = "vstart" />
             </lessThan>
             <lessThan>
-              <value val="1-1-"2004" />
+              <value val="2004-1-1" />
               <colRef val="vend" />
             </lessThan>
             <equal>
