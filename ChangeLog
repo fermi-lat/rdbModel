@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Apr 26 17:04:07 PDT 2004
+rdbModel/rdbModel/Management
+
+Modified Files:
+	XercesBuilder.h 
+Log Message:
+Adjustments for revised Column class, elimination of ColumnSource nested class
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr 22 17:35:35 PDT 2004
 rdbModel/src/test
 
