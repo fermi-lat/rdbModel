@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Aug 23 17:04:59 PDT 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Handle new possibility "enter_time" for contents attribute of <from>
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Aug 23 17:04:21 PDT 2004
 rdbModel/rdbModel/Tables
 
