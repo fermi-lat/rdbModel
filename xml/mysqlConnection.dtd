@@ -1,0 +1,10 @@
+<!-- 
+  $Header :  $
+-->
+
+<!ELEMENT mysqlConnection EMPTY >
+<!ATTLIST mysqlConnection host NMTOKEN #REQUIRED
+                          user NMTOKEN #REQUIRED
+                          password NMTOKEN #IMPLIED
+                          dbname NMTOKEN #REQUIRED
+                          port   NMTOKEN "0">
