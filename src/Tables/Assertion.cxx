@@ -1,7 +1,8 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.2 2004/03/07 08:21:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.3 2004/03/24 02:06:57 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
+#include "rdbModel/RdbException.h"
 
 namespace rdbModel {
 
@@ -34,6 +35,27 @@ namespace rdbModel {
     }
   }
   
+
+  /// Throw exception if Operator is not a comparison operator
+  const std::string[2]& Assertion::Operator::getCompareArgs() const {
+    if (!isCompareOp()) 
+      throw RdbException("Assertion::Operator::getCompareArgs: wrong type");
+    return m_compareArgs;
+  }
+
+  /// Throw exception if Operator is not a comparison operator
+  const bool[2]& Assertion::Operator::getLiteralness() const {
+    if (!isCompareOp()) 
+      throw RdbException("Assertion::Operator::getLiteralness: wrong type");
+    return m_literal;
+  }
+
+  /// Throw exception if Operator is a comparison operator
+  const std::vector<Operator* >& Assertion::Operator::getChildren() const {
+    if (isCompareOp()) 
+      throw RdbException("Assertion::Operator::getChildren: wrong type");
+    return m_operands;
+  }
 
   Visitor::VisitorState  Assertion::accept(Visitor* v) {
     return v->visitAssertion(this);
