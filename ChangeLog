@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun  9 10:25:33 PDT 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h 
+Log Message:
+Add new data member for semantics of column value to provide guidance
+to program doing INSERTs 
+
+    *
+------------------------------------------------------------
 User: jrb  Mon May 24 09:42:34 PDT 2004
 rdbModel/xml
 
