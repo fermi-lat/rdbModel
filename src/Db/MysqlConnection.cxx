@@ -24,7 +24,6 @@ namespace {
   // Size specification is of form (m) or (m,d)  If no size specification 
   // return 0; else return value of m.
   int extractSize(const std::string& sqlString) {
-    int a;
     unsigned leftLoc = sqlString.find("(");
     if (leftLoc == std::string::npos) return 0;
     leftLoc++;           // now is at start of m
