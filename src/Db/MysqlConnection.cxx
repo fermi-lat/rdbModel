@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.17 2004/05/18 23:13:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.18 2004/05/19 22:10:51 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -288,7 +288,7 @@ namespace rdbModel {
                                         const Assertion* where,
                                         int   rowLimit,
                                         int   rowOffset) {
-    std::string sqlString = "SELECT";
+    std::string sqlString = "SELECT ";
     unsigned nGet = getCols.size();
     unsigned nOrder = orderCols.size();
 
