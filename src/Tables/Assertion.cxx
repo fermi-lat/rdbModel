@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.1 2004/03/06 01:15:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.2 2004/03/07 08:21:26 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -38,9 +38,5 @@ namespace rdbModel {
   Visitor::VisitorState  Assertion::accept(Visitor* v) {
     return v->visitAssertion(this);
   }
-
-  // no-op for now, till we figure out how the generated SQL will be used
-  // and hence what form it should take.
-  void makeSql() {}
 
 }

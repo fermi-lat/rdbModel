@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.5 2004/03/07 08:21:03 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.6 2004/03/09 01:42:11 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -75,7 +75,7 @@ namespace rdbModel {
       }
     }
 
-    // Look for primary key, if any
+    // Look for primary key element, if any
     DOM_Element primaryKey = 
       xml::Dom::findFirstChildByName(tableElt, "primary");
     if (primaryKey != DOM_Element()) {
@@ -91,12 +91,16 @@ namespace rdbModel {
     nChild = children.size();
 
     for (unsigned int iIndex = 0; iIndex < nChild; iIndex++) {
+      /*      std::string primaryVal = 
+        xml::Dom::getAttribute(children[iIndex], "primary");
+        bool isPrimary = (primaryVal == "yes"); */
       Index* newIndex = buildIndex(children[iIndex], false, newTable);
       if (newIndex) {
         newTable->addIndex(newIndex);
       }
     }
     
+    // Check that there is at most one primary key??
 
     // Handle assertion elements
     xml::Dom::getChildrenByTagName(tableElt, "assert", children);
@@ -246,15 +250,21 @@ namespace rdbModel {
   }
 
 
-  Index* XercesBuilder::buildIndex(DOM_Element e, bool primary, 
+  Index* XercesBuilder::buildIndex(DOM_Element e, bool primaryElt,
                                    Table* myTable) {
     Index* newIndex = new Index(myTable);
-    if (newIndex->m_primary = primary) { // DOM_Element is a <primary>
+
+    if (primaryElt) { // DOM_Element is a <primary> 
+      newIdex->m_primary = true;
       newIndex->m_name = xml::Dom::getAttribute(e, "col");
       newIndex->m_indexCols.push_back(newIndex->m_name);
     }
     else { // DOM_Element is <index>
       newIndex->m_name = xml::Dom::getAttribute(e, "name");
+
+      std::string primaryVal = 
+        xml::Dom::getAttribute(e, "primary");
+      newIndex->m_primary = (primaryVal == "yes");
 
       // Value of "cols" attribute is a blank-separated list of column names
       std::string cols = xml::Dom::getAttribute(e, "cols");
@@ -298,11 +308,9 @@ namespace rdbModel {
     }
     else if (opName == "compare") {
       std::string relation = xml::Dom::getAttribute(e, "relation");
-      bool swap = false;
       if (relation == "lessThan") newOp->m_opType = Assertion::OPTYPElessThan;
       else if (relation == "greaterThan") {
-        newOp->m_opType = Assertion::OPTYPElessThan;
-        swap = true;
+        newOp->m_opType = Assertion::OPTYPEgreaterThan;
       }
       else if (relation == "equal") newOp->m_opType = Assertion::OPTYPEequal;
       else if (relation == "notEqual") 
@@ -311,17 +319,12 @@ namespace rdbModel {
         newOp->m_opType = Assertion::OPTYPElessOrEqual;
       }
       else if (relation == "greaterOrEqual") {
-        newOp->m_opType = Assertion::OPTYPElessOrEqual;
-        swap = true;
+        newOp->m_opType = Assertion::OPTYPEgreaterOrEqual;
       }
       DOM_Element child[2];
       child[0] = xml::Dom::getFirstChildElement(e);
       child[1] = xml::Dom::getSiblingElement(child[0]);
-      if (swap) {
-        DOM_Element temp = child[0];
-        child[0] = child[1];
-        child[1] = temp;
-      }
+
       for (unsigned iChild = 0; iChild < 2; iChild++) {
         newOp->m_compareArgs[iChild] = 
           xml::Dom::getAttribute(child[iChild], "val");
@@ -341,6 +344,7 @@ namespace rdbModel {
     else if (opName == "or") newOp->m_opType = Assertion::OPTYPEor;
     else if (opName == "and") newOp->m_opType = Assertion::OPTYPEand;
     else if (opName == "exists") newOp->m_opType = Assertion::OPTYPEexists;
+    else if (opName == "forAll") newOp->m_opType = Assertion::OPTYPEforAll;
     else if (opName == "not") newOp->m_opType = Assertion::OPTYPEnot;
 
     // Recursively handle child operators
