@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v1r6p1 16-Feb-2005  jrb    Small backwards-compatible additions for use
+                              by calibUtil
    v1r6p0 30-Jan-2005  jrb    List all new CAL calib types
    v1r6    4-Jan-2005  jrb    Use xmlBase rather than xml
    v1r5   11-Nov-2004  jrb    Upgrade to Xerces 2.6.0
