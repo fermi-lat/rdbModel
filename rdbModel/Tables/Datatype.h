@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.7 2004/04/02 03:03:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.8 2004/04/03 00:19:40 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -62,6 +62,13 @@ namespace rdbModel{
     /// Return pointer to Enum object owned by datatype (if none, return
     /// null pointer).
     Enum* getEnum() const {return m_enum;}
+
+    /** User-supplied strings min and max will be set to min and max values,
+        if any, for the Datatype object.  
+        @ret  true if there is a min & max, false otherwise
+    */
+    bool getInterval(std::string& min, std::string& max);
+
 
   private:
     friend class rdbModel::XercesBuilder;
