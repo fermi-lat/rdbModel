@@ -3,7 +3,7 @@
 <rdbms dbs="calib"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibMetaDb.xml,v 1.11 2005/01/30 22:52:09 jrb Exp $" 
+       CVSid= "$Id: calib.xml,v 1.1 2005/02/24 20:53:54 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
@@ -32,7 +32,7 @@
      <src  null="false">  <!-- i.e. this is a required field -->
        <from agent="enduser" />
      </src>
-     <type typename="varchar" size="16">
+     <type typename="varchar" size="24">
        <restriction>
          <enum use="prefer" values="LAT EM EM2 miniTower"/>
        </restriction>
@@ -63,7 +63,7 @@
     <src null="false">
       <default value="vanilla" />
     </src>
-    <type typename="varchar" size="30">
+    <type typename="varchar" size="40">
       <restriction>
         <enum use="prefer" values="vanilla ideal" />
       </restriction>
@@ -150,8 +150,6 @@
     </comment>
   </col>
 
-<!-- Really completion should not be nullable, but in current MySQL table
-     it *is* nullable -->
   <col name="completion" >
     <src null="false" >
       <from agent="enduser"  />
@@ -207,7 +205,7 @@
     <src null="true">
       <from agent="enduser"  />
     </src>
-    <type typename="varchar" size="12" />
+    <type typename="varchar" size="16" />
     <!-- might add restriction which is a pattern definition, e.g.
          Vnnn.Rnnn.Pnnn
      -->
