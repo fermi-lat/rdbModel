@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 23 18:01:31 PST 2004
+rdbModel/rdbModel/Db
+
+Added Files:
+	Connection.h MysqlConnection.h MysqlResults.h ResultHandle.h 
+Log Message:
+Pure virtual classes (Connection, ResultHandle) for abstract database 
+interaction and derived classes for MySQL database
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 23 18:00:11 PST 2004
 rdbModel/rdbModel
 
