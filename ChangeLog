@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: riccardo  Fri Jul  2 07:21:41 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx MysqlResults.cxx 
+Log Message:
+Another small fix for right button press for context menu (still not really the ideal solution).
+
+    *
+------------------------------------------------------------
+User: riccardo  Fri Jul  2 07:21:41 PDT 2004
 rdbModel/rdbModel
 
 Modified Files:
