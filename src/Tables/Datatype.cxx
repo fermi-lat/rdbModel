@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.3 2004/03/06 01:15:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.4 2004/03/07 08:21:26 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -27,6 +27,7 @@ namespace {
     }
   }
   int findType(std::string aType) {
+    if (!initDone) init();
     for (int i = 0; i < N_SUPPORTED_TYPES; i++) {
       if (aType == typenames[i]) return i;
     }

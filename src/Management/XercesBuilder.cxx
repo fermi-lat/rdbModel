@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.4 2004/03/06 01:14:09 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.5 2004/03/07 08:21:03 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -60,7 +60,7 @@ namespace rdbModel {
     Table* newTable = new Table;
     newTable->m_name = xml::Dom::getAttribute(tableElt, "name");
     newTable->m_version = xml::Dom::getAttribute(tableElt, "version");
-    newTable->m_comment = xml::Dom::getAttribute(tableElt, "name");
+    newTable->m_comment = xml::Dom::getAttribute(tableElt, "comment");
 
     std::vector<DOM_Element> children;
     xml::Dom::getChildrenByTagName(tableElt, "col", children);
@@ -115,7 +115,7 @@ namespace rdbModel {
     Column* newCol = new Column(myTable);
     newCol->m_name = xml::Dom::getAttribute(e, "name");
     DOM_Element com = xml::Dom::findFirstChildByName(e, "comment");
-    newCol->m_comment = xml::Dom::getText(com);
+    newCol->m_comment = xml::Dom::getTextContent(com);
 
     DOM_Element src = xml::Dom::findFirstChildByName(e, "src");
     newCol->m_source = buildColumnSource(src);
@@ -127,9 +127,7 @@ namespace rdbModel {
   }
 
   Datatype* XercesBuilder::buildDatatype(DOM_Element e) {
-
     Datatype* newType = new Datatype;
-    
     newType->setType(xml::Dom::getAttribute(e, "typename"));
 
     if (xml::Dom::hasAttribute(e, "size")) {
@@ -196,12 +194,12 @@ namespace rdbModel {
         unsigned int blankLoc = enums.find(std::string(" "), start);
 
         while (blankLoc != std::string::npos) {
-          newEnum->m_choices.push_back(enums.substr(start, blankLoc-1));
+          newEnum->m_choices.push_back(enums.substr(start, blankLoc-start));
           start = blankLoc + 1;
           blankLoc = enums.find(std::string(" "), start);
-          newEnum->m_choices.push_back(enums.substr(start));
-          newType->m_enum = newEnum;
         }   // parsing enum list
+        newEnum->m_choices.push_back(enums.substr(start));
+        newType->m_enum = newEnum;
       }   // end processing of enum restriction
     }
     else {   // no restriction specified
@@ -264,7 +262,7 @@ namespace rdbModel {
       unsigned int blankLoc = cols.find(std::string(" "), start);
 
       while (blankLoc != std::string::npos) {
-        newIndex->m_indexCols.push_back(cols.substr(start, blankLoc-1));
+        newIndex->m_indexCols.push_back(cols.substr(start, blankLoc-start));
         start = blankLoc + 1;
         blankLoc = cols.find(std::string(" "), start);
       }
