@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Apr  6 17:32:26 PDT 2004
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Test new MysqlConnection::open method
+a file
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 17:32:01 PDT 2004
 rdbModel/src/Db
 
