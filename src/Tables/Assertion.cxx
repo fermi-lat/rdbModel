@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.8 2004/04/02 03:05:05 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.9 2004/04/07 23:06:49 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -65,6 +65,20 @@ namespace rdbModel {
       }
     }
     else m_opType = OPTYPEundefined;
+  }
+
+  // This only makes sense for conjunction-style operators AND, OR
+  bool Assertion::Operator::appendChild(Operator* child) {
+    if  ((m_opType == OPTYPEor) || (m_opType == OPTYPEand) ) {
+      m_operands.push_back(child);
+      return true;
+    }
+    else if ((m_opType == OPTYPEnot) && (m_operands.size() == 0) ) {
+      m_operands.push_back(child);
+      return true;
+    }
+    throw RdbException("Assertion::Operator::appendChild: wrong parent operator type");
+    return false;
   }
 
 

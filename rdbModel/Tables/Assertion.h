@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.7 2004/03/30 23:57:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.8 2004/03/31 02:11:05 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -41,6 +41,12 @@ namespace rdbModel{
       a comparison ( =, <=, etc. and also "is null") or an operation which
       has child operations:  OR, AND, NOT, for all, there exists, hence
       a node is a leaf node iff it's a comparison.
+
+      Once an operation has been incorporated into an Assertion or into 
+      another operation, it is 'owned' by this parent.  Deleting the parent
+      will cause its children to be deleted.  Hence applications building
+      assertions out of operators should never delete those operators.
+      
  
   */
   class Assertion {
@@ -72,6 +78,9 @@ namespace rdbModel{
 
       /// Constructor for OR, AND, NOT
       Operator(OPTYPE type, const std::vector<Operator*>& children);
+
+      /// Add another child to a conjunction-style operator
+      bool appendChild(Operator* child);
 
       /// Check whether columns or column and literal to be compared
       /// have compatible types
