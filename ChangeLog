@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Thu Mar  4 17:38:52 PST 2004
+rdbModel/src/Tables
+
+Added Files:
+	Column.cxx Datatype.cxx Table.cxx 
+Log Message:
+Table.cxx: moved here from previous wrong directory
+Column.cxx:  Implement everything currently declared in header
+Datatype.cxx:  Implement *almost* everything currently declared in header;
+                not quite done
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Mar  4 17:37:02 PST 2004
 rdbModel/src/Management
 
