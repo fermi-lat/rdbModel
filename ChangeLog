@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Mar  4 17:37:02 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Move stuff depending only internal representation of Datatype class from
+here to Datatype.cxx
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Mar  4 17:35:46 PST 2004
 rdbModel/src
 
