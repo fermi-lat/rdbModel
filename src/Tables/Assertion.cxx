@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.7 2004/03/31 02:11:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.8 2004/04/02 03:05:05 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -117,7 +117,7 @@ namespace rdbModel {
 
   Visitor::VisitorState  Assertion::accept(Visitor* v) {
     Visitor::VisitorState state = v->visitAssertion(this);
-    if (state == Visitor::BRANCHDONE) return Visitor::CONTINUE;
+    if (state == Visitor::VBRANCHDONE) return Visitor::VCONTINUE;
     return state;
   }
 

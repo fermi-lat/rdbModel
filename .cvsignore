@@ -4,5 +4,6 @@ rh*gcc*
 Linux-i686
 Win32*
 Visual
+VC*
 setup.*
 *.mak*

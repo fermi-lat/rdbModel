@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlResults.h,v 1.2 2004/03/27 01:38:46 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlResults.h,v 1.3 2004/03/28 08:22:51 jrb Exp $
 #ifndef RDBMODEL_MYSQLRESULTS_H
 #define RDBMODEL_MYSQLRESULTS_H
 
@@ -17,7 +17,6 @@ namespace rdbModel{
     friend class MysqlConnection;
 
   public:
-    MysqlResults();
     virtual ~MysqlResults();
 
     /// Return number of rows in results

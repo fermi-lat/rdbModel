@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.2 2004/03/06 01:15:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.3 2004/04/02 03:05:05 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -53,26 +53,26 @@ namespace rdbModel {
   Visitor::VisitorState Table::accept(Visitor* v) {
     
     Visitor::VisitorState state = v->visitTable(this);
-    if (state == Visitor::BRANCHDONE) return Visitor::CONTINUE;
-    if (state != Visitor::CONTINUE)       return state;
+    if (state == Visitor::VBRANCHDONE) return Visitor::VCONTINUE;
+    if (state != Visitor::VCONTINUE)       return state;
 
     unsigned n = m_cols.size();
 
     for (unsigned i = 0; i < n; i++) {
       state = m_cols[i]->accept(v);
-      if (state != Visitor::CONTINUE) return state;
+      if (state != Visitor::VCONTINUE) return state;
     }
 
     n = m_indices.size();
     for (unsigned i = 0; i < n; i++) {
       state = m_indices[i]->accept(v);
-      if (state != Visitor::CONTINUE) return state;
+      if (state != Visitor::VCONTINUE) return state;
     }
 
     n = m_asserts.size();
     for (unsigned i = 0; i < n; i++) {
       state = m_asserts[i]->accept(v);
-      if (state != Visitor::CONTINUE) return state;
+      if (state != Visitor::VCONTINUE) return state;
     }
     return state;
   }
