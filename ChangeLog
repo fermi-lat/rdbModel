@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sun Mar 28 00:21:45 PST 2004
+rdbModel/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Files in src subdirectory Db now included in compile
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar 26 17:41:38 PST 2004
 rdbModel/src/Tables
 
