@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar  5 17:15:25 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Column.cxx Datatype.cxx Table.cxx 
+Added Files:
+	Assertion.cxx Index.cxx 
+Log Message:
+Assertion.cxx, Index.cxx:  remaining implementation for basic services for
+objects built from xml file.
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar  5 17:14:09 PST 2004
 rdbModel/src/Management
 
