@@ -1,11 +1,11 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.3 2004/03/07 08:20:16 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.4 2004/04/27 00:04:07 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
 
 #include "rdbModel/Management/Builder.h"
 #include "xml/XmlParser.h"
-#include <xercesc/dom/DOM_Document.hpp>
-#include <xercesc/dom/DOM_Element.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMElement.hpp>
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Assertion.h"
 namespace rdbModel{
@@ -50,26 +50,29 @@ namespace rdbModel{
      * This method builds an individual Table object from its xml description
      * and returns a pointer to it
      */
-    Table* buildTable(DOM_Element e);
+    Table* buildTable(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e);
 
     /**
      *  build a Column from its xml description and return a pointer to it
      */
-    Column* buildColumn(DOM_Element e, Table* t);
+    Column* buildColumn(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e,Table* t);
 
     /**
      * build an Index object (corresponding to MySQL index or key) from its 
      * xml description
      */
-    Index* buildIndex(DOM_Element e, bool primary, Table* t);
+    Index* buildIndex(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
+                      bool primary, Table* t);
 
-    Assertion* buildAssertion(DOM_Element e, Table* t);
+    Assertion* buildAssertion(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
+                              Table* t);
  
-    Assertion::Operator* buildOperator(DOM_Element e, Table* t);
+    Assertion::Operator* 
+    buildOperator(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, Table* t);
 
-    Datatype* buildDatatype(DOM_Element e);
+    Datatype* buildDatatype(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e);
 
-    DOM_Document m_doc;
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* m_doc;
     Rdb* m_rdb;
 
   };

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.20 2004/06/28 19:41:08 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.22 2004/07/08 19:38:37 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -148,14 +148,15 @@ namespace rdbModel {
   }
 
   bool MysqlConnection::open(const std::string& parms) {
-
+    using XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument;
+    using XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
     xml::XmlParser parser;
-    DOM_Document doc = parser.parse(parms.c_str(), "mysqlConnection");
-    if (doc == DOM_Document()) {
+    DOMDocument* doc = parser.parse(parms.c_str(), "mysqlConnection");
+    if (doc == 0) {
       (*m_err) << "parse of connection parameters failed" << std::endl;
       return false;
     }
-    DOM_Element  conn = doc.getDocumentElement();
+    DOMElement*  conn = doc->getDocumentElement();
     
     std::string host = xml::Dom::getAttribute(conn, "host");
     std::string user = xml::Dom::getAttribute(conn, "user");
