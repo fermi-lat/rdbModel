@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.9 2004/06/09 17:25:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.10 2004/06/09 19:09:03 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -37,7 +37,8 @@ namespace rdbModel {
       CONTENTSusername 
     };
 
-    Column(Table* myTable=0) : m_myTable(myTable), m_type(0) {
+    Column(Table* myTable=0) : m_myTable(myTable), m_type(0), 
+                               m_isPrimaryKey(false) {
       m_contents = CONTENTSunspecified;
       m_default = std::string("");};
     // Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
@@ -66,7 +67,9 @@ namespace rdbModel {
     bool isCompatible(const Column* otherCol) const;
 
     /// Returns true if column may take on value NULL
-    bool nullAllowed() { return m_null;}
+    bool nullAllowed() const { return m_null;}
+
+    bool isPrimaryKey() const {return m_isPrimaryKey;}
 
     bool isAutoIncrement() const;  
 
@@ -90,6 +93,9 @@ namespace rdbModel {
 
       /// Can this field have the value NULL?
     bool m_null;
+    
+    /// Is this column a primary key?
+    bool m_isPrimaryKey;
 
   };
 
