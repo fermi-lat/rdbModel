@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.1 2004/03/05 01:38:52 jrb Exp $
 
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -145,8 +145,9 @@ namespace rdbModel {
       if (m_restrict == RESTRICTnonneg) return (doubleVal  >= 0.0 );
       else if (m_restrict == RESTRICTpos) return (doubleVal > 0.0);
       else if (m_restrict == RESTRICTinterval) {
-
-        // do a bunch of stuff
+        double min = Util::stringToDouble(m_min);
+        double max = Util::stringToDouble(m_max);
+        return ((min <= doubleVal) && (doubleVal <= max));
       }
       return true;
 
@@ -167,15 +168,32 @@ namespace rdbModel {
     }
     case TYPEvarchar:
     case TYPEchar:
-      return true;
-
-    case TYPEenum: {
-
-      // do a bunch of stuff
+      if (m_restrict == RESTRICTnone) return true;
+      if (!m_restrict->m_enum->m_required) return true;
+    case TYPEenum: 
+      unsigned nChoice = m_restrict->m_enum->m_choices.size();
+      for (unsigned i = 0; i < nChoice; i++) {
+        if (val == m_restrict->m_enum->m_choices[i]) return true;
+      }
+      return false;
     }
     case TYPEdatetime:
     case TYPEtimestamp: {
-      // do a bunch of stuff
+      try {
+        facilities::Timestamp aTime(val);
+        if (m_restrict == RESTRICTinterval) {
+          facilities::Timestamp min(m_min);
+          facilities::Timestamp max(m_min);
+          return ((min <= aTime) && (aTime <= max));
+        }
+        return true;
+      }
+      catch (facilities::BadTimeInput ex) {
+        std::cerr << "From rdbModel::Datatype::okValue" << std::endl;
+        std::cerr << ex.complaint << std::endl;
+        return false;
+      }
+
     }
     default:
       return false;
