@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.11 2004/03/31 19:11:21 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.12 2004/04/02 03:04:45 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -143,6 +143,17 @@ namespace rdbModel {
       }
     }
     else newType->m_outputSize = -1;
+    if ((newType->m_outputSize == -1) &&
+        (newType->getType() == Datatype::TYPEchar) ) newType->m_outputSize = 1;
+    if ((newType->m_outputSize == -1) &&
+        (newType->getType() == Datatype::TYPEvarchar) ) { // not allowed
+      std::cerr << "Error in rdb database description file: " << std::endl;
+      std::cerr << "Missing size spec. for varchar field " << std::endl;
+      delete newType;
+      newType = 0;
+      return newType;
+    }
+
 
     DOM_Element restrict = xml::Dom::getFirstChildElement(e);
 
