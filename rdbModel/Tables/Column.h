@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.7 2004/04/02 03:03:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.8 2004/04/27 00:05:32 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -21,7 +21,7 @@ namespace rdbModel {
     //    class ColumnSource;      // embedded class, described below
 
   public:
-    Column(Table* myTable=0) : m_myTable(myTable), m_type(0) {
+    Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_contents(0) {
       m_default = std::string("");};
     // Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
     ~Column();
@@ -33,6 +33,13 @@ namespace rdbModel {
       FROMnow,                  // datatype must be timestamp
       FROMprogram,
       FROMendUser
+    };
+
+    /// Hints to program in case FROM field is FROMprogram
+    enum CONTENTS {
+      CONTENTSunspecified = 0,
+      CONTENTSserviceName = 1,
+      CONTENTSusername 
     };
 
     const std::string& getName() const {return m_name; };
@@ -62,6 +69,7 @@ namespace rdbModel {
     bool isAutoIncrement() const;  
 
     FROM getSourceType() const {return m_from;}
+    CONTENTS getContentsType() const {return m_contents;}
                                
     Visitor::VisitorState accept(Visitor* v);
 
@@ -76,6 +84,7 @@ namespace rdbModel {
       
     std::string m_default;
     FROM m_from;
+    CONTENTS m_contents;
 
       /// Can this field have the value NULL?
     bool m_null;
