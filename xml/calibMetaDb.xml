@@ -3,9 +3,9 @@
 <rdbms dbs="calib"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibMetaDb.xml,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $" 
+       CVSid= "$Id: calibMetaDb.xml,v 1.2 2004/04/03 00:22:54 jrb Exp $" 
  >
-<table name="metaData_v2r1" 
+<table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
   <!-- define columns -->
   <col name="ser_no" >    <!-- value of name is an ID -->
@@ -177,8 +177,10 @@
     </comment>
   </col>
 
+<!-- Really completion should not be nullable, but in current MySQL table
+     it *is* nullable -->
   <col name="completion" >
-    <src null="false" >
+    <src null="true" >
       <from agent="enduser"  />
     </src>
     <type typename="enum">
