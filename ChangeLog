@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar 19 16:48:21 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Add some simple "get" methods
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar 19 16:48:06 PST 2004
 rdbModel/rdbModel/Tables
 
