@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.1 2004/03/05 01:38:52 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.2 2004/03/06 01:15:25 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -9,6 +9,8 @@ namespace rdbModel {
     delete m_type;
     delete m_source;
   }
+
+  Enum* Column::getEnum() const {return m_type->getEnum();}
 
   bool Column::okValue(const std::string& val, bool set) const {
     // auto increment and datetime values are established by rdbms

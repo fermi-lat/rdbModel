@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.6 2004/03/09 01:42:11 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.7 2004/03/24 02:06:37 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -178,7 +178,7 @@ namespace rdbModel {
       }
       else if (tagname == std::string("enum")) {
         newType->m_restrict = Datatype::RESTRICTenum;
-        Datatype::Enum* newEnum  = new Datatype::Enum();
+        Enum* newEnum  = new Enum();
         newEnum->m_required = 
           (xml::Dom::getAttribute(rtype, "use") == "require");
         if (!(newEnum->m_required) && 
@@ -255,7 +255,7 @@ namespace rdbModel {
     Index* newIndex = new Index(myTable);
 
     if (primaryElt) { // DOM_Element is a <primary> 
-      newIdex->m_primary = true;
+      newIndex->m_primary = true;
       newIndex->m_name = xml::Dom::getAttribute(e, "col");
       newIndex->m_indexCols.push_back(newIndex->m_name);
     }
@@ -301,25 +301,25 @@ namespace rdbModel {
     Assertion::Operator* newOp = new Assertion::Operator();
     std::string opName = xml::Dom::getTagName(e);
     if (opName == "isNull") {
-      newOp->m_opType = Assertion::OPTYPEisNull;
+      newOp->m_opType = OPTYPEisNull;
       newOp->m_compareArgs[0] = xml::Dom::getAttribute(e, "col");
       newOp->m_literal[0] = false;
       return newOp;
     }
     else if (opName == "compare") {
       std::string relation = xml::Dom::getAttribute(e, "relation");
-      if (relation == "lessThan") newOp->m_opType = Assertion::OPTYPElessThan;
+      if (relation == "lessThan") newOp->m_opType = OPTYPElessThan;
       else if (relation == "greaterThan") {
-        newOp->m_opType = Assertion::OPTYPEgreaterThan;
+        newOp->m_opType = OPTYPEgreaterThan;
       }
-      else if (relation == "equal") newOp->m_opType = Assertion::OPTYPEequal;
+      else if (relation == "equal") newOp->m_opType = OPTYPEequal;
       else if (relation == "notEqual") 
-        newOp->m_opType = Assertion::OPTYPEnotEqual;
+        newOp->m_opType = OPTYPEnotEqual;
       else if (relation == "lessOrEqual") {
-        newOp->m_opType = Assertion::OPTYPElessOrEqual;
+        newOp->m_opType = OPTYPElessOrEqual;
       }
       else if (relation == "greaterOrEqual") {
-        newOp->m_opType = Assertion::OPTYPEgreaterOrEqual;
+        newOp->m_opType = OPTYPEgreaterOrEqual;
       }
       DOM_Element child[2];
       child[0] = xml::Dom::getFirstChildElement(e);
@@ -341,11 +341,11 @@ namespace rdbModel {
     } 
 
     // All other cases have other operators as children
-    else if (opName == "or") newOp->m_opType = Assertion::OPTYPEor;
-    else if (opName == "and") newOp->m_opType = Assertion::OPTYPEand;
-    else if (opName == "exists") newOp->m_opType = Assertion::OPTYPEexists;
-    else if (opName == "forAll") newOp->m_opType = Assertion::OPTYPEforAll;
-    else if (opName == "not") newOp->m_opType = Assertion::OPTYPEnot;
+    else if (opName == "or") newOp->m_opType = OPTYPEor;
+    else if (opName == "and") newOp->m_opType = OPTYPEand;
+    else if (opName == "exists") newOp->m_opType = OPTYPEexists;
+    else if (opName == "forAll") newOp->m_opType = OPTYPEforAll;
+    else if (opName == "not") newOp->m_opType = OPTYPEnot;
 
     // Recursively handle child operators
     std::vector<DOM_Element> children;

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.3 2004/03/24 02:06:57 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.4 2004/03/27 01:41:38 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -37,21 +37,22 @@ namespace rdbModel {
   
 
   /// Throw exception if Operator is not a comparison operator
-  const std::string[2]& Assertion::Operator::getCompareArgs() const {
+  const std::string* Assertion::Operator::getCompareArgs() const {
     if (!isCompareOp()) 
       throw RdbException("Assertion::Operator::getCompareArgs: wrong type");
-    return m_compareArgs;
+    return &m_compareArgs[0];
   }
 
   /// Throw exception if Operator is not a comparison operator
-  const bool[2]& Assertion::Operator::getLiteralness() const {
+  const bool* Assertion::Operator::getLiteralness() const {
     if (!isCompareOp()) 
       throw RdbException("Assertion::Operator::getLiteralness: wrong type");
-    return m_literal;
+    return &m_literal[0];
   }
 
   /// Throw exception if Operator is a comparison operator
-  const std::vector<Operator* >& Assertion::Operator::getChildren() const {
+  const std::vector<Assertion::Operator* >& 
+  Assertion::Operator::getChildren() const {
     if (isCompareOp()) 
       throw RdbException("Assertion::Operator::getChildren: wrong type");
     return m_operands;
