@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.5 2004/04/02 03:04:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.6 2004/04/03 00:21:25 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -41,7 +41,24 @@ namespace {
     if (literal) sqlString += '"';
     return;
   }
-    
+
+  bool compareEnumList(const std::vector<std::string>& choices, 
+                       std::string sqlType) {
+    // Number has to be the same.  
+    unsigned locComma = sqlType.find(",");
+    unsigned nComma = 0;
+    while (locComma != std::string::npos) {
+      nComma++;
+      locComma = sqlType.find(",", locComma+1);
+    }
+    unsigned nChoice = choices.size();
+    if (nChoice != (nComma + 1)) return false;
+    for (unsigned iChoice = 0; iChoice < nChoice; iChoice++) {
+      unsigned loc = sqlType.find(choices[iChoice]);
+      if (loc == std::string::npos) return false;
+    }
+    return true;
+  }
 }
     
 namespace rdbModel {
@@ -468,20 +485,64 @@ namespace rdbModel {
     std::string base;
     int sqlSize = extractSize(sqlType);
 
-    // Some cases, like char and varchar, are handled entirely within
+    // Cases  char, varchar, enum and datetime are handled entirely within
     // the switch statement, but most do the bulk of the work in
     // common, after the switch.
     switch (dtype->getType()) {
     case Datatype::TYPEenum: {
       base = "enum";
+      if (sqlType.find(base) != 0) {
+        m_matchReturn = MATCHfail;
+        return Visitor::ERRORABORT;
+      }
+      Enum* ourEnum = dtype->getEnum();
+      // Finally compare local list of choices to those listed in sqlType
+      // Local list is a vector; in sqlType they're quoted, comma separated
+      return compareEnumList(ourEnum->getChoices(), sqlType);
+    }
+    case Datatype::TYPEvarchar: {
+      base = "varchar";
+      if (sqlType.find(base) != 0) {
+        m_matchReturn = MATCHfail;
+        return Visitor::ERRORABORT;
+      }
+      // size in db must be at least as large as size in Col.
+      if (sqlSize < dtype->getOutputSize()) {
+        m_matchReturn = MATCHfail;
+        return false;
+      }
+      else if (sqlSize > dtype->getOutputSize()) {
+        m_matchReturn = MATCHcompatible;
+      }
+      return true;
+    }
+    case Datatype::TYPEchar: {
+      base = "char";
+      if (sqlType.find(base) != 0) {
+        m_matchReturn = MATCHfail;
+        return Visitor::ERRORABORT;
+      }
+      //  For char datatype unspecified size is equivalent to size=1
+      if (!sqlSize) sqlSize = 1;
+      // size in db must be at least as large as size in Col.
+      if (sqlSize < dtype->getOutputSize()) {
+        m_matchReturn = MATCHfail;
+        return false;
+      }
+      else if (sqlSize > dtype->getOutputSize()) {
+        m_matchReturn = MATCHcompatible;
+      }
+      return true;
     }
     case Datatype::TYPEdatetime: {
       if (sqlType != "datetime") {
         m_matchReturn = MATCHfail;
         return false;
       }
-      break;
+      return true;
     }
+
+
     case Datatype::TYPEtimestamp: {
       base = "timestamp";
       break;
@@ -502,32 +563,6 @@ namespace rdbModel {
     case Datatype::TYPEdouble: {
       base = "double";
       break;
-    }
-    case Datatype::TYPEvarchar: {
-      base = "varchar";
-      // size in db must be at least as large as size in Col.
-      if (sqlSize < dtype->getOutputSize()) {
-        m_matchReturn = MATCHfail;
-        return false;
-      }
-      else if (sqlSize > dtype->getOutputSize()) {
-        m_matchReturn = MATCHcompatible;
-      }
-      return true;
-    }
-    case Datatype::TYPEchar: {
-      base = "char";
-      //  For char datatype unspecified size is equivalent to size=1
-      if (!sqlSize) sqlSize = 1;
-      // size in db must be at least as large as size in Col.
-      if (sqlSize < dtype->getOutputSize()) {
-        m_matchReturn = MATCHfail;
-        return false;
-      }
-      else if (sqlSize > dtype->getOutputSize()) {
-        m_matchReturn = MATCHcompatible;
-      }
-      return true;
     }
     default: {  // Indicates bad xml file input.  Applications
                 //should have exited already
