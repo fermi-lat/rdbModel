@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Mar  8 17:42:23 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Bug fixes
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Mar  8 17:42:11 PST 2004
 rdbModel/src/Management
 
