@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.4 2004/03/30 23:57:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.5 2004/04/02 03:04:26 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -17,7 +17,23 @@
 
 #include "mysql.h"
 #include <iostream>
+#include "facilities/Util.h"
 namespace {
+
+  // Size specification is of form (m) or (m,d)  If no size specification 
+  // return 0; else return value of m.
+  int extractSize(const std::string& sqlString) {
+    unsigned leftLoc = sqlString.find("(");
+    if (leftLoc == std::string::npos) return 0;
+    leftLoc++;           // now is at start of m
+    unsigned rightLoc = sqlString.find(",");
+    if (rightLoc == std::string::npos) {
+      rightLoc = sqlString.find(")");
+    }
+    std::string numString = 
+      sqlString.substr(leftLoc, rightLoc - leftLoc);
+    return facilities::Util::stringToInt(numString);
+  }
 
   void addArg(bool literal, const std::string arg, std::string& sqlString) {
     if (literal) sqlString += '"';
@@ -449,34 +465,91 @@ namespace rdbModel {
 
   bool MysqlConnection::checkDType(Datatype* dtype, 
                                    const std::string& sqlType) {
+    std::string base;
+    int sqlSize = extractSize(sqlType);
+
+    // Some cases, like char and varchar, are handled entirely within
+    // the switch statement, but most do the bulk of the work in
+    // common, after the switch.
     switch (dtype->getType()) {
     case Datatype::TYPEenum: {
+      base = "enum";
     }
     case Datatype::TYPEdatetime: {
+      if (sqlType != "datetime") {
+        m_matchReturn = MATCHfail;
+        return false;
+      }
+      break;
     }
     case Datatype::TYPEtimestamp: {
+      base = "timestamp";
+      break;
     }
     case Datatype::TYPEint: {
+      base = "int";
+      break;
     }
     case Datatype::TYPEmediumint: {
+      base = "mediumint";
+      break;
     }
     case Datatype::TYPEsmallint: {
+      base = "smallint";
+      break;
     }
-    case Datatype::TYPEreal: {
-    }
+    case Datatype::TYPEreal: 
     case Datatype::TYPEdouble: {
+      base = "double";
+      break;
     }
     case Datatype::TYPEvarchar: {
+      base = "varchar";
+      // size in db must be at least as large as size in Col.
+      if (sqlSize < dtype->getOutputSize()) {
+        m_matchReturn = MATCHfail;
+        return false;
+      }
+      else if (sqlSize > dtype->getOutputSize()) {
+        m_matchReturn = MATCHcompatible;
+      }
+      return true;
     }
     case Datatype::TYPEchar: {
+      base = "char";
+      //  For char datatype unspecified size is equivalent to size=1
+      if (!sqlSize) sqlSize = 1;
+      // size in db must be at least as large as size in Col.
+      if (sqlSize < dtype->getOutputSize()) {
+        m_matchReturn = MATCHfail;
+        return false;
+      }
+      else if (sqlSize > dtype->getOutputSize()) {
+        m_matchReturn = MATCHcompatible;
+      }
+      return true;
+    }
+    default: {  // Indicates bad xml file input.  Applications
+                //should have exited already
+      m_matchReturn = MATCHfail;
+      return false;
     }
     }     // end switch
+    if (sqlType.find(base) != 0) {
+      m_matchReturn = MATCHfail;
+      return Visitor::ERRORABORT;
+    }
+    // Now check size.  It's only for display, so mismatch is not failure
+    if (sqlSize != dtype->getOutputSize()) {
+      m_matchReturn = MATCHcompatible;
+    }
+
     return true;
   }
 
 
 
-  Visitor::VisitorState MysqlConnection::visitIndex(Index* ix) {
+  Visitor::VisitorState MysqlConnection::visitIndex(Index* ) {
     return Visitor::CONTINUE;
     // might put something real here later
   }
