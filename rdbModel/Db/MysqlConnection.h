@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.6 2004/04/07 00:31:42 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.7 2004/04/08 01:34:37 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -6,6 +6,7 @@
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Management/Visitor.h"
 #include <map>
+#include <iostream>
 
 typedef struct st_mysql MYSQL;
 typedef struct st_mysql_res MYSQL_RES;
@@ -34,7 +35,7 @@ namespace rdbModel{
         Allowed operations will depend on userid, etc., specified 
         return true if successful
     */
-    MysqlConnection();
+    MysqlConnection(std::ostream* out=0, std::ostream* errOut=0);
     virtual ~MysqlConnection();
     virtual bool open(const std::string& host, const std::string& userid,
                       const std::string& password,
@@ -121,28 +122,23 @@ namespace rdbModel{
 
 
   private:
-    MYSQL* m_mysql;
-    bool   m_connected;
-
-    std::string m_dbName;
-    static bool   m_compileInit;
-    static void compileInit();
-    static bool compileComparison(Assertion::Operator* op, 
-                                  std::string& sqlString);
-    static bool compileOperator(Assertion::Operator* op, 
-                                std::string &sqlString);
-
-    bool checkDType(Datatype* dtype, const std::string& sqlType);
-
-    // Following collection of data members is only of interest while 
-    // visit is in progress.
-
     /// Someday we may want more than one kind of visitor; for example,
     /// might want one to create dbs
     enum VISITOR {
       VISITORundefined,
       VISITORmatch
     };
+
+    MYSQL* m_mysql;
+    bool   m_connected;
+
+    std::string m_dbName;
+    std::ostream* m_out;
+    std::ostream* m_err;
+
+    // Following collection of data members is only of interest while 
+    // visit is in progress.
+
     VISITOR m_visitorType;
 
     /// Keep track of status during matching process
@@ -155,6 +151,17 @@ namespace rdbModel{
     std::map<std::string, unsigned int> m_colIx;
 
     std::string m_primColName;
+
+    static bool   m_compileInit;
+
+    static void compileInit();
+    static bool compileComparison(Assertion::Operator* op, 
+                                  std::string& sqlString);
+    static bool compileOperator(Assertion::Operator* op, 
+                                std::string &sqlString);
+
+    bool checkDType(Datatype* dtype, const std::string& sqlType);
+
 
   };
 
