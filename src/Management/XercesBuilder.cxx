@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.2 2004/03/05 01:37:02 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.3 2004/03/05 02:26:33 jrb Exp $
 #include "rdbModel/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -70,8 +70,8 @@ namespace rdbModel {
 
     // Delegate handling of columns associated with this table
     for (unsigned int iCol = 0; iCol < nChild; iCol++) {
-      Column* newCol = buildColumn(children[iCol]);
-      newCol->m_myTable = newTable;
+      Column* newCol = buildColumn(children[iCol], newTable);
+
       if (newCol) {
         newTable->addColumn(newCol);
       }
@@ -81,7 +81,7 @@ namespace rdbModel {
     DOM_Element primaryKey = 
       xml::Dom::findFirstChildByName(tableElt, "primary");
     if (primaryKey ! DOM_Element()) {
-      Index* newIndex = buildIndex(primaryKey, true);
+      Index* newIndex = buildIndex(primaryKey, true, newTable);
       if (newIndex) {
         newIndex->m_myTable = newTable;
         newTable->addIndex(newIndex);
@@ -93,9 +93,8 @@ namespace rdbModel {
     nChild = children.size();
 
     for (unsigned int iIndex = 0; iIndex < nChild; iCol++) {
-      Index* newIndex = buildIndex(children[iIndex], false);
+      Index* newIndex = buildIndex(children[iIndex], false, newTable);
       if (newIndex) {
-        newIndex->m_myTable = newTable;
         newTable->addIndex(newIndex)
       }
     }
@@ -106,17 +105,16 @@ namespace rdbModel {
     nChild = children.size();
 
     for (unsigned int iAssert = 0; iAssert < nChild; iAssert++) {
-      Assertion* newAssert = buildAssert(children[iAssert]);
+      Assertion* newAssert = buildAssert(children[iAssert], newTable);
       if (newAssert) {
-        newAssert->m_myTable = newTable;
         newTable->addAssertion(newAssert)
       }
     }
     return newTable;
   }  
 
-  Column* XercesBuilder::buildColumn(DOM_Element e) {
-    Column* newCol = new Column;
+  Column* XercesBuilder::buildColumn(DOM_Element e, Table* myTable) {
+    Column* newCol = new Column(myTable);
     newCol->m_name = xml::Dom::getAttribute(e, "name");
     DOM_Element com = xml::Dom::findFirstChildByName(e, "comment");
     newCol->m_comment = xml::Dom::getText(com);
@@ -247,8 +245,9 @@ namespace rdbModel {
   }
 
 
-  Index* XercesBuilder::buildIndex(DOM_Element e, bool primary) {
-    Index* newIndex = new Index;
+  Index* XercesBuilder::buildIndex(DOM_Element e, bool primary, 
+                                   Table* myTable) {
+    Index* newIndex = new Index(myTable);
     if (newIndex->m_primary = primary) { // DOM_Element is a <primary>
       newIndex->m_name = xml::Dom::getAttribute(e, "col");
       newIndex->m_indexCols.push_back(newIndex->m_name);
@@ -272,20 +271,22 @@ namespace rdbModel {
     return newIndex;
   }
 
-  Assertion* XercesBuilder::buildAssertion(DOM_Element e) {
+  Assertion* XercesBuilder::buildAssertion(DOM_Element e, Table* myTable) {
 
-    Assertion* newAssert = new Assertion();
+    Assertion* newAssert = new Assertion(myTable);
+    
     std::string when = xml::Dom::getAttribute(e, "case");
     
     newAssert->m_when = (when == "globalCheck") ? WHENglobalCheck 
       : WHENchangeRow;
     DOM_Element op = xml::Dom::getFirstChildElement(e);
-    newAssert->m_op = buildOperator(op);
+    newAssert->m_op = buildOperator(op, myTable);
     return newAssert;
   }
 
 
-  Assertion::Operator* XercesBuilder::buildOperator(DOM_Element e) {
+  Assertion::Operator* XercesBuilder::buildOperator(DOM_Element e, 
+                                                    Table* myTable) {
     Assertion::Operator newOp = new Assertion::Operator();
     std::string opName = xml::Dom::getTagName(e);
     if (opName == "isNull") {
@@ -327,6 +328,10 @@ namespace rdbModel {
         newOp->m_literal[iChild] = 
           (xml::Dom::checkTagName(child[iChild], "value")) ;
       }
+      if (!newOp->validCompareOp(myTable)) {
+        delete newOp;
+        newOp = 0;
+      }
       return newOp;
     } 
 
@@ -341,7 +346,14 @@ namespace rdbModel {
     xml::Dom::getChildrenByTagName(e, "*", children);
     unsigned nChild = children.size();
     for (unsigned iChild = 0; iChild < nChild; iChild++) {
-      newOp->mOperands.push_back(buildOperator(children[iChild]));
+      Assertion::Operator* childOp = buildOperator(children[iChild]);
+      if (childOp) {
+        newOp->mOperands.push_back(childOp);
+      }
+      else { // one bad apple and we're dead
+        delete newOp;
+        return 0;
+      }
     }
     return newOp;
   }
