@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun  9 12:09:03 PDT 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h 
+Log Message:
+Fix compile bug (why did it ever work?)
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jun  9 10:27:49 PDT 2004
 rdbModel/xml
 
