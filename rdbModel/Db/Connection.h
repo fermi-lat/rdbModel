@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.4 2004/04/02 03:02:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.5 2004/04/06 07:27:05 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -66,6 +66,10 @@ namespace rdbModel{
     /** Close the current open connection , if any.  Return true if there
      was a connection to close and it was closed successfully */
     virtual bool close() = 0;
+
+    /** Parameter is normally path for an xml file descrbing the 
+        connection parameters */
+    virtual bool open(const std::string& parms) = 0;
 
     /**
        Check to what degree local schema definition is compatible with
