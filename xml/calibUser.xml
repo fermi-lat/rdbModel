@@ -3,7 +3,7 @@
 <rdbms dbs="calib_user"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibTest.xml,v 1.7 2004/08/24 00:06:37 jrb Exp $" 
+       CVSid= "$Id: calibUser.xml,v 1.3 2004/08/25 17:25:47 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
@@ -50,7 +50,7 @@
      <type typename="varchar" size="20">
        <restriction>
          <enum use="prefer" values=
- "TKR_DeadChan TKR_HotChan TKR_Splits TKR_TOTSignal CAL_Ped CAL_MuSlope CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen" />
+ "TKR_DeadChan TKR_HotChan TKR_Splits TKR_TOTSignal CAL_Ped CAL_MuSlope CAL_MevPerDac CAL_TholdCI CAL_TholdMuon CAL_Asym CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen" />
        </restriction>
      </type>
      <comment>Calibration type.  Standard
