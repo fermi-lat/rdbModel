@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun 30 23:36:31 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	calibMetaDb.xml calibTest.xml 
+Added Files:
+	calibUser.xml 
+Log Message:
+1. Add file for calib_user dbs
+2. Reorder columns so that most important ones are at the top
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 28 12:41:32 PDT 2004
 rdbModel/src/test
 
