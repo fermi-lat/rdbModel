@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE rdbms SYSTEM "./rdbmsDescrip.dtd" >
-<rdbms dbs="calib"
+<rdbms dbs="calib_user"
        DTDversion="1.0"
        DTDexpected="1.0"
        CVSid= "$Id: calibTest.xml,v 1.4 2004/06/17 19:08:05 jrb Exp $" 
@@ -139,6 +139,7 @@
     <comment>End of period for which calibration is valid</comment>
   </col>
 
+
   <col name="proc_level" >
     <src null="false" >
       <default value="TEST" />
@@ -171,7 +172,6 @@
       not necessarily that the results were any good.
     </comment>
   </col>      
-
 
 
   <col name="locale" >
