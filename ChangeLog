@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 23 18:07:41 PST 2004
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.dtd 
+Log Message:
+Add "there exists" operation element; change index element slightly
+
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 23 18:06:57 PST 2004
 rdbModel/src/Tables
 
