@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
 // #include "detModel/Management/Builder.h"
@@ -51,17 +51,17 @@ namespace rdbModel{
     /**
      *  build a Column from its xml description and return a pointer to it
      */
-    Column* buildColumn(DOM_Element e);
+    Column* buildColumn(DOM_Element e, Table* t);
 
     /**
      * build an Index object (corresponding to MySQL index or key) from its 
      * xml description
      */
-    Index* buildIndex(DOM_Element e, bool primary);
+    Index* buildIndex(DOM_Element e, bool primary, Table* t);
 
-    Assertion* buildAssertion(DOM_Element e);
+    Assertion* buildAssertion(DOM_Element e, Table* t);
  
-    Assertion::Operator* buildOperator(DOM_Element e);
+    Assertion::Operator* buildOperator(DOM_Element e, Table* t);
 
     Column::ColumnSource* buildColumnSource(DOM_Element e);
 
