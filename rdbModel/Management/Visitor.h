@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.2 2004/03/04 01:06:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.3 2004/03/06 01:12:26 jrb Exp $
 #ifndef RDBMODEL_VISITOR_H
 #define RDBMODEL_VISITOR_H
 #include <string>
@@ -29,8 +29,10 @@ namespace rdbModel {
     enum VisitorState {
       CONTINUE = 0,
       DONE = 1,         // visitor has had its fill of visiting
-      ERROR = 2,        // error during visit; perhaps can continue, though
-      ERRORABORT = 3    // error during visit; can't handle more
+      BRANCHDONE = 2,   // don't descend further into structure; go
+                        // to next sibling, if any
+      ERROR = 3,        // error during visit; perhaps can continue, though
+      ERRORABORT = 4    // error during visit; can't handle more
     };
 
   public:
