@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  2 16:22:17 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Pay a little more attention to output size for char, varchar types
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Apr  2 16:21:25 PST 2004
 rdbModel/src/Db
 
