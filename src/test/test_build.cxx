@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.5 2004/04/07 00:32:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.6 2004/04/08 01:36:03 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -48,6 +48,7 @@ int main(int, char**) {
     return -1;
   }
 
+
   rdbModel::MATCH match = con->matchSchema(rdb);
 
   switch (match) {
@@ -65,6 +66,9 @@ int main(int, char**) {
     std::cout << "Connection failed while attempting match" << std::endl;
     return -1;
   }
+
+
+  
 
   // Make a query
   std::string rq[2];
@@ -89,6 +93,34 @@ int main(int, char**) {
       std::cerr <<" failed with error: " << ex.getMsg() << std::endl;
       std::cerr << "Code " << ex.getCode() << std::endl;
     }
+  }
+
+
+  // Now try to close connection, then reopen.
+  con->close();
+
+  if (!(con->open(connectfile)) ) {
+    std::cerr << "Unable to connect to MySQL database" << std::endl;
+    return -1;
+  }
+
+  // Check that we can really do something with this connection
+  match = con->matchSchema(rdb);
+
+  switch (match) {
+  case rdbModel::MATCHequivalent:
+    std::cout << "XML schema and MySQL database are equivalent!" << std::endl;
+    break;
+  case rdbModel::MATCHcompatible:
+    std::cout << "XML schema and MySQL database are compatible" << std::endl;
+    break;
+  case rdbModel::MATCHfail:
+    std::cout << "XML schema and MySQL database are NOT compatible" 
+              << std::endl;
+    return -2;
+  case rdbModel::MATCHnoConnection:
+    std::cout << "Connection failed while attempting match" << std::endl;
+    return -1;
   }
 
   return 0;
