@@ -1,0 +1,42 @@
+------------------------------------------------------------
+User: jrb  Tue Mar  2 17:57:05 PST 2004
+rdbModel
+
+Log Message:
+Package to describe a relational database and provide tools to access it,
+designed with the calibration metadata database in mind. 
+
+Status:
+
+Vendor Tag:	GLAST
+Release Tags:	v1r0
+		
+N rdbModel/.cvsignore
+I rdbModel/cmt/Makefile
+N rdbModel/cmt/requirements
+N rdbModel/cmt/.cvsignore
+I rdbModel/cmt/setup.csh
+I rdbModel/cmt/setup.sh
+I rdbModel/cmt/cleanup.csh
+I rdbModel/cmt/cleanup.sh
+N rdbModel/src/Management/Manager.cxx
+I rdbModel/src/Management/XercesBuilder.cxx~
+N rdbModel/src/Management/XercesBuilder.cxx
+N rdbModel/rdbModel/Rdb.h
+N rdbModel/rdbModel/Management/Builder.h
+N rdbModel/rdbModel/Management/Manager.h
+N rdbModel/rdbModel/Management/Visitor.h
+N rdbModel/rdbModel/Management/XercesBuilder.h
+N rdbModel/rdbModel/Tables/Assertion.h
+N rdbModel/rdbModel/Tables/Column.h
+N rdbModel/rdbModel/Tables/Datatype.h
+N rdbModel/rdbModel/Tables/Index.h
+N rdbModel/rdbModel/Tables/Table.h
+I rdbModel/xml/rdbmsDescrip.dtd~
+N rdbModel/xml/calibMetaDb.xml
+N rdbModel/xml/rdbmsDescrip.dtd
+I rdbModel/xml/calibMetaDb.xml~
+
+No conflicts created by this import
+
+    *
