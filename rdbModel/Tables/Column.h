@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -29,7 +29,7 @@ namespace rdbModel{
     const std::string& getComment() const {return m_comment;};
 
     Visitor::VisitorState accept(Visitor* v);
-    Visitor::VisitorState acceptNotRec(Visitor* v);
+    //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
   private:
     friend XercesBuilder; // needs access to add.. methods below
