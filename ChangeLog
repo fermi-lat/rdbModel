@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Nov 11 13:27:14 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Changes for Xerces 2.6.0
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Nov 11 13:27:01 PST 2004
 rdbModel/src/Db
 
