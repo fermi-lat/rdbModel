@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr 15 15:04:06 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	mysqlConnection.dtd 
+Log Message:
+Modify to match new call interface for Connection::open(..); eliminate separate
+'port' attribute
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr 15 15:03:20 PDT 2004
 rdbModel/src/Db
 
