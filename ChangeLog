@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 23 18:06:37 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Minor changes in line with slight changes to dtd
+
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 23 18:06:13 PST 2004
 rdbModel/src/Db
 
