@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.3 2004/03/28 08:22:51 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.4 2004/04/02 03:02:40 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -81,7 +81,8 @@ namespace rdbModel{
     */
     virtual bool insertRow(const std::string& tableName, 
                            const StringVector& colNames, 
-                           const StringVector& values) = 0;
+                           const StringVector& values,
+                           int* auto_value=0) = 0;
 
     /*
        So far anticipated uses of UPDATE would just modify a single row
@@ -131,7 +132,8 @@ namespace rdbModel{
       it publicly available so assertions belonging to a table
       can save the compiled version.
     */
-    virtual bool compileAssertion(const Assertion* a, std::string& sqlString)=0;
+    virtual bool compileAssertion(const Assertion* a, std::string& sqlString)
+      const = 0;
 
   };
 
