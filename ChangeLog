@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  1 19:00:48 PST 2004
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Little changes so that MysqlConnection::matchSchema  can do its thing
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr  1 18:59:41 PST 2004
 rdbModel/cmt
 
