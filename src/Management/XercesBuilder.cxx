@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.15 2004/06/09 17:26:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.16 2004/07/21 05:38:04 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -147,6 +147,9 @@ namespace rdbModel {
         }
         else if (contents == "username") {
           newCol->m_contents = Column::CONTENTSusername;
+        }
+        else if (contents == "enter_time") {
+          newCol->m_contents = Column::CONTENTSenterTime;
         }
         // otherwise just stick with default value of CONTENTSunspecified
       }

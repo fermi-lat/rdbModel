@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.10 2004/06/09 19:09:03 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.11 2004/07/21 05:36:48 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -34,7 +34,8 @@ namespace rdbModel {
     enum CONTENTS {
       CONTENTSunspecified = 0,
       CONTENTSserviceName = 1,
-      CONTENTSusername 
+      CONTENTSusername    = 2,
+      CONTENTSenterTime
     };
 
     Column(Table* myTable=0) : m_myTable(myTable), m_type(0), 
