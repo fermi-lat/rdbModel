@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sun Mar  7 00:21:26 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Datatype.cxx Index.cxx 
+Log Message:
+Get everything to compie
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Mar  7 00:21:03 PST 2004
 rdbModel/src/Management
 
