@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  2 16:21:25 PST 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Machinery for comparing local xml description of db with actual structure of 
+MySQL db.  All done except for comparing "enum" values
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Apr  2 16:19:40 PST 2004
 rdbModel/rdbModel/Tables
 
