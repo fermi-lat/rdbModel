@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.4 2004/04/02 03:02:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.5 2004/04/03 00:19:17 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -40,6 +40,11 @@ namespace rdbModel{
                       const std::string& password,
                       const std::string& dbName,
                       unsigned int       port=0);
+
+    /** Parameter is normally path for an xml file descrbing the 
+        connection parameters */
+     virtual bool open(const std::string& parms);
+
     /** Close the current open connection , if any.  Return true if there
      was a connection to close and it was closed successfully */
     virtual bool close();
