@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.8 2004/04/23 00:35:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.9 2004/05/06 01:33:47 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -12,6 +12,7 @@
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
 
+int doInsert(rdbModel::Connection* con);
 int main(int, char**) {
   std::string infile("$(RDBMODELROOT)/xml/calibMetaDb.xml");
 
@@ -62,16 +63,14 @@ int main(int, char**) {
   rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
 
   std::string connectfile("$(RDBMODELROOT)/xml/mysqlSlac.xml");
-  std::string connectfileT("$(RDBMODELROOT)/xml/mysqlSlacT.xml");
 
-  /*
-  if (!(con->open(std::string("centaurusa.slac.stanford.edu"),
-                  std::string("glastreader"),
-                 std::string("glastreader"), std::string("calib") ) ) ){
-    std::cerr << "Unable to connect to MySQL database" << std::endl;
-    return -1;
-  }
-  */
+  // mostly don't want to run code doing an insert.  For times
+  // when we do, must connect as user with INSERT priv.
+#ifdef TEST_INSERT
+  std::string connectfileT("$(RDBMODELROOT)/xml/mysqlTester.xml");
+#else
+  std::string connectfileT("$(RDBMODELROOT)/xml/mysqlSlacT.xml");
+#endif
   
   if (!(con->open(connectfile)) ) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
@@ -182,9 +181,75 @@ int main(int, char**) {
       return -1;
     }
 
+    // Following will do an insert.  To keep from cluttering up the
+    // database, mostly don't execute
+    //  
+#ifdef TEST_INSERT
+    int serial = doInsert(con);
+    if (serial) {
+      std::cout << "Hallelujah!  Inserted new row, serial# " 
+                << serial  << std::endl;
+    }
+    else {
+      std::cout << "Bah, humbug.  Insert failed. " << std::endl;
+    }
+#endif
+
   }
   return 0;
 }
-  
-  
 
+int doInsert(rdbModel::Connection* con) {
+  
+    std::vector<std::string> cols;
+    std::vector<std::string> vals;
+    std::vector<std::string> nullCols;
+    cols.push_back("instrument");
+    vals.push_back("LAT");
+
+    cols.push_back("calib_type");
+    vals.push_back("Test_Gen");
+
+    cols.push_back("flavor");
+    vals.push_back("zin");
+
+    cols.push_back("data_fmt");
+    vals.push_back("nonsense");
+
+    cols.push_back("vstart");
+    vals.push_back("2003-02-01");
+
+    cols.push_back("vend");
+    vals.push_back("2020-02-01");
+
+
+    cols.push_back("locale");
+    vals.push_back("phobos");
+
+    cols.push_back("completion");
+    vals.push_back("ABORT");
+
+    cols.push_back("creator");
+    vals.push_back("test_build");
+
+    cols.push_back("uid");
+    vals.push_back("jrb");
+
+    cols.push_back("data_ident");
+    vals.push_back("$(mycalibs)/test/moreJunk.xml");
+
+    // null this one out
+    //    cols.push_back("input_desc");
+    // vals.push_back("imagination");
+
+    cols.push_back("notes");
+    vals.push_back("Absurd test item, setting input_desc to NULL");
+
+    nullCols.push_back("input_desc");
+    //    nullCols.push_back("vend");
+
+    int  serial = 0;
+  
+    con->insertRow("metadata_v2r1", cols, vals, &serial, &nullCols);
+    return serial;
+}
