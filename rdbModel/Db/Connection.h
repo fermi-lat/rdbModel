@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.10 2004/05/07 23:31:16 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.11 2004/05/18 23:13:18 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -71,6 +71,9 @@ namespace rdbModel{
         connection parameters */
     virtual bool open(const std::string& parms) = 0;
 
+    /// Return true iff open has been done with no matching close
+    virtual bool isConnected() = 0;
+
     /**
        Check to what degree local schema definition is compatible with
        remote db accessed via this connection.  By default check db names
@@ -115,7 +118,8 @@ namespace rdbModel{
     virtual unsigned int update(const std::string& tableName, 
                                 const StringVector& colNames, 
                                 const StringVector& values,
-                                const Assertion* where=0) = 0;
+                                const Assertion* where=0,
+                                const StringVector* nullCols = 0) = 0;
 
     /**
       Support only for relatively simple SELECT, involving just
