@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Mon Aug 23 17:06:37 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	calibTest.xml rdbmsDescrip.dtd 
+Log Message:
+dtd: Handle new possibility "enter_time" for contents attribute of <from>
+calibTest.xml: Modify in accord with proposed changes to db structure
+(see JIRA issue CALIB-5)
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Aug 23 17:04:59 PDT 2004
 rdbModel/src/Management
 
