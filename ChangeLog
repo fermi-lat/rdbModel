@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar  5 17:13:10 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Column.h Datatype.h Index.h Table.h 
+Log Message:
+Some added utilities; changes for compilation
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar  5 17:12:26 PST 2004
 rdbModel/rdbModel/Management
 
