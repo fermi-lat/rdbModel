@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Aug 23 17:04:21 PDT 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h 
+Log Message:
+Handle new possibility "enter_time" for contents attribute of <from>
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Aug  9 10:54:42 PDT 2004
 rdbModel/doc
 
