@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 23 18:06:13 PST 2004
+rdbModel/src/Db
+
+Added Files:
+	MysqlConnection.cxx MysqlResults.cxx 
+Log Message:
+Implementation of classes for interaction with MySQL database (mostly 
+not done yet) 
+
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 23 18:05:08 PST 2004
 rdbModel/rdbModel/Tables
 
