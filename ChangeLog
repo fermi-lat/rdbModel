@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Mar  4 17:35:46 PST 2004
+rdbModel/src
+
+Removed Files:
+	Table.cxx 
+Log Message:
+Doesn't belong here. Move to correct directory
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Mar  4 17:35:16 PST 2004
 rdbModel/rdbModel/Tables
 
