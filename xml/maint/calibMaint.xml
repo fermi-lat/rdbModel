@@ -1,0 +1,470 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdbms SYSTEM "./rdbmsDescrip.dtd" >
+<rdbms dbs="calib_test"
+       DTDversion="1.0"
+       DTDexpected="1.0"
+       CVSid= "$Id: calibTest.xml,v 1.7 2004/08/24 00:06:37 jrb Exp $" 
+ >
+<table name="metadata_v2r1" 
+   comment="metadata table for LAT calibrations" version="v2r1">
+  <!-- define columns -->
+  <col name="ser_no" >    <!-- value of name is an ID -->
+     <!-- typename attribute is required. Allowed values
+          come from a fixed set, more or less subset of 
+          SQL types 
+       -->
+    <src null="false">
+       <from agent="auto_increment" />
+    </src>
+    <type typename="mediumint">
+       <!-- The restriction element is optional.  can also indicate
+            min and/or max, required enum set, or recommended enum set 
+        -->
+       <restriction>          
+         <nonnegative />   
+       </restriction>
+    </type>
+    <comment>This is the primary key, automatically set when a 
+          row is inserted.</comment>
+  </col>
+
+  <col name="instrument" >
+     <src  null="false">  <!-- i.e. this is a required field -->
+       <from agent="enduser" />
+     </src>
+     <type typename="varchar" size="16">
+       <restriction>
+         <enum use="prefer" values="LAT EM EM2 miniTower"/>
+       </restriction>
+     </type>
+     <comment>Instrument on which calibration occurred.  Standard
+        calibration software is only guaranteed to work with
+        instruments from the recommended set.
+     </comment>
+  </col>
+
+  <col name="calib_type" >
+     <src null="false">  <!-- i.e. this is a required field -->
+       <from agent="enduser" />
+     </src>
+     <type typename="varchar" size="20">
+       <restriction>
+         <enum use="prefer" values=
+ "TKR_DeadChan TKR_HotChan TKR_Splits TKR_TOTSignal CAL_Ped CAL_MuSlope CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen" />
+       </restriction>
+     </type>
+     <comment>Calibration type.  Standard
+        calibration software is only guaranteed to work with
+        those on the recommended list.
+     </comment>
+  </col>
+
+  <col name="flavor" >
+    <src null="false">
+      <default value="vanilla" />
+    </src>
+    <type typename="varchar" size="30">
+      <restriction>
+        <enum use="prefer" values="vanilla ideal" />
+      </restriction>
+    </type>
+    <comment>Normal production calibrations will be "vanilla".
+             "ideal" is commonly used for simulations
+    </comment>
+  </col>
+
+  <col name="data_fmt" >
+    <src null="false" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="10">
+      <restriction>
+        <enum use="prefer" values="XML ROOT" />
+      </restriction>
+    </type>
+    <comment> XML is the only supported format for most calibrations</comment>
+  </col>
+
+  <col name="data_ident" >
+    <src null="false" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="255">
+      <restriction>
+        <file />
+      </restriction>
+    </type>
+    <comment>Typically complete path and filename for the calibration 
+     data.  May include one or more environment variables written with 
+     delimiters
+      $(...), e.g. a plausible data_ident might be
+                  $(EMcalibroot)/Cal/CalMuSlope_LAT.xml
+    </comment>
+    <!-- 
+        [maybe should change to using standard unix delimiters
+            ${..} ? Or does it matter, since Windows does it differently?]
+    -->
+  </col>
+
+  <col name="vstart" >
+    <src  null="false" > 
+      <from agent="enduser" />
+    </src>
+    <type typename="datetime">
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>Start of period for which calibration is valid. MUST be 
+            supplied by user</comment>
+  </col>
+
+  <col name="vend" >
+    <!-- If no value is supplied, calibration is marked as being
+      valid until the last possible time
+     -->
+    <src null="true"> 
+      <default value="2037-12-31" />
+    </src>
+    <type typename="datetime">
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>End of period for which calibration is valid</comment>
+  </col>
+
+  <col name="proc_level" >
+    <src null="false" >
+      <default value="TEST" />
+    </src>
+    <type typename="enum">
+      <restriction>
+        <enum use="require" values="PROD TEST DEV SUPSED" />
+      </restriction>
+    </type>
+    <comment>
+      Is this calibration to be taken seriously (i.e., PROD)? Ideally,
+      only one calibration of a given calib_type, flavor, etc.,
+      covering a particular instant should be PROD at a time.
+    </comment>
+  </col>
+
+<!-- Really completion should not be nullable, but in current MySQL table
+     it *is* nullable -->
+  <col name="completion" >
+    <src null="false" >
+      <from agent="enduser"  />
+    </src>
+    <type typename="enum">
+      <restriction>
+        <enum use="require" values="OK INC ABORT" />
+      </restriction>
+    </type>
+    <comment>Every calibration must be marked with one of these
+      completion states.  "OK" just means the procedure completed,
+      not necessarily that the results were any good.
+    </comment>
+  </col>      
+
+
+
+  <col name="locale" >
+    <!-- Should it be required rather than defaulted? -->
+    <src null="false" > 
+      <default value="orbit" />
+    </src>
+    <type typename="varchar" size="12">
+      <restriction>
+        <enum use="prefer" values="orbit SLAC NRL CERN" />
+      </restriction>
+    </type>
+    <comment>Where the data was taken.  May be used "as is" or may
+        be input to some procedure, such as a root macro or analysis job.
+    </comment>
+  </col>
+
+
+  <col name="input_desc" >
+    <src null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="255" />
+    <comment>Optional comments about input to calibration algorithm</comment>
+  </col>
+
+  <col name="notes" >
+    <src null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="255" />
+    <comment>Optional comments about anything at all</comment>
+  </col>
+
+
+  <col name="fmt_version" >
+    <!-- optional; enduser specifies if anyone does -->
+    <src null="true">
+      <from agent="enduser"  />
+    </src>
+    <type typename="varchar" size="12" />
+    <!-- might add restriction which is a pattern definition, e.g.
+         Vnnn.Rnnn.Pnnn
+     -->
+    <comment>Optional place to specify what version of data format was
+             used for this data set, so that consumers can decide 
+             how or whether to read it
+    </comment>
+  </col>
+
+  <col name="update_time" >
+    <!-- field is nullable in a non-standard fashion.  It never really
+         contains null; however when it is left unspecified rdbms will
+         fill it with current time. 
+         Note src element is redundant once we know type is "timestamp"
+     -->
+    <src null="true">
+      <from agent="now"  />         
+    </src>
+    <type typename="timestamp" size="14" />
+    <comment>Time of last modification to row. Equal to time it was entered
+      if there were no subsequent mods.  End user is not allowed to set it
+    </comment>
+  </col>
+
+  <col name="enter_time" >
+    <!-- proper handling not yet implemented in code -->
+    <src null="true" >
+      <from agent="service" contents="insert_time" />         
+    </src>
+    <type typename="datetime" >
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>
+      Date when this calibration was entered into database, to be
+      set automatically by service (not by end user)
+    </comment>
+  </col>
+     
+
+  <col name="prod_start" >
+    <src null="true">
+      <from agent="enduser" />
+    </src>
+    <type typename="datetime" >
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>
+      Date when this calibration was declared to be PROD (if it ever was)
+    </comment>
+  </col>
+
+  <col name="prod_end" >
+    <src  null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="datetime" >
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>
+      Date, if any, when this calibration ceased being called PROD
+    </comment>
+  </col>
+
+  <col name="input_start" >
+    <src null="true">
+      <from agent="enduser" />
+    </src>
+    <type typename="datetime" >
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>
+      Lower bound for time interval over which data input to calib. procedure
+      was taken.
+    </comment>
+  </col>
+
+  <col name="input_end" >
+    <src  null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="datetime" >
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>
+      Upper bound for time interval over which data input to calib. procedure
+      was taken.
+    </comment>
+  </col>
+
+  <col name="creator" >
+    <src  null="true">
+      <from agent="service" contents="service_name" />
+    </src>
+    <!-- could maybe cut down size -->
+    <type typename="varchar" size="255" />
+    <comment> program, script or whatever adding the row is responsible 
+         for filling in this field with something identifying it 
+    </comment>
+  </col>
+
+  <col name="uid" >
+    <src null="false" >
+      <from agent="service"  contents="username" />
+    </src>
+    <type typename="varchar" size="12" />
+    <comment>Service creating the row should determine user id invoking
+             it and put it in this field.
+    </comment>
+  </col>
+
+
+  <col name="data_size" >
+    <src null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="int" size="11" >
+      <restriction>
+        <nonnegative />
+      </restriction>
+    </type>
+    <comment>
+      Field is optional.  If supplied, must be non-negative integer
+    </comment>
+  </col>
+
+  <!-- define primary key, indices -->
+  <primary col="ser_no" />
+
+  <index name="typical_search"
+         cols="completion instrument calib_type flavor proc_level" />
+
+  <!-- define extra constraints -->
+  <assert case="changeRow">
+    <compare relation="lessThan">
+      <colRef val="vstart" />
+      <colRef val="vend" />
+    </compare>
+  </assert>
+
+  <assert case="changeRow">
+    <or>
+      <isNull col="prod_start" />
+      <isNull col="prod_end" />
+      <compare relation="lessThan">
+        <colRef val="prod_start" />
+        <colRef val="prod_end" />
+      </compare>
+    </or>
+  </assert>
+
+<!-- Other MySQL functions and operators to consider implementing
+     for use here
+
+    IN   (an enumerated set), NOT IN
+
+  -->
+
+
+   
+</table>
+<table name="history"
+  comment="record changes to calibration metadata table(s) for this dbs"
+  version="v1r0">
+  <!-- define columns -->
+  <col name="h_ser_no" >    <!-- value of name is an ID -->
+    <src null="false">
+       <from agent="auto_increment" />
+    </src>
+    <type typename="mediumint">
+       <!-- The restriction element is optional.  can also indicate
+            min and/or max, required enum set, or recommended enum set 
+        -->
+       <restriction>          
+         <nonnegative />   
+       </restriction>
+    </type>
+    <comment>This is the primary key, automatically set when a 
+          row is inserted.</comment>
+  </col>
+  <col name="table_name" >
+    <src null="false">
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="30">
+      <restriction>
+        <enum use="prefer" values="metadata_v2r1 history" />
+      </restriction>
+    </type>
+    <comment>Name of table which was affected</comment>
+  </col>
+
+  <col name="operation" >
+     <src  null="false">  <!-- i.e. this is a required field -->
+       <from agent="enduser" />
+     </src>
+     <type typename="varchar" size="30">
+       <restriction>
+         <enum use="prefer" values="CREATE ALTER DELETE"/>
+       </restriction>
+     </type>
+     <comment>What was done to the table</comment>
+  </col>
+  <col name="operation_time" >
+    <src null="false">
+      <from agent="enduser" />
+    </src>
+    <type typename="datetime">
+      <restriction>
+        <interval min="1970-1-1" max="2037-12-31"/>
+      </restriction>
+    </type>
+    <comment>Approximate time mod was made to the table</comment>
+  </col>
+    <col name="h_update_time" >
+    <!-- field is nullable in a non-standard fashion.  It never really
+         contains null; however when it is left unspecified rdbms will
+         fill it with current time. 
+         Note src element is redundant once we know type is "timestamp"
+     -->
+    <src null="true">
+      <from agent="now"  />         
+    </src>
+    <type typename="timestamp" size="14" />
+    <comment>Time of last modification to row. Equal to time it was entered
+      if there were no subsequent mods.  End user is not allowed to set it
+    </comment>
+  </col>
+  <col name="details" >
+    <src null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="255" />
+    <comment>Optional comments describing the change in more detail</comment>
+  </col>
+  <col name="h_uid" >
+    <src null="false" >
+      <from agent="service"  contents="username" />
+    </src>
+    <type typename="varchar" size="12" />
+    <comment>Service creating the row should determine user id invoking
+             it and put it in this field.
+    </comment>
+  </col>
+
+  <!-- define primary key, indices -->
+  <primary col="h_ser_no" />
+
+</table>
+ 
+</rdbms>
