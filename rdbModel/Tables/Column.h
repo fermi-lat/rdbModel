@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.2 2004/03/04 01:07:11 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -23,10 +23,17 @@ namespace rdbModel{
     Column() : m_type(0), m_source(0) /* , m_primary(false)*/ {};
     ~Column();
 
-    Datatype* getDatatype() const;
-    ColumnSource* getSource() const;
     const std::string& getName() const {return m_name; };
     const std::string& getComment() const {return m_comment;};
+
+    Datatype* getDatatype() const {return m_type;};
+
+    /** See if supplied value meets constraints of column definition
+     *   @arg  val    std::string representation of value to be checked
+     *   @arg  set    true if value is to be written to column; false
+     *                if just being used, e.g. in "where" clause 
+     */
+    bool okValue(const std::string& val, bool set=true) const;
 
     Visitor::VisitorState accept(Visitor* v);
     //    Visitor::VisitorState acceptNotRec(Visitor* v);
@@ -42,6 +49,8 @@ namespace rdbModel{
     ColumnSource* m_source;   // maybe make this a nested class?
     //    bool m_primary;         // primary key.  Or do we just do this
     //                               with a Key object?
+    ColumnSource* getSource() const {return m_source;};
+
   private:   
     class ColumnSource {
     public:
