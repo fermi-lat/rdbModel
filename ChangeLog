@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar  5 17:13:29 PST 2004
+rdbModel/src
+
+Modified Files:
+	Rdb.cxx 
+Log Message:
+Changes for compilation
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar  5 17:13:10 PST 2004
 rdbModel/rdbModel/Tables
 
