@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/Manager.cxx,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/Manager.cxx,v 1.2 2004/03/07 08:21:03 jrb Exp $
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -18,6 +18,7 @@ namespace rdbModel{
   Manager::~Manager(){
     delete m_rdb;
     delete m_builder;
+    s_pMyself = 0;
   }
 
   Manager* Manager::getManager()
