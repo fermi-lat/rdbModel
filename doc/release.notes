@@ -6,6 +6,10 @@
 
    *  EOH  *
 
+   v1r6p2 24-Feb-2005  jrb    Add more-carefully-named files to describe
+                              production, user and test databases.  Adjust
+                              a couple column descriptions to match increased
+                              varchar lengths.
    v1r6p1 16-Feb-2005  jrb    Small backwards-compatible additions for use
                               by calibUtil
    v1r6p0 30-Jan-2005  jrb    List all new CAL calib types
