@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.19 2004/05/20 16:24:23 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.20 2004/06/28 19:41:08 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -24,6 +24,7 @@ namespace {
   // Size specification is of form (m) or (m,d)  If no size specification 
   // return 0; else return value of m.
   int extractSize(const std::string& sqlString) {
+    int a;
     unsigned leftLoc = sqlString.find("(");
     if (leftLoc == std::string::npos) return 0;
     leftLoc++;           // now is at start of m
