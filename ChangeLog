@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar  5 17:12:26 PST 2004
+rdbModel/rdbModel/Management
+
+Modified Files:
+	Visitor.h XercesBuilder.h 
+Log Message:
+visitor.h  Changes for compilation
+XercesBuilder.h some rearrangement
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar  5 17:11:49 PST 2004
 rdbModel/rdbModel
 
