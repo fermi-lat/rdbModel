@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.3 2004/03/09 01:42:36 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.4 2004/04/06 07:28:58 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -31,9 +31,18 @@ int main(int, char**) {
   // Connect to real database
   rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
 
+  std::string connectfile("$(RDBMODELROOT)/xml/mysqlSlac.xml");
+
+  /*
   if (!(con->open(std::string("centaurusa.slac.stanford.edu"),
                   std::string("glastreader"),
                  std::string("glastreader"), std::string("calib") ) ) ){
+    std::cerr << "Unable to connect to MySQL database" << std::endl;
+    return -1;
+  }
+  */
+  
+  if (!(con->open(connectfile)) ) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
   }
