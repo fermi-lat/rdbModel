@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #include "rdbModel/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -8,7 +8,8 @@
 #include "rdbModel/Tables/Index.h"
 #include "xml/XmlParser.h"
 #include "xml/Dom.h"
-
+#include <iostream>
+    
 namespace rdbModel {
   XercesBuilder::XercesBuilder() : Builder(), m_rdb(0) {
 
@@ -130,9 +131,23 @@ namespace rdbModel {
   }
 
   Datatype* XercesBuilder::buildDatatype(DOM_Element e) {
+
     Dataytpe* newType = new Datatype;
     
-    newType->m_typname = xml::Dom::getAttribute(e, "typename");
+    newType->setType(xml::Dom::getAttribute(e, "typename"));
+
+    if (xml:Dom::hasAttribute(e, "size")) {
+      try {
+        m_outputSize = xml::Dom::getIntAttribute(e, "size");
+      }
+      catch (xml::DomeException ex) {
+        std::cerr << "Error in rdb database description file" << std::endl;
+        std::cerr << ex.getMsg() << std::endl;
+        std::cerr << "Ignoring column size specification " << std::endl;
+        m_outputSize = -1;        // treat as unspecified
+      }
+    }
+    else m_outputSize = -1;
 
     DOM_Element restrict = xml::Dom::getFirstChildElement(e);
 
@@ -141,14 +156,15 @@ namespace rdbModel {
       std::string tagname = xml::Dom::getTagName(rtype);
       if (tagname == std::string("nonnegative")) {
         newType->m_restrict = RESTRICTnonneg;
+        if (newType->isInt) m_minInt = 0;
       }
       else if (tagname == std::string("positive")) {
         newType->m_restrict = RESTRICTpos;
+        if (newType->isInt) m_minInt = 1;
       }
       else if (tagname == std::string("interval")) {
-        newType->m_restrict = RESTRICTinterval;
-        newType->m_min = xml::Dom::getAttribute(rtype, "min");
-        newType->m_max = xml::Dom::getAttribute(rtype, "max");
+        newType->setInterval(xml::getAttribute(rtype, "min"),
+                             xml::getAttribute(rtype, "max"));
       }
       else if (tagname == std::string("file")) {
         newType->m_restrict = RESTRICTfile;
