@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.13 2004/04/03 00:22:17 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.14 2004/04/27 00:06:45 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -141,6 +141,14 @@ namespace rdbModel {
       }
       else if (agent == "service") {
         newCol->m_from = Column::FROMprogram;
+        std::string contents = xml::Dom::getAttribute(child, "contents");
+        if (contents == "service_name") {
+          newCol->m_contents = Column::CONTENTSserviceName;
+        }
+        else if (contents == "username") {
+          newCol->m_contents = Column::CONTENTSusername;
+        }
+        // otherwise just stick with default value of CONTENTSunspecified
       }
       // shouldn't be anything else
     } 
