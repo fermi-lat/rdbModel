@@ -3,7 +3,7 @@
 <rdbms dbs="calib_test"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibTest.xml,v 1.3 2004/06/09 17:27:49 jrb Exp $" 
+       CVSid= "$Id: calibTest.xml,v 1.4 2004/06/17 19:08:05 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
@@ -85,18 +85,25 @@
     <comment>For now only XML format is supported</comment>
   </col>
 
-  <col name="data_size" >
-    <src null="true" >
+  <col name="data_ident" >
+    <src null="false" >
       <from agent="enduser" />
     </src>
-    <type typename="int" size="11" >
+    <type typename="varchar" size="255">
       <restriction>
-        <nonnegative />
+        <file />
       </restriction>
     </type>
-    <comment>
-      Field is optional.  If supplied, must be non-negative integer
+    <comment>Typically complete path and filename for the calibration 
+     data.  May include one or more environment variables written with 
+     delimiters
+      $(...), e.g. a plausible data_ident might be
+                  $(CALIBUTILROOT)/xml/Cal/CalMuSlope_LAT.xml
     </comment>
+    <!-- 
+        [maybe should change to using standard unix delimiters
+            ${..} ? Or does it matter, since Windows does it differently?]
+    -->
   </col>
 
   <col name="vstart" >
@@ -104,6 +111,7 @@
       means that enduser is expected to supply a value, but  
       MySQL will use NULL (which for datetime translates to current
       time) in case no value is supplied
+      Correction:  NULL is just NULL. 
      -->
     <src  null="true" > 
       <from agent="enduser" />
@@ -131,49 +139,20 @@
     <comment>End of period for which calibration is valid</comment>
   </col>
 
-  <col name="enter_time" >
-    <!-- field is nullable in a non-standard fashion.  It never really
-         contains null; however when it is left unspecified rdbms will
-         fill it with current time. 
-         Note src element is redundant once we know type is "timestamp"
-     -->
-    <src null="true">
-      <from agent="now"  />         
-    </src>
-    <type typename="timestamp" size="14" />
-    <comment>Time the row is entered into database.  Enduser is
-      not allowed to set it
-    </comment>
-  </col>
 
-  <col name="locale" >
-    <!-- Should it be required rather than defaulted? -->
-    <src null="false" > 
-      <default value="orbit" />
+  <col name="proc_level" >
+    <src null="false" >
+      <default value="TEST" />
     </src>
-    <type typename="varchar" size="12">
+    <type typename="enum">
       <restriction>
-        <enum use="prefer" values="orbit SLAC NRL CERN" />
+        <enum use="require" values="PROD TEST DEV SUPSED" />
       </restriction>
     </type>
-    <comment>Where the data was taken.  May be used "as is" or may
-        be input to some procedure, such as a root macro or analysis job.
-    </comment>
-  </col>
-
-
-  <col name="fmt_version" >
-    <!-- optional; enduser specifies if anyone does -->
-    <src null="true">
-      <from agent="enduser"  />
-    </src>
-    <type typename="varchar" size="12" />
-    <!-- might add restriction which is a pattern definition, e.g.
-         Vnnn.Rnnn.Pnnn
-     -->
-    <comment>Optional place to specify what version of data format was
-             used for this data set, so that consumers can decide 
-             how or whether to read it
+    <comment>
+      Is this calibration to be taken seriously (i.e., PROD)? Ideally,
+      only one calibration of a given calib_type, flavor, etc.,
+      covering a particular instant should be PROD at a time.
     </comment>
   </col>
 
@@ -194,19 +173,67 @@
     </comment>
   </col>      
 
-  <col name="proc_level" >
-    <src null="false" >
-      <default value="TEST" />
+
+  <col name="locale" >
+    <!-- Should it be required rather than defaulted? -->
+    <src null="false" > 
+      <default value="orbit" />
     </src>
-    <type typename="enum">
+    <type typename="varchar" size="12">
       <restriction>
-        <enum use="require" values="PROD TEST DEV SUPSED" />
+        <enum use="prefer" values="orbit SLAC NRL CERN" />
       </restriction>
     </type>
-    <comment>
-      Is this calibration to be taken seriously (i.e., PROD)? Ideally,
-      only one calibration of a given calib_type, flavor, etc.,
-      covering a particular instant should be PROD at a time.
+    <comment>Where the data was taken.  May be used "as is" or may
+        be input to some procedure, such as a root macro or analysis job.
+    </comment>
+  </col>
+
+
+  <col name="input_desc" >
+    <src null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="255" />
+    <comment>Optional comments about input to calibration algorithm</comment>
+  </col>
+
+  <col name="notes" >
+    <src null="true" >
+      <from agent="enduser" />
+    </src>
+    <type typename="varchar" size="255" />
+    <comment>Optional comments about anything at all</comment>
+  </col>
+
+
+  <col name="fmt_version" >
+    <!-- optional; enduser specifies if anyone does -->
+    <src null="true">
+      <from agent="enduser"  />
+    </src>
+    <type typename="varchar" size="12" />
+    <!-- might add restriction which is a pattern definition, e.g.
+         Vnnn.Rnnn.Pnnn
+     -->
+    <comment>Optional place to specify what version of data format was
+             used for this data set, so that consumers can decide 
+             how or whether to read it
+    </comment>
+  </col>
+
+  <col name="enter_time" >
+    <!-- field is nullable in a non-standard fashion.  It never really
+         contains null; however when it is left unspecified rdbms will
+         fill it with current time. 
+         Note src element is redundant once we know type is "timestamp"
+     -->
+    <src null="true">
+      <from agent="now"  />         
+    </src>
+    <type typename="timestamp" size="14" />
+    <comment>Time the row is entered into database.  Enduser is
+      not allowed to set it
     </comment>
   </col>
 
@@ -259,41 +286,19 @@
     </comment>
   </col>
 
-  <col name="data_ident" >
-    <src null="false" >
+
+  <col name="data_size" >
+    <src null="true" >
       <from agent="enduser" />
     </src>
-    <type typename="varchar" size="255">
+    <type typename="int" size="11" >
       <restriction>
-        <file />
+        <nonnegative />
       </restriction>
     </type>
-    <comment>Typically complete path and filename for the calibration 
-     data.  May include one or more environment variables written with 
-     delimiters
-      $(...), e.g. a plausible data_ident might be
-                  $(CALIBUTILROOT)/xml/Cal/CalMuSlope_LAT.xml
+    <comment>
+      Field is optional.  If supplied, must be non-negative integer
     </comment>
-    <!-- 
-        [maybe should change to using standard unix delimiters
-            ${..} ? Or does it matter, since Windows does it differently?]
-    -->
-  </col>
-
-  <col name="input_desc" >
-    <src null="true" >
-      <from agent="enduser" />
-    </src>
-    <type typename="varchar" size="255" />
-    <comment>Optional comments about input to calibration algorithm</comment>
-  </col>
-
-  <col name="notes" >
-    <src null="true" >
-      <from agent="enduser" />
-    </src>
-    <type typename="varchar" size="255" />
-    <comment>Optional comments about anything at all</comment>
   </col>
 
   <!-- define primary key, indices -->
