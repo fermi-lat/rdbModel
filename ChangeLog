@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 30 15:57:35 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h 
+Log Message:
+Support EXISTS (but not ANY or ALL)
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Mar 28 00:25:23 PST 2004
 rdbModel/src/Tables
 
