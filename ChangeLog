@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar 26 17:41:38 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx 
+Log Message:
+Add "get" methods so that MysqlConnection can turn assertion into WHERE clause
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar 26 17:41:13 PST 2004
 rdbModel/src/Db
 
