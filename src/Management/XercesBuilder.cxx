@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.9 2004/03/30 23:58:00 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.10 2004/03/31 02:11:36 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -337,6 +337,7 @@ namespace rdbModel {
         delete newOp;
         return 0;
       }
+      return newOp;
     } 
 
     // All other cases have other operators as children
