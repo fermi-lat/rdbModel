@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Index.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_INDEX_H
 #define RDBMODEL_INDEX_H
 #include <vector>
@@ -21,8 +21,10 @@ namespace rdbModel{
     Index() {};
     ~Index();
 
+    const std::string& getName() const {return m_name; };
+
     Visitor::VisitorState accept(Visitor* v);
-    Visitor::VisitorState acceptNotRec(Visitor* v);
+    //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
   private:
     /// Is it a primary key?

@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -22,7 +22,7 @@ namespace rdbModel{
     Assertion();
     ~Assertion();
     Visitor::VisitorState accept(Visitor* v);
-    Visitor::VisitorState acceptNotRec(Visitor* v);
+    //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
     bool execute();
 
