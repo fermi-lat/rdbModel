@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Mon Apr 26 17:08:26 PDT 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Column.cxx Datatype.cxx 
+Log Message:
+Column.cxx:  redo implementation here and there to match reorganized data
+memebers
+Datatype.cxx: minor change to get rid of compile-time warning
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Apr 26 17:06:45 PDT 2004
 rdbModel/src/Management
 
