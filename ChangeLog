@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sun Mar 28 00:25:23 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Column.cxx 
+Log Message:
+Fix compile bugs
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Mar 28 00:24:57 PST 2004
 rdbModel/src/Management
 
