@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.3 2004/03/06 01:13:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.1 2004/03/24 02:01:31 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -32,7 +32,8 @@ namespace rdbModel{
     virtual ~MysqlConnection();
     virtual bool open(const std::string& host, const std::string& userid,
                       const std::string& password,
-                      const std::string& dbName);
+                      const std::string& dbName,
+                      unsigned int       port=0);
     /** Close the current open connection , if any.  Return true if there
      was a connection to close and it was closed successfully */
     virtual bool close();
@@ -40,37 +41,25 @@ namespace rdbModel{
     /** Typical derived class will form a syntactically correct 
         INSERT statement from the input arguments and issue it to
         the dbms. Return true if row was inserted successfully
+        If @a auto_value is non-zero and the table has an auto-increment
+        column, its value will be returned.
 
         Might also want to add a routine for INSERT ... SELECT
     */
 
     virtual bool insertRow(const std::string& tableName, 
                            const StringVector& colNames, 
-                           const StringVector& values);
-
-    /**
-       So far anticipated uses of UPDATE would just modify a single row
-       identified by ser_no (or, more generally, primary key), so
-       make a method for this case.  Can call the more general
-       version below.
-
-       @return true if no errors were encountered; else false.  If the 
-       update requested was error-free but entailed no actual change, 
-       returns ??
-     */
-    virtual bool updateUnique(const std::string& tableName, 
-                              const StringVector& colNames, 
-                              const StringVector& values,
-                              const std::string& keyValue);
+                           const StringVector& values,
+                           int* auto_value=0);
 
 
     /**
       Generic UPDATE. Return value is number of rows changed.
     */
-    virtual int update(const std::string& tableName, 
-                       const StringVector& colNames, 
-                       const StringVector& values,
-                       const Assertion* where=0);
+    virtual unsigned int update(const std::string& tableName, 
+                                const StringVector& colNames, 
+                                const StringVector& values,
+                                const Assertion* where=0);
 
     /**
       Support only for relatively simple SELECT, involving just
@@ -84,8 +73,8 @@ namespace rdbModel{
     */
     virtual ResultHandle* select(const std::string& tableName,
                                  const StringVector& getCols,
+                                 const StringVector& orderCols,
                                  const Assertion* where=0,
-                                 const std::string& orderBy="",
                                  int   rowLimit=0);
 
     /**
@@ -93,11 +82,11 @@ namespace rdbModel{
       it publicly available so assertions belonging to a table
       can save the compiled version.
     */
-    std::string compileAssertion(const Asssertion* a);
+    bool compileAssertion(const Asssertion* a, std::string& sqlString) const;
   private:
     MYSQL* m_mysql;
     bool   m_connected;
-
+    bool   m_compileInit;
   };
 
 }  // end namespace rdbModel

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.3 2004/03/06 01:13:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.1 2004/03/24 02:01:31 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -37,7 +37,8 @@ namespace rdbModel{
     virtual ~Connection() {};
     virtual bool open(const std::string& host, const std::string& userid,
                       const std::string& password,
-                      const std::string& dbName) = 0;
+                      const std::string& dbName,
+                      unsigned int       port) = 0;
     /** Close the current open connection , if any.  Return true if there
      was a connection to close and it was closed successfully */
     virtual bool close() = 0;
@@ -53,7 +54,7 @@ namespace rdbModel{
                            const StringVector& colNames, 
                            const StringVector& values) = 0;
 
-    /**
+    /*
        So far anticipated uses of UPDATE would just modify a single row
        identified by ser_no (or, more generally, primary key), so
        make a method for this case.  Can call the more general
@@ -63,19 +64,22 @@ namespace rdbModel{
        update requested was error-free but entailed no actual change, 
        returns ??
      */
+    /*
+      At this level, don't have access to column name for primary 
+      key, if any.  This has to be done by caller
     virtual bool updateUnique(const std::string& tableName, 
                               const StringVector& colNames, 
                               const StringVector& values,
                               const std::string& keyValue) = 0;
-
+    */
 
     /**
       Generic UPDATE. Return value is number of rows changed.
     */
-    virtual int update(const std::string& tableName, 
-                       const StringVector& colNames, 
-                       const StringVector& values,
-                       const Assertion* where=0) = 0;
+    virtual unsigned int update(const std::string& tableName, 
+                                const StringVector& colNames, 
+                                const StringVector& values,
+                                const Assertion* where=0) = 0;
 
     /**
       Support only for relatively simple SELECT, involving just
@@ -89,8 +93,8 @@ namespace rdbModel{
     */
     virtual ResultHandle* select(const std::string& tableName,
                                  const StringVector& getCols,
+                                 const StringVector& orderCols,
                                  const Assertion* where=0,
-                                 const std::string& orderBy="",
                                  int   rowLimit=0)=0;
 
     /**
@@ -98,7 +102,7 @@ namespace rdbModel{
       it publicly available so assertions belonging to a table
       can save the compiled version.
     */
-    std::string compileAssertion(const Asssertion* a)=0;
+    bool compileAssertion(const Asssertion* a, std::string& sqlString)=0;
 
   };
 
