@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.14 2004/04/27 00:06:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.15 2004/05/06 01:33:24 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -205,7 +205,8 @@ namespace rdbModel {
   bool MysqlConnection::insertRow(const std::string& tableName, 
                                   const StringVector& colNames, 
                                   const StringVector& values,
-                                  int* auto_value) {
+                                  int* auto_value,
+                                  const StringVector* nullCols) {
     std::string ins;
     if (auto_value) *auto_value = 0;
 
@@ -221,9 +222,15 @@ namespace rdbModel {
     // have supplied all necessary columns
 
     ins += "insert into " + tableName;
-    ins += "set " + colNames[0] + "='" + values[0] + "' ";
+    ins += " set " + colNames[0] + "='" + values[0] + "' ";
     for (unsigned iCol = 1; iCol < nCol; iCol++) {
-      ins += ",set " + colNames[iCol] + "='" + values[iCol] + "' ";
+      ins += ", " + colNames[iCol] + "='" + values[iCol] + "' ";
+    }
+    if (nullCols) {
+      unsigned nNull = nullCols->size();
+      for (unsigned iNull = 0; iNull < nNull; iNull++) {
+        ins += ", " + (*nullCols)[iNull] + "= NULL ";
+      }
     }
 
     int mysqlRet = mysql_query(m_mysql, ins.c_str());
