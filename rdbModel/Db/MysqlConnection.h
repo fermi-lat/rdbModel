@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.10 2004/05/06 01:33:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.11 2004/05/07 23:31:16 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -90,6 +90,9 @@ namespace rdbModel{
       @param tableName
       @param getCols   vector of columns to be retrieved
       @param where     ptr to an Assertion object
+      @param rowLimit  max number of rows to return
+      @param rowOffset offset for first row returned among those satisfying 
+                       conditions; ignored if 0.
       @return If the SELECT succeeds, a pointer to an object which 
        manages the returned data; else 0.  Caller is responsible for
        deleting the ResultHandle object.
@@ -98,7 +101,8 @@ namespace rdbModel{
                                  const StringVector& getCols,
                                  const StringVector& orderCols,
                                  const Assertion* where=0,
-                                 int   rowLimit=0);
+                                 int   rowLimit=0,
+                                 int   rowOffset=0);
 
     /** 
       Transmit raw request of any form to our other end.  If it is a 
