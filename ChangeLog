@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  1 19:02:41 PST 2004
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Add matchSchema to the Connection interface.
+Make MysqlConnection into a Visitor since it will visit Rdb in order
+ to compare it with MySQL db 
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr  1 19:00:48 PST 2004
 rdbModel/rdbModel
 
