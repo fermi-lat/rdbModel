@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sun Jan 30 14:52:09 PST 2005
+rdbModel/xml
+
+Modified Files:
+	calibMetaDb.xml calibTest.xml calibUser.xml 
+Log Message:
+Let rdbGUI know about all the new CAL calibration types
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v1r6, operation: add
 Package: rdbModel
