@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar  1 12:00:17 PST 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Table.h 
+Log Message:
+Coment out unimplemented function
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v1r6p3, operation: add
 Package: rdbModel
