@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.17 2004/08/24 00:04:59 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.18 2004/11/11 21:27:14 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -6,8 +6,8 @@
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/Tables/Index.h"
-#include "xml/XmlParser.h"
-#include "xml/Dom.h"
+#include "xmlBase/XmlParser.h"
+#include "xmlBase/Dom.h"
 #include <iostream>
     
 namespace rdbModel {
@@ -18,7 +18,7 @@ namespace rdbModel {
   }
 
   unsigned int XercesBuilder::parseInput(const std::string& filename) {
-    xml::XmlParser parser;
+    xmlBase::XmlParser parser;
 
     m_doc = parser.parse(filename.c_str(), "rdbms");
 
@@ -34,15 +34,15 @@ namespace rdbModel {
 
     
     //  save attribute information associated with outermost (rdbms) element.
-    m_rdb->m_dbName = xml::Dom::getAttribute(docElt, "dbs");
+    m_rdb->m_dbName = xmlBase::Dom::getAttribute(docElt, "dbs");
 
-    m_rdb->m_DTDversion = xml::Dom::getAttribute(docElt, "DTDversion");
+    m_rdb->m_DTDversion = xmlBase::Dom::getAttribute(docElt, "DTDversion");
 
-    m_rdb->m_CVSid = xml::Dom::getAttribute(docElt, "CVSid");
+    m_rdb->m_CVSid = xmlBase::Dom::getAttribute(docElt, "CVSid");
 
     // Get vector of table elements.  
     std::vector<DOMElement*> tables;
-    xml::Dom::getChildrenByTagName(docElt, "table", tables);
+    xmlBase::Dom::getChildrenByTagName(docElt, "table", tables);
     unsigned int nTable = tables.size();
     unsigned int processed = 0;
 
@@ -59,12 +59,12 @@ namespace rdbModel {
   Table* XercesBuilder::buildTable(DOMElement* tableElt) {
 
     Table* newTable = new Table;
-    newTable->m_name = xml::Dom::getAttribute(tableElt, "name");
-    newTable->m_version = xml::Dom::getAttribute(tableElt, "version");
-    newTable->m_comment = xml::Dom::getAttribute(tableElt, "comment");
+    newTable->m_name = xmlBase::Dom::getAttribute(tableElt, "name");
+    newTable->m_version = xmlBase::Dom::getAttribute(tableElt, "version");
+    newTable->m_comment = xmlBase::Dom::getAttribute(tableElt, "comment");
 
     std::vector<DOMElement* > children;
-    xml::Dom::getChildrenByTagName(tableElt, "col", children);
+    xmlBase::Dom::getChildrenByTagName(tableElt, "col", children);
     unsigned int nChild = children.size();
 
     // Delegate handling of columns associated with this table
@@ -78,7 +78,7 @@ namespace rdbModel {
 
     // Look for primary key element, if any
     DOMElement* primaryKey = 
-      xml::Dom::findFirstChildByName(tableElt, "primary");
+      xmlBase::Dom::findFirstChildByName(tableElt, "primary");
     if (primaryKey != 0) {
       Index* newIndex = buildIndex(primaryKey, true, newTable);
       if (newIndex) {
@@ -88,7 +88,7 @@ namespace rdbModel {
     }
 
     // Handle any other indices
-    xml::Dom::getChildrenByTagName(tableElt, "index", children);
+    xmlBase::Dom::getChildrenByTagName(tableElt, "index", children);
     nChild = children.size();
 
     for (unsigned int iIndex = 0; iIndex < nChild; iIndex++) {
@@ -101,7 +101,7 @@ namespace rdbModel {
     // Check that there is at most one primary key??
 
     // Handle assertion elements
-    xml::Dom::getChildrenByTagName(tableElt, "assert", children);
+    xmlBase::Dom::getChildrenByTagName(tableElt, "assert", children);
     nChild = children.size();
 
     for (unsigned int iAssert = 0; iAssert < nChild; iAssert++) {
@@ -116,21 +116,21 @@ namespace rdbModel {
   Column* XercesBuilder::buildColumn(DOMElement* e, Table* myTable) {
     Column* newCol = new Column(myTable);
     //    m_default.clear();
-    newCol->m_name = xml::Dom::getAttribute(e, "name");
-    DOMElement* com = xml::Dom::findFirstChildByName(e, "comment");
-    newCol->m_comment = xml::Dom::getTextContent(com);
+    newCol->m_name = xmlBase::Dom::getAttribute(e, "name");
+    DOMElement* com = xmlBase::Dom::findFirstChildByName(e, "comment");
+    newCol->m_comment = xmlBase::Dom::getTextContent(com);
 
-    DOMElement* src = xml::Dom::findFirstChildByName(e, "src");
+    DOMElement* src = xmlBase::Dom::findFirstChildByName(e, "src");
 
-    newCol->m_null = (xml::Dom::getAttribute(src, "null") == "true");
+    newCol->m_null = (xmlBase::Dom::getAttribute(src, "null") == "true");
 
-    DOMElement* child = xml::Dom::getFirstChildElement(src);
-    if (xml::Dom::checkTagName(child, "default")) {
+    DOMElement* child = xmlBase::Dom::getFirstChildElement(src);
+    if (xmlBase::Dom::checkTagName(child, "default")) {
       newCol->m_from = Column::FROMdefault;
-      newCol->m_default = xml::Dom::getAttribute(child, "value");
+      newCol->m_default = xmlBase::Dom::getAttribute(child, "value");
     }
-    else if (xml::Dom::checkTagName(child, "from")) {
-      std::string agent = xml::Dom::getAttribute(child, "agent");
+    else if (xmlBase::Dom::checkTagName(child, "from")) {
+      std::string agent = xmlBase::Dom::getAttribute(child, "agent");
       if (agent == "auto_increment") {
         newCol->m_from = Column::FROMautoIncrement;
       }
@@ -142,7 +142,7 @@ namespace rdbModel {
       }
       else if (agent == "service") {
         newCol->m_from = Column::FROMprogram;
-        std::string contents = xml::Dom::getAttribute(child, "contents");
+        std::string contents = xmlBase::Dom::getAttribute(child, "contents");
         if (contents == "service_name") {
           newCol->m_contents = Column::CONTENTSserviceName;
         }
@@ -157,7 +157,7 @@ namespace rdbModel {
       // shouldn't be anything else
     } 
 
-    DOMElement* dtype = xml::Dom::findFirstChildByName(e, "type");
+    DOMElement* dtype = xmlBase::Dom::findFirstChildByName(e, "type");
     newCol->m_type = buildDatatype(dtype);
     
     return newCol;
@@ -165,13 +165,13 @@ namespace rdbModel {
 
   Datatype* XercesBuilder::buildDatatype(DOMElement* e) {
     Datatype* newType = new Datatype;
-    newType->setType(xml::Dom::getAttribute(e, "typename"));
+    newType->setType(xmlBase::Dom::getAttribute(e, "typename"));
 
-    if (xml::Dom::hasAttribute(e, "size")) {
+    if (xmlBase::Dom::hasAttribute(e, "size")) {
       try {
-        newType->m_outputSize = xml::Dom::getIntAttribute(e, "size");
+        newType->m_outputSize = xmlBase::Dom::getIntAttribute(e, "size");
       }
-      catch (xml::DomException ex) {
+      catch (xmlBase::DomException ex) {
         std::cerr << "Error in rdb database description file" << std::endl;
         std::cerr << ex.getMsg() << std::endl;
         std::cerr << "Ignoring column size specification " << std::endl;
@@ -191,11 +191,11 @@ namespace rdbModel {
     }
 
 
-    DOMElement* restrict = xml::Dom::getFirstChildElement(e);
+    DOMElement* restrict = xmlBase::Dom::getFirstChildElement(e);
 
     if (restrict != 0) {
-      DOMElement* rtype = xml::Dom::getFirstChildElement(restrict);
-      std::string tagname = xml::Dom::getTagName(rtype);
+      DOMElement* rtype = xmlBase::Dom::getFirstChildElement(restrict);
+      std::string tagname = xmlBase::Dom::getTagName(rtype);
       if ((newType->m_type == Datatype::TYPEenum) &&
           (tagname != std::string("enum") ) ) {
         std::cerr << "From rdbMode::XercesBuilder::buildDatatype" << std::endl;
@@ -214,8 +214,8 @@ namespace rdbModel {
         if (newType->m_isInt) newType->m_minInt = 1;
       }
       else if (tagname == std::string("interval")) {
-        newType->setInterval(xml::Dom::getAttribute(rtype, "min"),
-                             xml::Dom::getAttribute(rtype, "max"));
+        newType->setInterval(xmlBase::Dom::getAttribute(rtype, "min"),
+                             xmlBase::Dom::getAttribute(rtype, "max"));
       }
       else if (tagname == std::string("file")) {
         newType->m_restrict = Datatype::RESTRICTfile;
@@ -224,7 +224,7 @@ namespace rdbModel {
         newType->m_restrict = Datatype::RESTRICTenum;
         Enum* newEnum  = new Enum();
         newEnum->m_required = 
-          (xml::Dom::getAttribute(rtype, "use") == "require");
+          (xmlBase::Dom::getAttribute(rtype, "use") == "require");
         if (!(newEnum->m_required) && 
             (newType->m_type == Datatype::TYPEenum)) { //improper enum decl.
           delete newEnum;
@@ -236,7 +236,7 @@ namespace rdbModel {
           return newType;
         }  // end improprer enum decl.
           
-        std::string enums = xml::Dom::getAttribute(rtype, "values");
+        std::string enums = xmlBase::Dom::getAttribute(rtype, "values");
 
         unsigned int start = 0;
         unsigned int blankLoc = enums.find(std::string(" "), start);
@@ -269,20 +269,20 @@ namespace rdbModel {
 
     if (primaryElt) { // DOMElement* is a <primary> 
       newIndex->m_primary = true;
-      std::string col = newIndex->m_name = xml::Dom::getAttribute(e, "col");
+      std::string col = newIndex->m_name = xmlBase::Dom::getAttribute(e, "col");
       newIndex->m_indexCols.push_back(newIndex->m_name);
       Column* myCol = myTable->getColumnByName(col);
       myCol->m_isPrimaryKey = true;
     }
     else { // DOMElement* is <index>
-      newIndex->m_name = xml::Dom::getAttribute(e, "name");
+      newIndex->m_name = xmlBase::Dom::getAttribute(e, "name");
 
       std::string primaryVal = 
-        xml::Dom::getAttribute(e, "primary");
+        xmlBase::Dom::getAttribute(e, "primary");
       newIndex->m_primary = (primaryVal == "yes");
 
       // Value of "cols" attribute is a blank-separated list of column names
-      std::string cols = xml::Dom::getAttribute(e, "cols");
+      std::string cols = xmlBase::Dom::getAttribute(e, "cols");
 
       // Could make this more robust by checking there is really just one below
       if (newIndex->m_primary) {   // had better be just one column
@@ -307,11 +307,11 @@ namespace rdbModel {
   Assertion* XercesBuilder::buildAssertion(DOMElement* e, Table* myTable) {
 
     
-    std::string when = xml::Dom::getAttribute(e, "case");
+    std::string when = xmlBase::Dom::getAttribute(e, "case");
     
     Assertion::WHEN whenType = (when == "globalCheck") ? 
       Assertion::WHENglobalCheck  : Assertion::WHENchangeRow;
-    DOMElement* opElt = xml::Dom::getFirstChildElement(e);
+    DOMElement* opElt = xmlBase::Dom::getFirstChildElement(e);
     Assertion::Operator* op = buildOperator(opElt, myTable);
 
     Assertion* newAssert = new Assertion(whenType, op, myTable);
@@ -322,15 +322,15 @@ namespace rdbModel {
 
   Assertion::Operator* XercesBuilder::buildOperator(DOMElement* e, 
                                                     Table* myTable) {
-    std::string opName = xml::Dom::getTagName(e);
+    std::string opName = xmlBase::Dom::getTagName(e);
     OPTYPE opType;
     if (opName == "isNull") {
       return new Assertion::Operator(OPTYPEisNull, 
-                                     xml::Dom::getAttribute(e, "col"),
+                                     xmlBase::Dom::getAttribute(e, "col"),
                                      std::string(""), false, false);
     }
     else if (opName == "compare") {
-      std::string relation = xml::Dom::getAttribute(e, "relation");
+      std::string relation = xmlBase::Dom::getAttribute(e, "relation");
       if (relation == "lessThan") opType = OPTYPElessThan;
       else if (relation == "greaterThan") {
         opType = OPTYPEgreaterThan;
@@ -345,17 +345,17 @@ namespace rdbModel {
         opType = OPTYPEgreaterOrEqual;
       }
       DOMElement* child[2];
-      child[0] = xml::Dom::getFirstChildElement(e);
-      child[1] = xml::Dom::getSiblingElement(child[0]);
+      child[0] = xmlBase::Dom::getFirstChildElement(e);
+      child[1] = xmlBase::Dom::getSiblingElement(child[0]);
 
       std::string compareArgs[2];
       bool isLit[2];
       for (unsigned iChild = 0; iChild < 2; iChild++) {
         compareArgs[iChild] = 
-          xml::Dom::getAttribute(child[iChild], "val");
+          xmlBase::Dom::getAttribute(child[iChild], "val");
       
         // Element is either a <colRef> or a <value>  
-        isLit[iChild] = (xml::Dom::checkTagName(child[iChild], "value")) ;
+        isLit[iChild] = (xmlBase::Dom::checkTagName(child[iChild], "value")) ;
       }
       Assertion::Operator* newOp = 
         new Assertion::Operator(opType, compareArgs[0], compareArgs[1],
@@ -371,12 +371,12 @@ namespace rdbModel {
     else if (opName == "exists") {
       std::string tableName;
       opType = OPTYPEexists;
-      if (xml::Dom::hasAttribute(e, "tableName") ) {
+      if (xmlBase::Dom::hasAttribute(e, "tableName") ) {
         tableName = 
-          xml::Dom::getAttribute(e, "tableName");
+          xmlBase::Dom::getAttribute(e, "tableName");
       }
       else tableName = myTable->getName();
-      DOMElement* child = xml::Dom::getFirstChildElement(e);
+      DOMElement* child = xmlBase::Dom::getFirstChildElement(e);
       Assertion::Operator* childOp = buildOperator(child, myTable);
       return new Assertion::Operator(opType, tableName, childOp);
     }
@@ -388,7 +388,7 @@ namespace rdbModel {
     // Recursively handle child operators
     std::vector<DOMElement*> children;
     std::vector<Assertion::Operator*> childOps;
-    xml::Dom::getChildrenByTagName(e, "*", children);
+    xmlBase::Dom::getChildrenByTagName(e, "*", children);
     unsigned nChild = children.size();
     for (unsigned iChild = 0; iChild < nChild; iChild++) {
       Assertion::Operator* childOp = buildOperator(children[iChild], myTable);

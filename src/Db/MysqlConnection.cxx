@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.22 2004/07/08 19:38:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.23 2004/11/11 21:27:01 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -13,8 +13,8 @@
 #include "rdbModel/RdbException.h"
 #include "facilities/Util.h"
 
-#include "xml/XmlParser.h"
-#include "xml/Dom.h"
+#include "xmlBase/XmlParser.h"
+#include "xmlBase/Dom.h"
 
 #include "mysql.h"
 #include <iostream>
@@ -150,7 +150,7 @@ namespace rdbModel {
   bool MysqlConnection::open(const std::string& parms) {
     using XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument;
     using XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
-    xml::XmlParser parser;
+    xmlBase::XmlParser parser;
     DOMDocument* doc = parser.parse(parms.c_str(), "mysqlConnection");
     if (doc == 0) {
       (*m_err) << "parse of connection parameters failed" << std::endl;
@@ -158,10 +158,10 @@ namespace rdbModel {
     }
     DOMElement*  conn = doc->getDocumentElement();
     
-    std::string host = xml::Dom::getAttribute(conn, "host");
-    std::string user = xml::Dom::getAttribute(conn, "user");
-    std::string password = xml::Dom::getAttribute(conn, "password");
-    std::string dbname = xml::Dom::getAttribute(conn, "dbname");
+    std::string host = xmlBase::Dom::getAttribute(conn, "host");
+    std::string user = xmlBase::Dom::getAttribute(conn, "user");
+    std::string password = xmlBase::Dom::getAttribute(conn, "password");
+    std::string dbname = xmlBase::Dom::getAttribute(conn, "dbname");
 
     if (password.size() == 0 ) { // prompt for password?
       (*m_out) << "interactive login NYI " << std::endl;
