@@ -1,18 +1,18 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
 #include <string>
 // #include "detModel/Sections/Section.h"
+#include "rdbModel/Manager/Visitor.h"
 
-namespace rdbModel{
+namespace rdbModel {
   
 
   class Table;
   class Column;
   class Index;
   //  class Assertion;
-  class Visitor;
   class XercesBuilder;
 
   /**
@@ -34,13 +34,9 @@ namespace rdbModel{
     virtual ~Rdb();
 
     /// This method gives back the DTDversion
-    std::string getDTDversion(){return DTDversion;};
+    std::string getDTDversion(){return m_DTDversion;};
     /// This method gives back the CVSid  
-    std::string getCVSid(){return CVSid;};
-    /// This method sets the DTDversion  
-    void setDTDversion(std::string pdtd){DTDversion = pdtd;};
-    /// This method sets the CVSid  
-    void setCVSid(std::string pcvs){CVSid = pcvs;};
+    std::string getCVSid(){return m_CVSid;};
 
     // Not sure we want to expose this:
     // This method gives back a pointer to the tables vector
@@ -59,9 +55,10 @@ namespace rdbModel{
 
 
     /// This is the recursive accept for the visitor pattern
-    void accept(Visitor* v);
-    /// This is the non recursive accept for the visitor pattern
-    void acceptNotRec(Visitor* v);
+    Visitor::VisitorState  accept(Visitor* v);
+    // This is the non recursive accept for the visitor pattern
+    // Not yet sure we need it
+    //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
     // This method builds a global volumes map for all the sections 
     //    void buildVolumeMap();
@@ -72,6 +69,9 @@ namespace rdbModel{
     // Must make each concrete implementation of Builder a friend since
     // derived classes don't inherit friendliness.
     friend XercesBuilder;
+
+    void setDTDversion(std::string pdtd){m_DTDversion = pdtd;};
+    void setCVSid(std::string pcvs){m_CVSid = pcvs;};
 
     void addTable(Table* t){tables.push_back(t);};
 
