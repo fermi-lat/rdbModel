@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr 15 15:03:20 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Change "open" call interface. (optional) port is now part of 'host' parameter
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr 15 15:03:07 PDT 2004
 rdbModel/rdbModel/Db
 
