@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Aug  9 10:32:26 PDT 2004
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Add TKR_Splits and TKR_TOTSignal to calib_type enumerated values
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Jul 20 22:40:14 PDT 2004
 rdbModel/doc
 
