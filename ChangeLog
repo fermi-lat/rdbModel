@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun  9 10:26:19 PDT 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Fill new Column data member m_contents
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jun  9 10:25:33 PDT 2004
 rdbModel/rdbModel/Tables
 
