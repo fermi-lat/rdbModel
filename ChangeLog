@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr 22 17:35:35 PDT 2004
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Test new service Datatype::getInterval
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr 22 17:35:17 PDT 2004
 rdbModel/src/Tables
 
