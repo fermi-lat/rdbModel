@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.2 2004/03/04 01:07:11 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.3 2004/03/05 01:35:16 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -20,7 +20,7 @@ namespace rdbModel{
     class ColumnSource;      // embedded class, described below
 
   public:
-    Column() : m_type(0), m_source(0) /* , m_primary(false)*/ {};
+    Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
     ~Column();
 
     const std::string& getName() const {return m_name; };
@@ -35,13 +35,16 @@ namespace rdbModel{
      */
     bool okValue(const std::string& val, bool set=true) const;
 
+    /// Return true if otherCol and this have compatible datatypes
+    bool isCompatible(const Column* otherCol) const;
+
     Visitor::VisitorState accept(Visitor* v);
     //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
   private:
-    friend XercesBuilder; // needs access to add.. methods below
+    friend class rdbModel::XercesBuilder; // needs access to add.. methods 
 
-    Table* m_myTable
+    Table* m_myTable;
 
     std::string m_name;
     std::string m_comment;

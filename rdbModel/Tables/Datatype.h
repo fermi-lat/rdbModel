@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.2 2004/03/05 01:35:16 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -33,23 +33,24 @@ namespace rdbModel{
       RESTRICTfile      // value must have valid file path syntax
     };
 
-    Datatype() : m_restrict(0), m_enum(0), m_isInt(false)  {}
+    Datatype() : m_restrict(RESTRICTnone), m_enum(0), m_isInt(false)  {}
     ~Datatype() {if (m_enum) delete m_enum;}
     /// Check that supplied string has proper syntax for our type and
     /// is in accord with restriction, if any
-    bool okValue(const std::string& val);
+    bool okValue(const std::string& val) const;
+    bool isCompatible(const Datatype* other) const;
 
   private:    // embedded class since Enum restriction is a bit more complex
     class Enum {
     public: 
-      std::vector<std::string&> m_choices;
+      std::vector<std::string> m_choices;
       // sometimes column *must* have one of the enumerated values; 
       // other times they're just suggestions
       bool m_required;  
     };
 
   private:
-    friend XercesBuilder;
+    friend class rdbModel::XercesBuilder;
 
     // Bring all internal data specific to type up to date.  
     // Return type discovered, or -1 if unrecognized

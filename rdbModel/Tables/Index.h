@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Index.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Index.h,v 1.2 2004/03/04 01:07:11 jrb Exp $
 #ifndef RDBMODEL_INDEX_H
 #define RDBMODEL_INDEX_H
 #include <vector>
@@ -18,20 +18,24 @@ namespace rdbModel{
    */
   class Index {
   public:
-    Index() {};
-    ~Index();
+    Index(Table* myTable=0) : m_myTable(myTable) {};
+    ~Index() {};
 
     const std::string& getName() const {return m_name; };
+    bool isPrimary() const {return m_primary;}
+    const std::vector<std::string>& getColumnNames();
 
     Visitor::VisitorState accept(Visitor* v);
     //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
-  private:
+  private: 
+    friend class rdbModel::XercesBuilder;
+
     /// Is it a primary key?
     bool m_primary;
 
     /// Names of  columns it's indexing
-    std::vector<std::string&> m_indexCols;
+    std::vector<std::string> m_indexCols;
 
     /// Point back to owning table
     Table* m_myTable;
