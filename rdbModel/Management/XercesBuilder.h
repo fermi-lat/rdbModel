@@ -1,18 +1,22 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.2 2004/03/06 01:12:26 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
-// #include "detModel/Management/Builder.h"
+
 #include "rdbModel/Management/Builder.h"
 #include "xml/XmlParser.h"
 #include <xercesc/dom/DOM_Document.hpp>
 #include <xercesc/dom/DOM_Element.hpp>
-
+#include "rdbModel/Tables/Column.h"
+#include "rdbModel/Tables/Assertion.h"
 namespace rdbModel{
 
   class Table;    // single rdbms table
-  class Column;   // column description
+  //  class Column;   // column description
+  //  class Column::ColumnSource;
   class Index;    // index/key (may be primary or not)
-  class Assertion; // represents logic in some sort of validity check
+  //  class Assertion; // represents logic in some sort of validity check
+  //  class Assertion::Operator;
+  class Datatype;
 
   //  class DMDocClient;
   /**

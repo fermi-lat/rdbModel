@@ -1,4 +1,4 @@
-// $Header:   $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Manager.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_MANAGER_H
 #define RDBMODEL_MANAGER_H
 // #include <map>
@@ -45,7 +45,7 @@ namespace rdbModel{
     /** This method gives back the pointer to the Rdb object. It coule be
 	used by expert clients to access information without the need of
 	a visitor */
-    Rdb* getRdb(){return m_Rdb;};
+    Rdb* getRdb(){return m_rdb;};
 
 
     void setInputSource(std::string pname){m_filename = pname;};
@@ -58,7 +58,7 @@ namespace rdbModel{
     /** The constructor is protected; in such a way it is forbidden to *
 	build directely a manager. Here the new Rdb object is explicitely
 	built */
-    Manager():manBuilder(0)  {m_rdb = new Rdb;};
+    Manager():m_builder(0)  {m_rdb = new Rdb;};
 
   private:
 

@@ -1,40 +1,43 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.2 2004/03/05 02:27:04 jrb Exp $
-
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.3 2004/03/06 01:15:25 jrb Exp $
+#include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
+#include "facilities/Timestamp.h"
 
 namespace {
 
+  using rdbModel::Datatype;
+
   bool initDone = false;
-  const int N_SUPPORTED_TYPES = Datatype::TYPEchar + 1;
+  const unsigned int N_SUPPORTED_TYPES = rdbModel::Datatype::TYPEchar + 1;
   std::string typenames[N_SUPPORTED_TYPES];
   void init() {
     if (!initDone) {
-      typenames[TYPEenum] = std::string("enum");
-      typenames[TYPEdatetime] = std::string("datetime");
-      typenames[TYPEtimestamp] = std::string("timestamp");
-      typenames[TYPEint] = std::string("int");
-      typenames[TYPEmediumint] = std::string("mediumint");
-      typenames[TYPEsmallint] = std::string("smallint");
-      typenames[TYPEreal] = std::string("real");
-      typenames[TYPEdouble] = std::string("double");
-      typenames[TYPEvarchar] = std::string("varchar");
-      typenames[TYPEchar] = std::string("char");
+      typenames[Datatype::TYPEenum] = std::string("enum");
+      typenames[Datatype::TYPEdatetime] = std::string("datetime");
+      typenames[Datatype::TYPEtimestamp] = std::string("timestamp");
+      typenames[Datatype::TYPEint] = std::string("int");
+      typenames[Datatype::TYPEmediumint] = std::string("mediumint");
+      typenames[Datatype::TYPEsmallint] = std::string("smallint");
+      typenames[Datatype::TYPEreal] = std::string("real");
+      typenames[Datatype::TYPEdouble] = std::string("double");
+      typenames[Datatype::TYPEvarchar] = std::string("varchar");
+      typenames[Datatype::TYPEchar] = std::string("char");
       initDone = true;
     }
   }
   int findType(std::string aType) {
-    for (unsigned i = 0; i < N_SUPPORTED_TYPES; i++) {
+    for (int i = 0; i < N_SUPPORTED_TYPES; i++) {
       if (aType == typenames[i]) return i;
     }
-    return -1;
+    return (int) Datatype::TYPEnotFound;
   }
   enum TYPE_OF_TYPE {
     TOTinteger = 0,
     TOTreal,
     TOTchar,
     TOTdate
-  }
+  };
   int findTOT(Datatype::TYPES aType) {
     if ((aType == Datatype::TYPEint) || (aType == Datatype::TYPEmediumint) ||
         (aType == Datatype::TYPEsmallint)) return TOTinteger;
@@ -51,7 +54,7 @@ namespace {
 namespace rdbModel {
 
   int Datatype::setType(std::string name) {
-    m_type = findType(name);
+    m_type = (TYPES) findType(name);
     if (m_type >=0 ) {
       m_typename = name;
     }
@@ -62,7 +65,7 @@ namespace rdbModel {
     switch (m_type) {
       case TYPEint: {
         m_maxInt = 2147483647;
-        m_minInt = -2147483648;
+        m_minInt = -2147483647;
         m_isInt = true;
         break;
       }
@@ -91,7 +94,7 @@ namespace rdbModel {
         (m_type == TYPEchar) || (m_type == TYPEvarchar)) {
       std::cerr << "From rdbModel::Datatype::setInterval " << std::endl;
       std::cerr << "Cannot set interval restriction for type " <<
-        typenames[m_type} << std::endl;
+        typenames[m_type] << std::endl;
       return false;
     }
 
@@ -105,8 +108,8 @@ namespace rdbModel {
       try {
         int minInt = facilities::Util::stringToInt(min);
         int maxInt = facilities::Util::stringToInt(max);
-        if (minInt > newType->m_min) newType->m_min = minInt;
-        if (maxInt < newType->m_max) newType->m_max = maxInt;
+        if (minInt > m_minInt) m_minInt = minInt;
+        if (maxInt < m_maxInt) m_maxInt = maxInt;
       }
       catch (facilities::WrongType ex) {
         std::cerr << "Error detected in XercesBuilder::buildDatatype " 
@@ -122,6 +125,7 @@ namespace rdbModel {
       try {
         double minFloat = facilities::Util::stringToDouble(min);
         double maxFloat = facilities::Util::stringToDouble(max);
+        ret =  (minFloat < maxFloat);
       }
       catch (facilities::WrongType ex) {
         std::cerr << "Error detected in XercesBuilder::buildDatatype " 
@@ -129,12 +133,11 @@ namespace rdbModel {
         std::cerr << ex.getMsg() << std::endl;
         return false;
       }
-      ret =  (minFloat < maxFloat);
     }
     if (m_type == TYPEdatetime) {
       try {
-        facilities::timestamp minTime(min);
-        facilities::timestamp maxTime(max);
+        facilities::Timestamp minTime(min);
+        facilities::Timestamp maxTime(max);
         ret =  (minTime < maxTime);
       }
       catch (facilities::BadTimeInput ex) {
@@ -146,7 +149,7 @@ namespace rdbModel {
     return ret;
   }
 
-  bool Datatype::okValue(const std::string& val) {
+  bool Datatype::okValue(const std::string& val) const {
     using facilities::Util;
 
     switch (m_type) {
@@ -186,11 +189,11 @@ namespace rdbModel {
     case TYPEvarchar:
     case TYPEchar:
       if (m_restrict == RESTRICTnone) return true;
-      if (!m_restrict->m_enum->m_required) return true;
-    case TYPEenum: 
-      unsigned nChoice = m_restrict->m_enum->m_choices.size();
+      if (!m_enum->m_required) return true;
+    case TYPEenum: {
+      unsigned nChoice = m_enum->m_choices.size();
       for (unsigned i = 0; i < nChoice; i++) {
-        if (val == m_restrict->m_enum->m_choices[i]) return true;
+        if (val == m_enum->m_choices[i]) return true;
       }
       return false;
     }
@@ -214,9 +217,10 @@ namespace rdbModel {
     }
     default:
       return false;
+    }
   }
 
-  bool isCompatible(const Datatype* other) const {
+  bool Datatype::isCompatible(const Datatype* other) const {
     // The ten distinct types can be partitioned into 4 sorts: integer,
     // real, character, and date.  Call two types compatible if they're
     // in the same partition.

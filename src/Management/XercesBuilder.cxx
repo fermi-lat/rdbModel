@@ -1,5 +1,5 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.3 2004/03/05 02:26:33 jrb Exp $
-#include "rdbModel/XercesBuilder.h"
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.4 2004/03/06 01:14:09 jrb Exp $
+#include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -13,21 +13,19 @@
 namespace rdbModel {
   XercesBuilder::XercesBuilder() : Builder(), m_rdb(0) {
 
-    doc = DOM_Document();
+    m_doc = DOM_Document();
   }
 
-  unsigned int XercesBuilder::parseInput(std::string filename) {
+  unsigned int XercesBuilder::parseInput(const std::string& filename) {
     xml::XmlParser parser;
 
-    m_doc = parser->parse(filename.c_str(), "rdbms");
+    m_doc = parser.parse(filename.c_str(), "rdbms");
 
     return (m_doc == DOM_Document()) ? 0xffffffff : 0;
   }
 
   int XercesBuilder::buildRdb() {
     Manager* man = Manager::getManager();
-    int nTable = 0;
-    int okTable = 0;
 
     if (m_doc == DOM_Document() ) return 0;
     m_rdb = man->getRdb();
@@ -35,11 +33,11 @@ namespace rdbModel {
 
     
     //  save attribute information associated with outermost (rdbms) element.
-    m_dbsname = xml::Dom::getAttribute(docElt, "dbs");
+    m_rdb->m_dbsname = xml::Dom::getAttribute(docElt, "dbs");
 
-    m_DTDversion = xml::Dom::getAttribute(docElt, "DTDversion");
+    m_rdb->m_DTDversion = xml::Dom::getAttribute(docElt, "DTDversion");
 
-    m_CVSid = xml::Dom::getAttribute(docElt, "CVSid");
+    m_rdb->m_CVSid = xml::Dom::getAttribute(docElt, "CVSid");
 
     // Get vector of table elements.  
     std::vector<DOM_Element> tables;
@@ -59,10 +57,10 @@ namespace rdbModel {
 
   Table* XercesBuilder::buildTable(DOM_Element tableElt) {
 
-    Table newTable = new Table;
+    Table* newTable = new Table;
     newTable->m_name = xml::Dom::getAttribute(tableElt, "name");
-    newTable->m_version = xml::Dom::getAttribute(tabelElt, "version");
-    newTable->m_comment = xml::Dom::getAttribute(tabelElt, "name");
+    newTable->m_version = xml::Dom::getAttribute(tableElt, "version");
+    newTable->m_comment = xml::Dom::getAttribute(tableElt, "name");
 
     std::vector<DOM_Element> children;
     xml::Dom::getChildrenByTagName(tableElt, "col", children);
@@ -80,7 +78,7 @@ namespace rdbModel {
     // Look for primary key, if any
     DOM_Element primaryKey = 
       xml::Dom::findFirstChildByName(tableElt, "primary");
-    if (primaryKey ! DOM_Element()) {
+    if (primaryKey != DOM_Element()) {
       Index* newIndex = buildIndex(primaryKey, true, newTable);
       if (newIndex) {
         newIndex->m_myTable = newTable;
@@ -92,10 +90,10 @@ namespace rdbModel {
     xml::Dom::getChildrenByTagName(tableElt, "index", children);
     nChild = children.size();
 
-    for (unsigned int iIndex = 0; iIndex < nChild; iCol++) {
+    for (unsigned int iIndex = 0; iIndex < nChild; iIndex++) {
       Index* newIndex = buildIndex(children[iIndex], false, newTable);
       if (newIndex) {
-        newTable->addIndex(newIndex)
+        newTable->addIndex(newIndex);
       }
     }
     
@@ -105,9 +103,9 @@ namespace rdbModel {
     nChild = children.size();
 
     for (unsigned int iAssert = 0; iAssert < nChild; iAssert++) {
-      Assertion* newAssert = buildAssert(children[iAssert], newTable);
+      Assertion* newAssert = buildAssertion(children[iAssert], newTable);
       if (newAssert) {
-        newTable->addAssertion(newAssert)
+        newTable->addAssert(newAssert);
       }
     }
     return newTable;
@@ -123,64 +121,66 @@ namespace rdbModel {
     newCol->m_source = buildColumnSource(src);
     
     DOM_Element dtype = xml::Dom::findFirstChildByName(e, "type");
-    newCol->m_datatype = buildDatatype(dtype);
+    newCol->m_type = buildDatatype(dtype);
     
     return newCol;
   }
 
   Datatype* XercesBuilder::buildDatatype(DOM_Element e) {
 
-    Dataytpe* newType = new Datatype;
+    Datatype* newType = new Datatype;
     
     newType->setType(xml::Dom::getAttribute(e, "typename"));
 
-    if (xml:Dom::hasAttribute(e, "size")) {
+    if (xml::Dom::hasAttribute(e, "size")) {
       try {
-        m_outputSize = xml::Dom::getIntAttribute(e, "size");
+        newType->m_outputSize = xml::Dom::getIntAttribute(e, "size");
       }
-      catch (xml::DomeException ex) {
+      catch (xml::DomException ex) {
         std::cerr << "Error in rdb database description file" << std::endl;
         std::cerr << ex.getMsg() << std::endl;
         std::cerr << "Ignoring column size specification " << std::endl;
-        m_outputSize = -1;        // treat as unspecified
+        newType->m_outputSize = -1;        // treat as unspecified
       }
     }
-    else m_outputSize = -1;
+    else newType->m_outputSize = -1;
 
     DOM_Element restrict = xml::Dom::getFirstChildElement(e);
 
     if (restrict != DOM_Element()) {
       DOM_Element rtype = xml::Dom::getFirstChildElement(restrict);
       std::string tagname = xml::Dom::getTagName(rtype);
-      if ((newType->m_type == TYPEenum) &&
-          (tagname != std::string("enum") ) {
+      if ((newType->m_type == Datatype::TYPEenum) &&
+          (tagname != std::string("enum") ) ) {
         std::cerr << "From rdbMode::XercesBuilder::buildDatatype" << std::endl;
         std::cerr << "Bad enum type. Missing value list " << std::endl;
         delete newType;
         newType = 0;
         return newType;
       }
+
       if (tagname == std::string("nonnegative")) {
-        newType->m_restrict = RESTRICTnonneg;
-        if (newType->isInt) m_minInt = 0;
+        newType->m_restrict = Datatype::RESTRICTnonneg;
+        if (newType->m_isInt) newType->m_minInt = 0;
       }
       else if (tagname == std::string("positive")) {
-        newType->m_restrict = RESTRICTpos;
-        if (newType->isInt) m_minInt = 1;
+        newType->m_restrict = Datatype::RESTRICTpos;
+        if (newType->m_isInt) newType->m_minInt = 1;
       }
       else if (tagname == std::string("interval")) {
-        newType->setInterval(xml::getAttribute(rtype, "min"),
-                             xml::getAttribute(rtype, "max"));
+        newType->setInterval(xml::Dom::getAttribute(rtype, "min"),
+                             xml::Dom::getAttribute(rtype, "max"));
       }
       else if (tagname == std::string("file")) {
-        newType->m_restrict = RESTRICTfile;
+        newType->m_restrict = Datatype::RESTRICTfile;
       }
       else if (tagname == std::string("enum")) {
-        newType->m_restrict = RESTRICTenum;
+        newType->m_restrict = Datatype::RESTRICTenum;
         Datatype::Enum* newEnum  = new Datatype::Enum();
         newEnum->m_required = 
           (xml::Dom::getAttribute(rtype, "use") == "require");
-        if (!(newEnum->m_required) && (newType->m_type == TYPEenum)) {
+        if (!(newEnum->m_required) && 
+            (newType->m_type == Datatype::TYPEenum)) { //improper enum decl.
           delete newEnum;
           delete newType;
           std::cerr << "From rdbMode::XercesBuilder::buildDatatype" 
@@ -188,26 +188,29 @@ namespace rdbModel {
           std::cerr << "Bad enum type. List must be 'required' " << std::endl;
           newType = 0;
           return newType;
-        }
+        }  // end improprer enum decl.
           
-        std::string enums = xml::Dom::getAttribute(rtype "values");
+        std::string enums = xml::Dom::getAttribute(rtype, "values");
 
         unsigned int start = 0;
         unsigned int blankLoc = enums.find(std::string(" "), start);
 
         while (blankLoc != std::string::npos) {
           newEnum->m_choices.push_back(enums.substr(start, blankLoc-1));
-        start = blankLoc + 1;
-        blankLoc = enums.find(std::string(" "), start);
-        newEnum->m_choices.push_back(enums.substr(start));
-        newType->m_enum = newEnum;
-      }
+          start = blankLoc + 1;
+          blankLoc = enums.find(std::string(" "), start);
+          newEnum->m_choices.push_back(enums.substr(start));
+          newType->m_enum = newEnum;
+        }   // parsing enum list
+      }   // end processing of enum restriction
     }
-    else {
-      newType->m_restrict = RESTRICTnone;
-      if (newType->m_type == TYPEenum) {  // error. Must have enum restriction
+    else {   // no restriction specified
+      newType->m_restrict = Datatype::RESTRICTnone;
+      if (newType->m_type == Datatype::TYPEenum) { 
+        // error. Must have enum restriction
         //        newType->m_type = -1;
-        std::cerr << "From rdbMode::XercesBuilder::buildDatatype" << std::endl;
+        std::cerr << "From rdbMode::XercesBuilder::buildDatatype" 
+                  << std::endl;
         std::cerr << "Bad enum type. Missing value list " << std::endl;
         delete newType;
         newType = 0;
@@ -216,28 +219,28 @@ namespace rdbModel {
     return newType;
   }
 
-  Column::ColumnSource XercesBuilder::buildColumnSource(DOM_Element e) {
+  Column::ColumnSource* XercesBuilder::buildColumnSource(DOM_Element e) {
     Column::ColumnSource* src = new Column::ColumnSource;
     src->m_null = (xml::Dom::getAttribute(e, "null") == "true");
 
-    DOM_element child = xml::Dom::getFirstChildElement(e);
+    DOM_Element child = xml::Dom::getFirstChildElement(e);
     if (xml::Dom::checkTagName(child, "default")) {
-      src->m_from = FROMdefault;
+      src->m_from = Column::ColumnSource::FROMdefault;
       src->m_default = xml::Dom::getAttribute(child, "value");
     }
-    elseif (xml::Dom::checkTagName(child, "from")) {
+    else if (xml::Dom::checkTagName(child, "from")) {
       std::string agent = xml::Dom::getAttribute(child, "agent");
       if (agent == "auto_increment") {
-        src->m_default = FROMautoIncrement;
+        src->m_default = Column::ColumnSource::FROMautoIncrement;
       }
-      elseif (agent == "now") {
-        src->m_default = FROMnow;
+      else if (agent == "now") {
+        src->m_default = Column::ColumnSource::FROMnow;
       }
-      elseif (agent == "enduser") {
-        src->m_default = FROMenduser;
+      else if (agent == "enduser") {
+        src->m_default = Column::ColumnSource::FROMendUser;
       }
-      elseif (agent == "service") {
-        src->m_default = FROMprogram;
+      else if (agent == "service") {
+        src->m_default = Column::ColumnSource::FROMprogram;
       }
       // shouldn't be anything else
     } 
@@ -277,8 +280,8 @@ namespace rdbModel {
     
     std::string when = xml::Dom::getAttribute(e, "case");
     
-    newAssert->m_when = (when == "globalCheck") ? WHENglobalCheck 
-      : WHENchangeRow;
+    newAssert->m_when = (when == "globalCheck") ? Assertion::WHENglobalCheck 
+      : Assertion::WHENchangeRow;
     DOM_Element op = xml::Dom::getFirstChildElement(e);
     newAssert->m_op = buildOperator(op, myTable);
     return newAssert;
@@ -287,10 +290,10 @@ namespace rdbModel {
 
   Assertion::Operator* XercesBuilder::buildOperator(DOM_Element e, 
                                                     Table* myTable) {
-    Assertion::Operator newOp = new Assertion::Operator();
+    Assertion::Operator* newOp = new Assertion::Operator();
     std::string opName = xml::Dom::getTagName(e);
     if (opName == "isNull") {
-      newOp->m_opType = OPTYPEisNull;
+      newOp->m_opType = Assertion::OPTYPEisNull;
       newOp->m_compareArgs[0] = xml::Dom::getAttribute(e, "col");
       newOp->m_literal[0] = false;
       return newOp;
@@ -298,23 +301,24 @@ namespace rdbModel {
     else if (opName == "compare") {
       std::string relation = xml::Dom::getAttribute(e, "relation");
       bool swap = false;
-      if (relation == "lessThan") newOp->m_opType = OPTYPElessThan;
+      if (relation == "lessThan") newOp->m_opType = Assertion::OPTYPElessThan;
       else if (relation == "greaterThan") {
-        newOp->m_opType = OPTYPElessThan;
+        newOp->m_opType = Assertion::OPTYPElessThan;
         swap = true;
       }
-      else if (relation == "equal") newOp->m_opType = OPTYPEequal;
-      else if (relation == "notEqual") newOp->m_opType = OPTYPEnotEqual;
+      else if (relation == "equal") newOp->m_opType = Assertion::OPTYPEequal;
+      else if (relation == "notEqual") 
+        newOp->m_opType = Assertion::OPTYPEnotEqual;
       else if (relation == "lessOrEqual") {
-        newOp->m_opType = OPTYPElessOrEqual;
+        newOp->m_opType = Assertion::OPTYPElessOrEqual;
       }
       else if (relation == "greaterOrEqual") {
-        newOp->m_opType = OPTYPElessOrEqual;
+        newOp->m_opType = Assertion::OPTYPElessOrEqual;
         swap = true;
       }
       DOM_Element child[2];
-      DOM_Element child[0] = xml::Dom::getFirstChildElement(e);
-      DOM_Element child[1] = xml::Dom::getSiblingElement(child1);
+      child[0] = xml::Dom::getFirstChildElement(e);
+      child[1] = xml::Dom::getSiblingElement(child[0]);
       if (swap) {
         DOM_Element temp = child[0];
         child[0] = child[1];
@@ -336,19 +340,19 @@ namespace rdbModel {
     } 
 
     // All other cases have other operators as children
-    else if (opName == "or") newOp->m_opType = OPTYPEor;
-    else if (opName == "and") newOp->m_opType = OPTYPEand;
-    else if (opName == "exists") newOp->m_opType = OPTYPEexists;
-    else if (opName == "not") newOp->m_opType = OPTYPEnot;
+    else if (opName == "or") newOp->m_opType = Assertion::OPTYPEor;
+    else if (opName == "and") newOp->m_opType = Assertion::OPTYPEand;
+    else if (opName == "exists") newOp->m_opType = Assertion::OPTYPEexists;
+    else if (opName == "not") newOp->m_opType = Assertion::OPTYPEnot;
 
     // Recursively handle child operators
     std::vector<DOM_Element> children;
     xml::Dom::getChildrenByTagName(e, "*", children);
     unsigned nChild = children.size();
     for (unsigned iChild = 0; iChild < nChild; iChild++) {
-      Assertion::Operator* childOp = buildOperator(children[iChild]);
+      Assertion::Operator* childOp = buildOperator(children[iChild], myTable);
       if (childOp) {
-        newOp->mOperands.push_back(childOp);
+        newOp->m_operands.push_back(childOp);
       }
       else { // one bad apple and we're dead
         delete newOp;

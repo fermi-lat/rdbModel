@@ -1,7 +1,8 @@
-// $Header:    $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 
 #ifndef RDBMODEL_BUILDER_H
 #define RDBMODEL_BUILDER_H
+#include <string>
 
 namespace rdbModel{
   class Rdb;
@@ -41,10 +42,10 @@ namespace rdbModel{
     /** This method return a pointer to the internal
         Rdb                  
     */
-    Rdb * getRdb() { return currentGdd; };
+    Rdb * getRdb() { return m_currentRdb; };
 
   protected:
-    /** This is a private pointer to a Gdd used
+    /** This is a private pointer to an Rdb used
         during the building */
     Rdb * m_currentRdb;
   };
