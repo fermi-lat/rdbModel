@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.12 2004/04/02 03:04:45 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.13 2004/04/03 00:22:17 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -114,13 +114,37 @@ namespace rdbModel {
 
   Column* XercesBuilder::buildColumn(DOM_Element e, Table* myTable) {
     Column* newCol = new Column(myTable);
+    //    m_default.clear();
     newCol->m_name = xml::Dom::getAttribute(e, "name");
     DOM_Element com = xml::Dom::findFirstChildByName(e, "comment");
     newCol->m_comment = xml::Dom::getTextContent(com);
 
     DOM_Element src = xml::Dom::findFirstChildByName(e, "src");
-    newCol->m_source = buildColumnSource(src);
-    
+
+    newCol->m_null = (xml::Dom::getAttribute(src, "null") == "true");
+
+    DOM_Element child = xml::Dom::getFirstChildElement(src);
+    if (xml::Dom::checkTagName(child, "default")) {
+      newCol->m_from = Column::FROMdefault;
+      newCol->m_default = xml::Dom::getAttribute(child, "value");
+    }
+    else if (xml::Dom::checkTagName(child, "from")) {
+      std::string agent = xml::Dom::getAttribute(child, "agent");
+      if (agent == "auto_increment") {
+        newCol->m_from = Column::FROMautoIncrement;
+      }
+      else if (agent == "now") {
+        newCol->m_from = Column::FROMnow;
+      }
+      else if (agent == "enduser") {
+        newCol->m_from = Column::FROMendUser;
+      }
+      else if (agent == "service") {
+        newCol->m_from = Column::FROMprogram;
+      }
+      // shouldn't be anything else
+    } 
+
     DOM_Element dtype = xml::Dom::findFirstChildByName(e, "type");
     newCol->m_type = buildDatatype(dtype);
     
@@ -226,35 +250,6 @@ namespace rdbModel {
     }
     return newType;
   }
-
-  Column::ColumnSource* XercesBuilder::buildColumnSource(DOM_Element e) {
-    Column::ColumnSource* src = new Column::ColumnSource;
-    src->m_null = (xml::Dom::getAttribute(e, "null") == "true");
-
-    DOM_Element child = xml::Dom::getFirstChildElement(e);
-    if (xml::Dom::checkTagName(child, "default")) {
-      src->m_from = Column::ColumnSource::FROMdefault;
-      src->m_default = xml::Dom::getAttribute(child, "value");
-    }
-    else if (xml::Dom::checkTagName(child, "from")) {
-      std::string agent = xml::Dom::getAttribute(child, "agent");
-      if (agent == "auto_increment") {
-        src->m_default = Column::ColumnSource::FROMautoIncrement;
-      }
-      else if (agent == "now") {
-        src->m_default = Column::ColumnSource::FROMnow;
-      }
-      else if (agent == "enduser") {
-        src->m_default = Column::ColumnSource::FROMendUser;
-      }
-      else if (agent == "service") {
-        src->m_default = Column::ColumnSource::FROMprogram;
-      }
-      // shouldn't be anything else
-    } 
-    return src;
-  }
-
 
   Index* XercesBuilder::buildIndex(DOM_Element e, bool primaryElt,
                                    Table* myTable) {
