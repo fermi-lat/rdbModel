@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.1 2004/03/05 01:38:52 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.2 2004/03/05 02:27:04 jrb Exp $
 
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -29,6 +29,23 @@ namespace {
     }
     return -1;
   }
+  enum TYPE_OF_TYPE {
+    TOTinteger = 0,
+    TOTreal,
+    TOTchar,
+    TOTdate
+  }
+  int findTOT(Datatype::TYPES aType) {
+    if ((aType == Datatype::TYPEint) || (aType == Datatype::TYPEmediumint) ||
+        (aType == Datatype::TYPEsmallint)) return TOTinteger;
+    else if ((aType == Datatype::TYPEreal) || (aType == Datatype::TYPEdouble))
+      return TOTreal;
+    else if ((aType == Datatype::TYPEdatetime) || 
+             (aType == Datatype::TYPEtimestamp))
+      return TOTdate;
+    else return TOTchar;
+  }
+    
 }
 
 namespace rdbModel {
@@ -199,4 +216,10 @@ namespace rdbModel {
       return false;
   }
 
+  bool isCompatible(const Datatype* other) const {
+    // The ten distinct types can be partitioned into 4 sorts: integer,
+    // real, character, and date.  Call two types compatible if they're
+    // in the same partition.
+    return (findTOT(m_type) == findTOT(other->m_type));
+  }
 }

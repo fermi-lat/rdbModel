@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Table.cxx,v 1.1 2004/03/04 01:07:44 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.1 2004/03/05 01:38:52 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -52,11 +52,10 @@ namespace rdbModel {
   // Traversal order is self, columns, indices, asserts
   Visitor::VisitorState Table::accept(Visitor* v) {
     
-    VisitorState state = v->visitTable(this);
+    Visitor::VisitorState state = v->visitTable(this);
     if (state != Visitor::CONTINUE) return state;
 
     unsigned n = m_cols.size();
-    unsigned i;
 
     for (unsigned i = 0; i < n; i++) {
       state = m_cols[i]->accept(v);
@@ -74,7 +73,7 @@ namespace rdbModel {
       state = m_asserts[i]->accept(v);
       if (state != Visitor::CONTINUE) return state;
     }
-
+    return state;
   }
 
 
