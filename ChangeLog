@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Apr  7 18:35:31 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+New method dbRequest(std::string req) where 'req' is an SQL query
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Apr  7 18:34:37 PDT 2004
 rdbModel/rdbModel/Db
 
