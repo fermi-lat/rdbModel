@@ -1,5 +1,5 @@
 <!--
-$Header:  $
+$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
  /** @file 
   @anchor dtd
   dtd for describing contents of sql tables, including constraints
@@ -69,9 +69,11 @@ $Header:  $
 
 <!ELEMENT index EMPTY >
 <!ATTLIST index  name NMTOKEN #REQUIRED
-                 cols IDREFS  #REQUIRED >
+                 cols IDREFS  #REQUIRED 
+                 primary (yes | no) "no"
+                 >
 
-<!ENTITY  % operator "or | and |  exists | not | isNull | compare" >
+<!ENTITY  % operator "or | and |  exists | forAll | not | isNull | compare" >
                    <!-- <!ENTITY  % operand "%operator; | const | refer " > -->
 <!ELEMENT assert (%operator; ) >
 <!ATTLIST assert case (changeRow | globalCheck) #REQUIRED >
@@ -89,6 +91,8 @@ $Header:  $
  -->
 
 <!ELEMENT exists (%operator;) >
+
+<!ELEMENT forAll (%operator;) >
 
 <!ELEMENT isNull EMPTY>
 <!ATTLIST isNull col IDREF #REQUIRED>
