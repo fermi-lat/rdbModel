@@ -3,7 +3,7 @@
 <rdbms dbs="calib_test"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibTest.xml,v 1.4 2004/06/17 19:08:05 jrb Exp $" 
+       CVSid= "$Id: calibMetaDb.xml,v 1.8 2004/07/01 06:36:31 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
@@ -50,7 +50,7 @@
      <type typename="varchar" size="20">
        <restriction>
          <enum use="prefer" values=
- "TKR_DeadChan TKR_HotChan CAL_Ped CAL_MuSlope CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen" />
+ "TKR_DeadChan TKR_HotChan TKR_Splits TKR_TOTSignal CAL_Ped CAL_MuSlope CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen" />
        </restriction>
      </type>
      <comment>Calibration type.  Standard
@@ -79,10 +79,10 @@
     </src>
     <type typename="varchar" size="10">
       <restriction>
-        <enum use="prefer" values="XML" />
+        <enum use="prefer" values="XML ROOT" />
       </restriction>
     </type>
-    <comment>For now only XML format is supported</comment>
+    <comment> XML is the only supported format for most calibrations</comment>
   </col>
 
   <col name="data_ident" >
@@ -98,7 +98,7 @@
      data.  May include one or more environment variables written with 
      delimiters
       $(...), e.g. a plausible data_ident might be
-                  $(CALIBUTILROOT)/xml/Cal/CalMuSlope_LAT.xml
+                  $(EMcalibroot)/Cal/CalMuSlope_LAT.xml
     </comment>
     <!-- 
         [maybe should change to using standard unix delimiters
@@ -139,7 +139,6 @@
     <comment>End of period for which calibration is valid</comment>
   </col>
 
-
   <col name="proc_level" >
     <src null="false" >
       <default value="TEST" />
@@ -172,6 +171,7 @@
       not necessarily that the results were any good.
     </comment>
   </col>      
+
 
 
   <col name="locale" >

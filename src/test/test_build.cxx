@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.11 2004/06/21 23:18:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.12 2004/06/28 19:41:32 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -41,7 +41,10 @@ int main(int, char**) {
   rdbModel::Column* serCol = rdb->getColumn("metadata_v2r1", "ser_no");
   if (serCol) {
     rdbModel::Datatype* serType = serCol->getDatatype();
-    
+
+    std::cout << "Value of isPrimaryKey() for column ser_no is: " 
+              << serCol->isPrimaryKey() << std::endl;
+
     if (serType->getInterval(colMin, colMax) ) {
       std::cout << "Min and max for ser_no are " << colMin 
                 << ", " << colMax << std::endl;
