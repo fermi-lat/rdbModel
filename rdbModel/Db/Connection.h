@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.2 2004/03/27 01:38:46 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.3 2004/03/28 08:22:51 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -7,8 +7,31 @@
 
 namespace rdbModel{
 
+  /** The following are used as return codes from the function schemaMatch.
+      which checks for compatibility between the schema definition embodied
+      in an Rdb object and the one at the other end of a Connection.
+      <ul>
+      <li>MATCHequivalent means that every comparison attempted has succeeded
+      </li>
+      <li>MATCHcompatible means that everything required by the local 
+      schema exists in the remote db, but not necessarily the other way around.
+      selects, inserts and updates attempted via the Connection should work.
+      </li>
+      <li>MATCHfail means the remote db is missing something described locally,
+      or types are incompatible for corresponding objects.
+      </li>
+      </ul>
+  */
+  enum MATCH  {
+    MATCHequivalent,
+    MATCHcompatible,
+    MATCHfail,
+    MATCHnoConnection
+  };
+
   class ResultHandle;
   class Assertion;
+  class Rdb;
   /** 
       Class to handle connection to an SQL database, or something very like
       it.  It should be able to
@@ -44,13 +67,18 @@ namespace rdbModel{
      was a connection to close and it was closed successfully */
     virtual bool close() = 0;
 
+    /**
+       Check to what degree local schema definition is compatible with
+       remote db accessed via this connection
+     */
+    virtual MATCH matchSchema(Rdb *rdb) = 0;
+
     /** Typical derived class will form a syntactically correct 
         INSERT statement from the input arguments and issue it to
         the dbms. Return true if row was inserted successfully
 
         Might also want to add a routine for INSERT ... SELECT
     */
-
     virtual bool insertRow(const std::string& tableName, 
                            const StringVector& colNames, 
                            const StringVector& values) = 0;
