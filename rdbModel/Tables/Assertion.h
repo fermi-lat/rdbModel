@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.2 2004/03/04 01:07:11 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -19,15 +19,19 @@ namespace rdbModel{
       WHENglobalCheck = 1,
       WHENchangeRow
     };
-    Assertion();
+    Assertion(Table* myTable=0) : m_op(0), m_myTable(myTable) 
+    { m_sqlEquivalent.clear();};
     ~Assertion();
+    WHEN getWhen() const {return m_when;}
     Visitor::VisitorState accept(Visitor* v);
+
+    const std::string& getSql() const {return m_sqlEquivalent;}
+    
     //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
-    bool execute();
 
   private:
-    friend XercesBuilder;
+    friend class rdbModel::XercesBuilder;
 
     WHEN m_when;
     Operator* m_op;
@@ -54,8 +58,12 @@ namespace rdbModel{
     // Other operators take 1 or more other operators as arguments
     class Operator {
     public:
-      Operator();
+      Operator() {};
       ~Operator();
+
+      /// Check whether columns or column and literal to be compared
+      /// have compatible types
+      bool validCompareOp(Table* table) const;
 
       OPTYPE m_opType;
 
