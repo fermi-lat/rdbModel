@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 23 18:06:57 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx 
+Log Message:
+Minor changes in line with slight changes to dtd
+
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 23 18:06:37 PST 2004
 rdbModel/src/Management
 
