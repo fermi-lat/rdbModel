@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.5 2004/03/27 01:39:46 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.6 2004/03/28 08:23:41 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -13,9 +13,8 @@ namespace rdbModel{
     enum OPTYPE {
       OPTYPEor = 1,
       OPTYPEand,
-      OPTYPEexists,
-      OPTYPEforAll,
       OPTYPEnot,
+      OPTYPEexists,
       OPTYPEisNull,
       OPTYPEequal,           // first of 2-operand compare ops
       OPTYPEnotEqual,
@@ -72,6 +71,9 @@ namespace rdbModel{
       /// Throw exception if Operator is not a comparison operator
       const std::string* getCompareArgs() const;
 
+      /// Throw exception if Operaotr is not EXISTS
+      const std::string& getTableName() const;
+
       /// Throw exception if Operator is not a comparison operator
       const bool* getLiteralness() const;
 
@@ -89,6 +91,9 @@ namespace rdbModel{
       // keep track of whether compare arg is literal or column name.
       std::string m_compareArgs[2];
       bool m_literal[2];     
+
+      // Following used only for EXSITS
+      std::string m_tableName;
 
       // Following is used only for non-compare operators
       std::vector<Operator* > m_operands;  // #allowed depends on opType

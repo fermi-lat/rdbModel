@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.2 2004/03/27 01:41:12 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.3 2004/03/28 08:24:27 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -201,9 +201,8 @@ namespace rdbModel {
   void MysqlConnection::compileInit() {
     opSymbols[OPTYPEor] = " OR ";
     opSymbols[OPTYPEand] = " AND ";
-    opSymbols[OPTYPEexists] = "ANY ";
-    opSymbols[OPTYPEforAll] = "ALL ";
     opSymbols[OPTYPEnot] = " NOT ";
+    opSymbols[OPTYPEexists] = "EXISTS ";
     opSymbols[OPTYPEisNull] = " IS NULL";
     opSymbols[OPTYPEequal] = "=";
     opSymbols[OPTYPEnotEqual] = "<>";
@@ -249,10 +248,21 @@ namespace rdbModel {
     unsigned nChild = children.size();
 
     sqlString += "(";
-    // For single-child operators NOT, forAll, thereExists, operator symbol
+    // For single-child operators NOT,  exists, operator symbol
     // goes 1st, then operand
-    if (nChild == 1) { // operator goes first
+    if (nChild <= 1) { // operator goes first
       sqlString += opSymbols[op->getOpType()];
+
+      // more special handling for EXISTS
+      if (op->getOpType() == OPTYPEexists) {
+        sqlString += "(SELECT * FROM " + op->getTableName();
+        if (!nChild) {     // done
+          sqlString += ")";
+          return ret;
+        }
+        // else EXISTS child is object of a WHERE clause 
+        sqlString += " WHERE(";
+      }
       ret = compileOperator(children[0], sqlString);
       if (!ret) {
         std::string msg = 
@@ -261,6 +271,10 @@ namespace rdbModel {
         throw RdbException(msg);
       }
       sqlString += ")";
+
+      // Have an extra closing ")" for EXISTS with WHERE clause
+      if (op->getOpType() == OPTYPEexists)       sqlString += ")";
+
       return ret;
     }
     // Otherwise put operator symbols between adjacent children.
