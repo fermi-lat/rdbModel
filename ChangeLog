@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Jul  8 12:38:14 PDT 2004
+rdbModel/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Loosen dependency on GlastPolicy rather than generate spurious incompatibility
+messages
+
+    *
+------------------------------------------------------------
 User: riccardo  Fri Jul  2 07:21:41 PDT 2004
 rdbModel/src/Db
 
