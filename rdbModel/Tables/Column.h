@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.3 2004/03/05 01:35:16 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.4 2004/03/06 01:13:10 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -27,6 +27,10 @@ namespace rdbModel{
     const std::string& getComment() const {return m_comment;};
 
     Datatype* getDatatype() const {return m_type;};
+
+    /// Return pointer to Enum object associated with this column (if
+    /// none, return null pointer).
+    Enum* getEnum() const {return m_type->getEnum();}
 
     /** See if supplied value meets constraints of column definition
      *   @arg  val    std::string representation of value to be checked
