@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sun Mar 28 00:23:42 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Column.h Datatype.h 
+Log Message:
+Get everything to compile (again) 
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Mar 28 00:22:51 PST 2004
 rdbModel/rdbModel/Db
 
