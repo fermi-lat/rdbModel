@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  2 16:58:05 PST 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Full implementation of MysqlConnection::matchSchema(.. )
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Apr  2 16:22:54 PST 2004
 rdbModel/xml
 
