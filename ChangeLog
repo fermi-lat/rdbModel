@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Mar  4 18:27:04 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+finish up implementatio of okValue method
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Mar  4 18:26:33 PST 2004
 rdbModel/src/Management
 
