@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlResults.cxx,v 1.1 2004/03/24 02:06:13 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlResults.cxx,v 1.2 2004/03/28 08:24:27 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -29,7 +29,8 @@ namespace rdbModel {
     if (clear) fields.clear();
 
     for (unsigned int iField = 0; iField < nFields; iField++) {
-      fields.push_back(std::string(myRow[iField]));
+      if (myRow[iField]) fields.push_back(std::string(myRow[iField]));
+      else fields.push_back("");
     }
 
     return true;
