@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.2 2004/03/05 01:37:02 jrb Exp $
 #include "rdbModel/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -154,6 +154,14 @@ namespace rdbModel {
     if (restrict != DOM_Element()) {
       DOM_Element rtype = xml::Dom::getFirstChildElement(restrict);
       std::string tagname = xml::Dom::getTagName(rtype);
+      if ((newType->m_type == TYPEenum) &&
+          (tagname != std::string("enum") ) {
+        std::cerr << "From rdbMode::XercesBuilder::buildDatatype" << std::endl;
+        std::cerr << "Bad enum type. Missing value list " << std::endl;
+        delete newType;
+        newType = 0;
+        return newType;
+      }
       if (tagname == std::string("nonnegative")) {
         newType->m_restrict = RESTRICTnonneg;
         if (newType->isInt) m_minInt = 0;
@@ -174,6 +182,16 @@ namespace rdbModel {
         Datatype::Enum* newEnum  = new Datatype::Enum();
         newEnum->m_required = 
           (xml::Dom::getAttribute(rtype, "use") == "require");
+        if (!(newEnum->m_required) && (newType->m_type == TYPEenum)) {
+          delete newEnum;
+          delete newType;
+          std::cerr << "From rdbMode::XercesBuilder::buildDatatype" 
+                    << std::endl;
+          std::cerr << "Bad enum type. List must be 'required' " << std::endl;
+          newType = 0;
+          return newType;
+        }
+          
         std::string enums = xml::Dom::getAttribute(rtype "values");
 
         unsigned int start = 0;
@@ -187,7 +205,16 @@ namespace rdbModel {
         newType->m_enum = newEnum;
       }
     }
-    else newType->m_restrict = RESTRICTnone;
+    else {
+      newType->m_restrict = RESTRICTnone;
+      if (newType->m_type == TYPEenum) {  // error. Must have enum restriction
+        //        newType->m_type = -1;
+        std::cerr << "From rdbMode::XercesBuilder::buildDatatype" << std::endl;
+        std::cerr << "Bad enum type. Missing value list " << std::endl;
+        delete newType;
+        newType = 0;
+      }
+    }
     return newType;
   }
 
