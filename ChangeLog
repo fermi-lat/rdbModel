@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed May 19 15:10:51 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Log mysql requests to output stream
+
+    *
+------------------------------------------------------------
 User: jrb  Tue May 18 16:13:40 PDT 2004
 rdbModel/src/Db
 
