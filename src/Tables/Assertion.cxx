@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.9 2004/04/07 23:06:49 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.10 2004/04/20 00:13:20 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -7,21 +7,24 @@
 namespace rdbModel {
 
   Assertion::Operator::~Operator() {
-    while (m_operands.size() ) {
-      Operator* op = m_operands.back();
-      m_operands.pop_back();
-      delete op;
+    if (!m_keepChildren) {
+      while (m_operands.size() ) {
+        Operator* op = m_operands.back();
+        m_operands.pop_back();
+        delete op;
+      }
     }
   }
 
   Assertion::~Assertion() {
-    delete m_op;
+    if (!m_keepOp) delete m_op;
   }
 
   // Constructor for comparisons
   Assertion::Operator::Operator(OPTYPE type, const std::string& leftArg, 
                                 const std::string& rightArg, bool leftLiteral, 
-                                bool rightLiteral) :  m_opType(type)  {
+                                bool rightLiteral) :  m_opType(type),
+                                                      m_keepChildren(false) {
     m_tableName.clear();
     m_operands.clear();
     if (!isCompareOp()) {
@@ -38,7 +41,8 @@ namespace rdbModel {
   /// Constructor for EXISTS
   Assertion::Operator::Operator(OPTYPE type, const std::string& tableName,
                                 Operator* child) : m_opType(type),
-                                                   m_tableName(tableName)
+                                                   m_tableName(tableName),
+                                                   m_keepChildren(false)
   {
     if (type != OPTYPEexists) {
       m_opType = OPTYPEundefined;
@@ -50,8 +54,9 @@ namespace rdbModel {
 
   /// Constructor for OR, AND, NOT
   Assertion::Operator::Operator(OPTYPE type, 
-                                const std::vector<Operator*>& children)  :
-    m_opType(type) {
+                                const std::vector<Operator*>& children,
+                                bool keepChildren)  :
+    m_opType(type), m_keepChildren(keepChildren) {
     
     if ((type == OPTYPEor) || (type == OPTYPEand) || (type = OPTYPEnot)) {
       m_tableName.clear();
