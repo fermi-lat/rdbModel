@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Jan  4 17:22:38 PST 2005
+rdbModel/rdbModel/Management
+
+Modified Files:
+	XercesBuilder.h 
+Log Message:
+Eliminate unnecessary #include of xml/XmlParser.h
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Jan  4 17:21:45 PST 2005
 rdbModel/cmt
 
