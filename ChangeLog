@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Mar  3 17:07:12 PST 2004
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Column.h Index.h Table.h 
+Log Message:
+comment out non-recursive accept for now; add a couple little utilities
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Mar  3 17:06:33 PST 2004
 rdbModel/rdbModel/Management
 
