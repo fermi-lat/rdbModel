@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.8 2004/03/28 08:24:57 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.9 2004/03/30 23:58:00 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -91,9 +91,6 @@ namespace rdbModel {
     nChild = children.size();
 
     for (unsigned int iIndex = 0; iIndex < nChild; iIndex++) {
-      /*      std::string primaryVal = 
-        xml::Dom::getAttribute(children[iIndex], "primary");
-        bool isPrimary = (primaryVal == "yes"); */
       Index* newIndex = buildIndex(children[iIndex], false, newTable);
       if (newIndex) {
         newTable->addIndex(newIndex);
@@ -209,8 +206,6 @@ namespace rdbModel {
     else {   // no restriction specified
       newType->m_restrict = Datatype::RESTRICTnone;
       if (newType->m_type == Datatype::TYPEenum) { 
-        // error. Must have enum restriction
-        //        newType->m_type = -1;
         std::cerr << "From rdbMode::XercesBuilder::buildDatatype" 
                   << std::endl;
         std::cerr << "Bad enum type. Missing value list " << std::endl;
@@ -284,91 +279,98 @@ namespace rdbModel {
 
   Assertion* XercesBuilder::buildAssertion(DOM_Element e, Table* myTable) {
 
-    Assertion* newAssert = new Assertion(myTable);
     
     std::string when = xml::Dom::getAttribute(e, "case");
     
-    newAssert->m_when = (when == "globalCheck") ? Assertion::WHENglobalCheck 
-      : Assertion::WHENchangeRow;
-    DOM_Element op = xml::Dom::getFirstChildElement(e);
-    newAssert->m_op = buildOperator(op, myTable);
+    Assertion::WHEN whenType = (when == "globalCheck") ? 
+      Assertion::WHENglobalCheck  : Assertion::WHENchangeRow;
+    DOM_Element opElt = xml::Dom::getFirstChildElement(e);
+    Assertion::Operator* op = buildOperator(opElt, myTable);
+
+    Assertion* newAssert = new Assertion(whenType, op, myTable);
+
     return newAssert;
   }
 
 
   Assertion::Operator* XercesBuilder::buildOperator(DOM_Element e, 
                                                     Table* myTable) {
-    Assertion::Operator* newOp = new Assertion::Operator();
     std::string opName = xml::Dom::getTagName(e);
+    OPTYPE opType;
     if (opName == "isNull") {
-      newOp->m_opType = OPTYPEisNull;
-      newOp->m_compareArgs[0] = xml::Dom::getAttribute(e, "col");
-      newOp->m_literal[0] = false;
-      return newOp;
+      return new Assertion::Operator(OPTYPEisNull, 
+                                     xml::Dom::getAttribute(e, "col"),
+                                     std::string(""), false, false);
     }
     else if (opName == "compare") {
       std::string relation = xml::Dom::getAttribute(e, "relation");
-      if (relation == "lessThan") newOp->m_opType = OPTYPElessThan;
+      if (relation == "lessThan") opType = OPTYPElessThan;
       else if (relation == "greaterThan") {
-        newOp->m_opType = OPTYPEgreaterThan;
+        opType = OPTYPEgreaterThan;
       }
-      else if (relation == "equal") newOp->m_opType = OPTYPEequal;
+      else if (relation == "equal") opType = OPTYPEequal;
       else if (relation == "notEqual") 
-        newOp->m_opType = OPTYPEnotEqual;
+        opType = OPTYPEnotEqual;
       else if (relation == "lessOrEqual") {
-        newOp->m_opType = OPTYPElessOrEqual;
+        opType = OPTYPElessOrEqual;
       }
       else if (relation == "greaterOrEqual") {
-        newOp->m_opType = OPTYPEgreaterOrEqual;
+        opType = OPTYPEgreaterOrEqual;
       }
       DOM_Element child[2];
       child[0] = xml::Dom::getFirstChildElement(e);
       child[1] = xml::Dom::getSiblingElement(child[0]);
 
+      std::string compareArgs[2];
+      bool isLit[2];
       for (unsigned iChild = 0; iChild < 2; iChild++) {
-        newOp->m_compareArgs[iChild] = 
+        compareArgs[iChild] = 
           xml::Dom::getAttribute(child[iChild], "val");
       
         // Element is either a <colRef> or a <value>  
-        newOp->m_literal[iChild] = 
-          (xml::Dom::checkTagName(child[iChild], "value")) ;
+        isLit[iChild] = (xml::Dom::checkTagName(child[iChild], "value")) ;
       }
+      Assertion::Operator* newOp = 
+        new Assertion::Operator(opType, compareArgs[0], compareArgs[1],
+                                isLit[0], isLit[1]);
       if (!newOp->validCompareOp(myTable)) {
         delete newOp;
-        newOp = 0;
+        return 0;
       }
-      return newOp;
     } 
 
     // All other cases have other operators as children
-    else if (opName == "or") newOp->m_opType = OPTYPEor;
-    else if (opName == "and") newOp->m_opType = OPTYPEand;
     else if (opName == "exists") {
-      newOp->m_opType = OPTYPEexists;
+      std::string tableName;
+      opType = OPTYPEexists;
       if (xml::Dom::hasAttribute(e, "tableName") ) {
-        newOp->m_tableName = 
+        tableName = 
           xml::Dom::getAttribute(e, "tableName");
       }
-      else newOp->m_tableName = myTable->getName();
+      else tableName = myTable->getName();
+      DOM_Element child = xml::Dom::getFirstChildElement(e);
+      Assertion::Operator* childOp = buildOperator(child, myTable);
+      return new Assertion::Operator(opType, tableName, childOp);
     }
 
-    //    else if (opName == "forAll") newOp->m_opType = OPTYPEforAll;
-    else if (opName == "not") newOp->m_opType = OPTYPEnot;
+    else if (opName == "or") opType = OPTYPEor;
+    else if (opName == "and") opType = OPTYPEand;
+    else if (opName == "not") opType = OPTYPEnot;
 
     // Recursively handle child operators
     std::vector<DOM_Element> children;
+    std::vector<Assertion::Operator*> childOps;
     xml::Dom::getChildrenByTagName(e, "*", children);
     unsigned nChild = children.size();
     for (unsigned iChild = 0; iChild < nChild; iChild++) {
       Assertion::Operator* childOp = buildOperator(children[iChild], myTable);
       if (childOp) {
-        newOp->m_operands.push_back(childOp);
+        childOps.push_back(childOp);
       }
       else { // one bad apple and we're dead
-        delete newOp;
         return 0;
       }
     }
-    return newOp;
+    return new Assertion::Operator(opType, childOps);
   }
 }
