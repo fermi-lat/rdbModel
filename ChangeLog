@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar  1 12:00:36 PST 2005
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Order initializations properly in constructor
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar  1 12:00:17 PST 2005
 rdbModel/rdbModel/Tables
 
