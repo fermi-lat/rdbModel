@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.8 2004/03/31 02:11:05 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.9 2004/04/20 00:13:02 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -77,7 +77,8 @@ namespace rdbModel{
       Operator(OPTYPE type, const std::string& tableName, Operator* child=0);
 
       /// Constructor for OR, AND, NOT
-      Operator(OPTYPE type, const std::vector<Operator*>& children);
+      Operator(OPTYPE type, const std::vector<Operator*>& children,
+               bool keepChildren = false);
 
       /// Add another child to a conjunction-style operator
       bool appendChild(Operator* child);
@@ -115,13 +116,20 @@ namespace rdbModel{
 
       // Following used only for EXSITS
       std::string m_tableName;
+      bool        m_keepChildren;
 
       // Following is used only for non-compare operators
       std::vector<Operator* > m_operands;  // #allowed depends on opType
     };
 
-    Assertion(WHEN when = WHENundefined, Operator* op = 0, Table* myTable=0) : 
-      m_when(when), m_op(op), m_myTable(myTable) 
+    /**  
+         Normally, operator associated with the assertion will be deleted
+         when the assertion itself is deleted, but this won't happen if
+         keepOp is set to true.
+     */
+    Assertion(WHEN when = WHENundefined, Operator* op = 0, 
+              Table* myTable=0, bool keepOp=false) : 
+      m_when(when), m_op(op), m_myTable(myTable), m_keepOp(keepOp)
     { m_compiled.clear();};
 
     ~Assertion();
@@ -137,6 +145,7 @@ namespace rdbModel{
     WHEN m_when;
     Operator* m_op;
     Table* m_myTable;
+    bool   m_keepOp;
 
     /// Let's hope that, independent of connection type, std::string is
     /// a reasonable choice for "compiled" form of the assertion
