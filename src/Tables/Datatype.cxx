@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.5 2004/03/09 01:42:23 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.6 2004/03/20 00:48:21 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -149,6 +149,16 @@ namespace rdbModel {
     }
     return ret;
   }
+
+  bool Datatype::getInterval(std::string& min, std::string& max) {
+    if (m_restrict == RESTRICTinterval) {
+      min = m_min;
+      max = m_max;
+      return true;
+    }
+    return false;
+  }
+
 
   bool Datatype::okValue(const std::string& val) const {
     using facilities::Util;
