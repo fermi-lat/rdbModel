@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.4 2004/03/06 01:13:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.5 2004/03/20 00:48:06 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -9,6 +9,7 @@ namespace rdbModel{
 
   class Table;
   class Datatype;
+  class Enum;
 
   class XercesBuilder;
 
@@ -30,7 +31,7 @@ namespace rdbModel{
 
     /// Return pointer to Enum object associated with this column (if
     /// none, return null pointer).
-    Enum* getEnum() const {return m_type->getEnum();}
+    Enum* getEnum() const;
 
     /** See if supplied value meets constraints of column definition
      *   @arg  val    std::string representation of value to be checked

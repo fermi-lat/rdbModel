@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.4 2004/03/07 08:20:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.5 2004/03/20 00:48:06 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -18,6 +18,7 @@ namespace rdbModel{
     bool choicesRequired() const {return m_required;}
 
   private:
+    friend class rdbModel::XercesBuilder;
     std::vector<std::string> m_choices;
     // sometimes column *must* have one of the enumerated values; 
     // other times they're just suggestions

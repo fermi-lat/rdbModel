@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.4 2004/03/24 02:05:08 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.5 2004/03/27 01:39:46 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -10,6 +10,21 @@ namespace rdbModel{
   class XercesBuilder;
   class Table;
 
+    enum OPTYPE {
+      OPTYPEor = 1,
+      OPTYPEand,
+      OPTYPEexists,
+      OPTYPEforAll,
+      OPTYPEnot,
+      OPTYPEisNull,
+      OPTYPEequal,           // first of 2-operand compare ops
+      OPTYPEnotEqual,
+      OPTYPElessThan,
+      OPTYPEgreaterThan,
+      OPTYPElessOrEqual,
+      OPTYPEgreaterOrEqual,
+      OPTYPElast
+    };
 
   /** 
       Assertions are used in at least two ways:
@@ -30,6 +45,7 @@ namespace rdbModel{
  
   */
   class Assertion {
+  public:
     class Operator;         // nested class declared below
 
   public:
@@ -39,49 +55,7 @@ namespace rdbModel{
       WHENchangeRow,
       WHENwhere     // as a WHERE clause, used and then discarded
     };
-    Assertion(Table* myTable=0) : m_op(0), m_myTable(myTable) 
-    { m_sqlEquivalent.clear();};
-    ~Assertion();
-    WHEN getWhen() const {return m_when;}
-    Visitor::VisitorState accept(Visitor* v);
 
-    Operator* getOperator() const {return m_op;}
-    /// 
-    const std::string& getPrecompiled() const {return m_compiled;}
-    
-    //    Visitor::VisitorState acceptNotRec(Visitor* v);
-
-
-  private:
-    friend class rdbModel::XercesBuilder;
-
-    WHEN m_when;
-    Operator* m_op;
-    Table* m_myTable;
-
-    /// Let's hope that, independent of connection type, std::string is
-    /// a reasonable choice for "compiled" form of the assertion
-    std::string m_compiled;  
-
-    enum OPTYPE {
-      OPTYPEor = 1,
-      OPTYPEand,
-      OPTYPEexists,
-      OPTYPEforAll,
-      OPTYPEnot,
-      OPTYPEisNull,
-      OPTYPEequal,           // first of 2-operand compare ops
-      OPTYPEnotEqual,
-      OPTYPElessThan,
-      OPTYPEgreaterThan,
-      OPTYPElessOrEqual,
-      OPTYPEgreaterOrEqual
-    };
-    const int OPTYPElast = OPTYPgreaterOrEqual;
-
-    // Compare operators take two arguments.  One must be a column
-    // name, the other may be a column name or a constant
-    // Other operators take 1 or more other operators as arguments
     class Operator {
     public:
       Operator() {};
@@ -96,10 +70,10 @@ namespace rdbModel{
       bool isCompareOp() const {return (m_opType >= OPTYPEisNull);}
 
       /// Throw exception if Operator is not a comparison operator
-      const std::string[2]& getCompareArgs() const;
+      const std::string* getCompareArgs() const;
 
       /// Throw exception if Operator is not a comparison operator
-      const bool[2]& getLiteralness() const;
+      const bool* getLiteralness() const;
 
       /// Throw exception if Operator is a comparison operator
       const std::vector<Operator* >& getChildren() const;
@@ -107,6 +81,7 @@ namespace rdbModel{
       OPTYPE getOpType() const {return m_opType;}
       
     private:
+      friend class rdbModel::XercesBuilder;
       OPTYPE m_opType;
 
       // Following two lines apply only to compare operators
@@ -118,6 +93,36 @@ namespace rdbModel{
       // Following is used only for non-compare operators
       std::vector<Operator* > m_operands;  // #allowed depends on opType
     };
+
+    Assertion(Table* myTable=0) : m_op(0), m_myTable(myTable) 
+    { m_compiled.clear();};
+    ~Assertion();
+    WHEN getWhen() const {return m_when;}
+    Visitor::VisitorState accept(Visitor* v);
+
+    Operator* getOperator() const {return m_op;}
+    /// 
+    const std::string& getPrecompiled() const {return m_compiled;}
+    
+    //    Visitor::VisitorState acceptNotRec(Visitor* v);
+
+
+
+
+  private:
+    friend class rdbModel::XercesBuilder;
+
+    WHEN m_when;
+    Operator* m_op;
+    Table* m_myTable;
+
+    /// Let's hope that, independent of connection type, std::string is
+    /// a reasonable choice for "compiled" form of the assertion
+    std::string m_compiled;  
+
+    // Compare operators take two arguments.  One must be a column
+    // name, the other may be a column name or a constant
+    // Other operators take 1 or more other operators as arguments
       
   };
 }
