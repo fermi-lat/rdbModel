@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.8 2004/04/10 01:15:27 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.9 2004/04/15 22:03:07 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -52,9 +52,10 @@ namespace rdbModel{
 
     /**
        Check to what degree local schema definition is compatible with
-       remote db accessed via this connection
+       remote db accessed via this connection.  By default check db names
+       match, but this may be disabled.
     */
-    virtual MATCH matchSchema(Rdb *rdb);
+    virtual MATCH matchSchema(Rdb *rdb, bool matchDbName=true);
 
     /** Typical derived class will form a syntactically correct 
         INSERT statement from the input arguments and issue it to
@@ -140,6 +141,7 @@ namespace rdbModel{
     // visit is in progress.
 
     VISITOR m_visitorType;
+    bool    m_matchDbName;
 
     /// Keep track of status during matching process
     MATCH   m_matchReturn;

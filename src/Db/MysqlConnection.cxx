@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.13 2004/04/15 22:03:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.14 2004/04/27 00:06:20 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -174,8 +174,10 @@ namespace rdbModel {
 
 
 
-  MATCH MysqlConnection::matchSchema(Rdb *rdb) {
+  MATCH MysqlConnection::matchSchema(Rdb *rdb, bool matchDbName) {
     if (!m_connected) return MATCHnoConnection;
+
+    m_matchDbName = matchDbName;
 
     // Check global characteristics; 
     // Could do this via Manager; seems a bit artificial, bypass for now
@@ -466,9 +468,11 @@ namespace rdbModel {
   // are at least compatible enough to be used.
   Visitor::VisitorState MysqlConnection::visitRdb(Rdb *rdb) {
     
-    if (m_dbName != rdb->getDbName()) {
-      m_matchReturn = MATCHfail;
-      return Visitor::VDONE;
+    if (m_matchDbName) {
+      if (m_dbName != rdb->getDbName()) {
+        m_matchReturn = MATCHfail;
+        return Visitor::VDONE;
+      }
     }
     
     unsigned int nLocal = rdb->getNTable();

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.7 2004/04/08 01:34:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.8 2004/04/15 22:03:07 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -73,9 +73,10 @@ namespace rdbModel{
 
     /**
        Check to what degree local schema definition is compatible with
-       remote db accessed via this connection
+       remote db accessed via this connection.  By default check db names
+       match, but this may be disabled.
      */
-    virtual MATCH matchSchema(Rdb *rdb) = 0;
+    virtual MATCH matchSchema(Rdb *rdb, bool matchDbName=true) = 0;
 
     /** Typical derived class will form a syntactically correct 
         INSERT statement from the input arguments and issue it to
