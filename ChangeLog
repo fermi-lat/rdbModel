@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri May  7 16:31:50 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add argument nullColls (array of column names to be nulled) to insertRow
+method.  And fix insertRow so it actually works.
+
+    *
+------------------------------------------------------------
 User: jrb  Fri May  7 16:31:16 PDT 2004
 rdbModel/rdbModel/Db
 
