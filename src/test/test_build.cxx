@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.10 2004/05/07 23:32:21 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.11 2004/06/21 23:18:50 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -11,10 +11,15 @@
 #include "rdbModel/Db/MysqlResults.h"
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
+#include "rdbModel/Tables/Assertion.h"
+#include "facilities/Util.h"
+
+// #define TEST_INSERT
 
 int doInsert(rdbModel::Connection* con);
+int doUpdate(rdbModel::Connection*, int serial);
 int main(int, char**) {
-  std::string infile("$(RDBMODELROOT)/xml/calibMetaDb.xml");
+  std::string infile("$(RDBMODELROOT)/xml/calibTest.xml");
 
   rdbModel::Manager* man = rdbModel::Manager::getManager();
 
@@ -59,11 +64,6 @@ int main(int, char**) {
   }
   else std::cout << "no such column as 'vstart' " << std::endl;
 
-  // Connect to real database
-  rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
-
-  std::string connectfile("$(RDBMODELROOT)/xml/connect/mysqlSlac.xml");
-
   // mostly don't want to run code doing an insert.  For times
   // when we do, must connect as user with INSERT priv.
 #ifdef TEST_INSERT
@@ -72,13 +72,18 @@ int main(int, char**) {
   std::string connectfileT("$(RDBMODELROOT)/xml/connect/mysqlSlacT.xml");
 #endif
   
+  // Connect to real database
+  rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
+
+  std::string connectfile("$(RDBMODELROOT)/xml/connect/mysqlSlac.xml");
+
   if (!(con->open(connectfile)) ) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
   }
 
 
-  rdbModel::MATCH match = con->matchSchema(rdb);
+  rdbModel::MATCH match = con->matchSchema(rdb, false);
 
   switch (match) {
   case rdbModel::MATCHequivalent:
@@ -96,8 +101,6 @@ int main(int, char**) {
     return -1;
   }
 
-
-  
 
   // Make a query
   std::string rq[2];
@@ -132,7 +135,6 @@ int main(int, char**) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
   }
-
   con->close();
 
   // Now open with alternate connection file
@@ -140,6 +142,30 @@ int main(int, char**) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
   }
+
+    // Following will do an insert.  To keep from cluttering up the
+    // database, mostly don't execute
+    //  
+#ifdef TEST_INSERT
+    int serial = doInsert(con);
+    if (serial) {
+      std::cout << "Hallelujah!  Inserted new row, serial# " 
+                << serial  << std::endl;
+
+      // Now try update
+      int nUpdates = doUpdate(con, serial);
+
+      if (nUpdates) {
+        std::cout << "Did " << nUpdates << " on row " << serial
+                  << std::endl;
+      }
+      else std::cout << "Failed to update row " << serial << std::endl;
+    }
+    else {
+      std::cout << "Bah, humbug.  Insert failed. " << std::endl;
+    }
+#else
+
 
   // Check that we can really do something with this connection
   match = con->matchSchema(rdb);
@@ -181,21 +207,9 @@ int main(int, char**) {
       return -1;
     }
 
-    // Following will do an insert.  To keep from cluttering up the
-    // database, mostly don't execute
-    //  
-#ifdef TEST_INSERT
-    int serial = doInsert(con);
-    if (serial) {
-      std::cout << "Hallelujah!  Inserted new row, serial# " 
-                << serial  << std::endl;
-    }
-    else {
-      std::cout << "Bah, humbug.  Insert failed. " << std::endl;
-    }
+  }
 #endif
 
-  }
   return 0;
 }
 
@@ -222,6 +236,8 @@ int doInsert(rdbModel::Connection* con) {
     cols.push_back("vend");
     vals.push_back("2020-02-01");
 
+    cols.push_back("data_size");
+    vals.push_back("0");
 
     cols.push_back("locale");
     vals.push_back("phobos");
@@ -253,3 +269,40 @@ int doInsert(rdbModel::Connection* con) {
     con->insertRow("metadata_v2r1", cols, vals, &serial, &nullCols);
     return serial;
 }
+
+int doUpdate(rdbModel::Connection* con, int serial) {
+  using rdbModel::Assertion;
+  using facilities::Util;
+
+  // Set up WHERE clause, always the same
+  std::string serialStr;
+  Util::itoa(serial, serialStr);
+  Assertion::Operator* serEquals = 
+    new Assertion::Operator(rdbModel::OPTYPEequal, "ser_no",
+                            serialStr, false, true);
+
+  Assertion* whereSer = new Assertion(Assertion::WHENwhere, serEquals);
+
+  // First call an update without any null columns; change notes field
+  // and set data_size to something.
+  std::vector<std::string> colNames, values, nullCols;
+  colNames.push_back(std::string("notes"));
+  colNames.push_back(std::string("data_size"));
+
+  values.push_back(std::string("1st update: set data_size to non-zero value"));
+  values.push_back(std::string("883"));
+
+  std::string table("metadata_v2r1");
+  unsigned nChange = con->update(table, colNames, values, whereSer);
+
+  // Now null out data_size
+  nullCols.push_back("data_size");
+  colNames.clear();
+  colNames.push_back(std::string("notes"));
+  values.clear();
+  values.push_back(std::string("2nd update: data_size set to NULL"));
+  nChange += con->update(table, colNames, values, whereSer, &nullCols);
+
+  return nChange;
+}
+
