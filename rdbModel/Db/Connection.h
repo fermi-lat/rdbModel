@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.5 2004/04/06 07:27:05 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.6 2004/04/07 00:31:41 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -130,6 +130,15 @@ namespace rdbModel{
                                  const StringVector& orderCols,
                                  const Assertion* where=0,
                                  int   rowLimit=0)=0;
+
+    /** 
+      Transmit raw request of any form to database.  If it is a request
+      that returns results, those results will be stored in a newly-
+      allocated ResultHandle and dbRequest will return a pointer to
+      it. Otherwise dbRequest will return a null pointer.
+      Throw an exception if request fails for any reason.
+    */
+    virtual ResultHandle* dbRequest(const std::string& request)=0;
 
     /**
       compile method for assertions.  Use it internally, but also make
