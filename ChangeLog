@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Feb 15 14:43:33 PST 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add table name to connect message
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Feb 15 14:43:06 PST 2005
 rdbModel/rdbModel/Tables
 
