@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Apr  6 00:29:48 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	calibMetaDb.xml 
+Log Message:
+A couple small changes to make table definition match the real one in the
+MySQL dbs.
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 00:28:58 PDT 2004
 rdbModel/src/test
 
