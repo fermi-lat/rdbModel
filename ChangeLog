@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed May  5 18:33:02 PDT 2004
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Add optional argument to matchSchema so dbname can be ignored
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Apr 26 17:08:26 PDT 2004
 rdbModel/src/Tables
 
