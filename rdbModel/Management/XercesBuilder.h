@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.2 2004/03/06 01:12:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.3 2004/03/07 08:20:16 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
 
@@ -66,8 +66,6 @@ namespace rdbModel{
     Assertion* buildAssertion(DOM_Element e, Table* t);
  
     Assertion::Operator* buildOperator(DOM_Element e, Table* t);
-
-    Column::ColumnSource* buildColumnSource(DOM_Element e);
 
     Datatype* buildDatatype(DOM_Element e);
 
