@@ -1,11 +1,11 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.6 2004/03/28 08:23:42 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.7 2004/04/02 03:03:50 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
 #include <string>
 #include "rdbModel/Management/Visitor.h"
 
-namespace rdbModel{
+namespace rdbModel {
 
   class Table;
   class Datatype;
@@ -18,14 +18,27 @@ namespace rdbModel{
    * rdbModel representation of a(n SQL-like) table description
    */
   class Column {
-    class ColumnSource;      // embedded class, described below
+    //    class ColumnSource;      // embedded class, described below
 
   public:
-    Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
+    Column(Table* myTable=0) : m_myTable(myTable), m_type(0) {
+      m_default = std::string("");};
+    // Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
     ~Column();
+
+    /// Source of value.
+    enum FROM {
+      FROMdefault = 1,          // enduser can override default, however
+      FROMautoIncrement,
+      FROMnow,                  // datatype must be timestamp
+      FROMprogram,
+      FROMendUser
+    };
 
     const std::string& getName() const {return m_name; };
     const std::string& getComment() const {return m_comment;};
+
+    const std::string& getDefault() const {return m_default;}
 
     Datatype* getDatatype() const {return m_type;};
 
@@ -44,13 +57,13 @@ namespace rdbModel{
     bool isCompatible(const Column* otherCol) const;
 
     /// Returns true if column may take on value NULL
-    bool nullAllowed() { return getSource()->m_null;}
+    bool nullAllowed() { return m_null;}
 
     bool isAutoIncrement() const;  
 
+    FROM getSourceType() const {return m_from;}
                                
     Visitor::VisitorState accept(Visitor* v);
-    //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
   private:
     friend class rdbModel::XercesBuilder; // needs access to add.. methods 
@@ -60,32 +73,12 @@ namespace rdbModel{
     std::string m_name;
     std::string m_comment;
     Datatype*  m_type;
-    ColumnSource* m_source;   // maybe make this a nested class?
-    //    bool m_primary;         // primary key.  Or do we just do this
-    //                               with a Key object?
-    ColumnSource* getSource() const {return m_source;};
-
-  private:   
-    class ColumnSource {
-    public:
-    // So far no need for anything other than default constructor
-    // and destructor.  Might end up embedding this in Column altogether.
-
-      /// Source of value.
-      enum FROM {
-        FROMdefault = 1,          // enduser can override default, however
-        FROMautoIncrement,
-        FROMnow,                  // datatype must be timestamp
-        FROMprogram,
-        FROMendUser
-      };
       
-      std::string m_default;
-      FROM m_from;
+    std::string m_default;
+    FROM m_from;
 
       /// Can this field have the value NULL?
-      bool m_null;
-    };                     // end nested ColumnSource class
+    bool m_null;
 
   };
 
