@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 30 18:11:36 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Use new constructors for Assertion and Assertion::Operator; no longer needs
+to be friend class
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 30 18:11:05 PST 2004
 rdbModel/rdbModel/Tables
 
