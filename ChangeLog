@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar  1 12:01:25 PST 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Bug fixes in code checking for acceptable column values
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar  1 12:00:36 PST 2005
 rdbModel/src/Management
 
