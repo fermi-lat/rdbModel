@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<!DOCTYPE rdbms SYSTEM "./rdbmsDescrip.dtd" >
+<!DOCTYPE rdbms SYSTEM "../rdbmsDescrip.dtd" >
 <rdbms dbs="calib_test"
        DTDversion="1.0"
        DTDexpected="1.0"
-       CVSid= "$Id: calibTest.xml,v 1.7 2004/08/24 00:06:37 jrb Exp $" 
+       CVSid= "$Id: calibMaint.xml,v 1.1 2004/08/25 19:26:20 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
