@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.4 2004/03/27 01:41:38 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.5 2004/03/28 08:25:22 jrb Exp $
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -48,6 +48,13 @@ namespace rdbModel {
     if (!isCompareOp()) 
       throw RdbException("Assertion::Operator::getLiteralness: wrong type");
     return &m_literal[0];
+  }
+
+  /// Throw exception if Operator is not EXISTS
+  const std::string& Assertion::Operator::getTableName() const {
+    if (m_opType != OPTYPEexists) 
+      throw RdbException("Assertion::Operator::getTableNmae: wrong type");
+    return m_tableName;
   }
 
   /// Throw exception if Operator is a comparison operator

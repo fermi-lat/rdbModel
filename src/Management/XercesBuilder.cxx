@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.7 2004/03/24 02:06:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.8 2004/03/28 08:24:57 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -343,8 +343,16 @@ namespace rdbModel {
     // All other cases have other operators as children
     else if (opName == "or") newOp->m_opType = OPTYPEor;
     else if (opName == "and") newOp->m_opType = OPTYPEand;
-    else if (opName == "exists") newOp->m_opType = OPTYPEexists;
-    else if (opName == "forAll") newOp->m_opType = OPTYPEforAll;
+    else if (opName == "exists") {
+      newOp->m_opType = OPTYPEexists;
+      if (xml::Dom::hasAttribute(e, "tableName") ) {
+        newOp->m_tableName = 
+          xml::Dom::getAttribute(e, "tableName");
+      }
+      else newOp->m_tableName = myTable->getName();
+    }
+
+    //    else if (opName == "forAll") newOp->m_opType = OPTYPEforAll;
     else if (opName == "not") newOp->m_opType = OPTYPEnot;
 
     // Recursively handle child operators
