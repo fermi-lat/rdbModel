@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.4 2004/03/07 08:21:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.5 2004/03/09 01:42:23 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -190,11 +190,11 @@ namespace rdbModel {
     case TYPEvarchar:
     case TYPEchar:
       if (m_restrict == RESTRICTnone) return true;
-      if (!m_enum->m_required) return true;
+      if (!m_enum->choicesRequired()) return true;
     case TYPEenum: {
-      unsigned nChoice = m_enum->m_choices.size();
+      unsigned nChoice = m_enum->getChoices().size();
       for (unsigned i = 0; i < nChoice; i++) {
-        if (val == m_enum->m_choices[i]) return true;
+        if (val == m_enum->getChoices()[i]) return true;
       }
       return false;
     }
