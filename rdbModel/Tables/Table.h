@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.4 2004/03/24 02:05:08 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.5 2004/04/27 00:05:32 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -31,8 +31,9 @@ namespace rdbModel {
     /// ask the connection to do the insert and return status (an int,
     /// meaning to be determined.  Should include values for illegal
     /// input, missing connection, etc. )
-    int  insertRow(const std::vector<std::string>& colNames,
-                   const std::vector<std::string>& colValues);
+    //  hasn't been implemented
+    //    int  insertRow(const std::vector<std::string>& colNames,
+    //                   const std::vector<std::string>& colValues);
 
     
     Visitor::VisitorState accept(Visitor* v);
