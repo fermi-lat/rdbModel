@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 30 15:58:00 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Support EXISTS (but not ANY or ALL)
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 30 15:57:48 PST 2004
 rdbModel/src/Db
 
