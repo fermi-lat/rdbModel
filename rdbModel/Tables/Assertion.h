@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.6 2004/03/28 08:23:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.7 2004/03/30 23:57:35 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -7,10 +7,10 @@
 
 namespace rdbModel{
 
-  class XercesBuilder;
   class Table;
 
     enum OPTYPE {
+      OPTYPEundefined = 0,
       OPTYPEor = 1,
       OPTYPEand,
       OPTYPEnot,
@@ -50,6 +50,7 @@ namespace rdbModel{
   public:
     // when does this assertion get applied?
     enum WHEN {
+      WHENundefined = 0,
       WHENglobalCheck = 1,
       WHENchangeRow,
       WHENwhere     // as a WHERE clause, used and then discarded
@@ -57,8 +58,20 @@ namespace rdbModel{
 
     class Operator {
     public:
-      Operator() {};
+      Operator() : m_opType(OPTYPEundefined) {};
       ~Operator();
+
+      /// Constructor for comparison.  If the operator is OPTTYPEisNull,
+      /// rightArg and rightLiteral are ignored.
+      Operator(OPTYPE type, const std::string& leftArg, 
+               const std::string& rightArg, 
+               bool leftLiteral, bool rightLiteral);
+
+      /// Constructor for EXISTS
+      Operator(OPTYPE type, const std::string& tableName, Operator* child=0);
+
+      /// Constructor for OR, AND, NOT
+      Operator(OPTYPE type, const std::vector<Operator*>& children);
 
       /// Check whether columns or column and literal to be compared
       /// have compatible types
@@ -83,7 +96,6 @@ namespace rdbModel{
       OPTYPE getOpType() const {return m_opType;}
       
     private:
-      friend class rdbModel::XercesBuilder;
       OPTYPE m_opType;
 
       // Following two lines apply only to compare operators
@@ -99,8 +111,10 @@ namespace rdbModel{
       std::vector<Operator* > m_operands;  // #allowed depends on opType
     };
 
-    Assertion(Table* myTable=0) : m_op(0), m_myTable(myTable) 
+    Assertion(WHEN when = WHENundefined, Operator* op = 0, Table* myTable=0) : 
+      m_when(when), m_op(op), m_myTable(myTable) 
     { m_compiled.clear();};
+
     ~Assertion();
     WHEN getWhen() const {return m_when;}
     Visitor::VisitorState accept(Visitor* v);
@@ -109,14 +123,8 @@ namespace rdbModel{
     /// 
     const std::string& getPrecompiled() const {return m_compiled;}
     
-    //    Visitor::VisitorState acceptNotRec(Visitor* v);
-
-
-
 
   private:
-    friend class rdbModel::XercesBuilder;
-
     WHEN m_when;
     Operator* m_op;
     Table* m_myTable;
