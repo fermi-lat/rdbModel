@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri May  7 16:32:21 PDT 2004
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Add code, normally not executed, to exercise insertRow.
+
+    *
+------------------------------------------------------------
 User: jrb  Fri May  7 16:31:50 PDT 2004
 rdbModel/src/Db
 
