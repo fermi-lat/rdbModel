@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.7 2004/04/10 01:16:27 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.8 2004/04/23 00:35:35 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -62,6 +62,7 @@ int main(int, char**) {
   rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
 
   std::string connectfile("$(RDBMODELROOT)/xml/mysqlSlac.xml");
+  std::string connectfileT("$(RDBMODELROOT)/xml/mysqlSlacT.xml");
 
   /*
   if (!(con->open(std::string("centaurusa.slac.stanford.edu"),
@@ -133,6 +134,14 @@ int main(int, char**) {
     return -1;
   }
 
+  con->close();
+
+  // Now open with alternate connection file
+  if (!(con->open(connectfileT)) ) {
+    std::cerr << "Unable to connect to MySQL database" << std::endl;
+    return -1;
+  }
+
   // Check that we can really do something with this connection
   match = con->matchSchema(rdb);
 
@@ -146,12 +155,34 @@ int main(int, char**) {
   case rdbModel::MATCHfail:
     std::cout << "XML schema and MySQL database are NOT compatible" 
               << std::endl;
-    return -2;
+    break;
+    //    return -2;
   case rdbModel::MATCHnoConnection:
     std::cout << "Connection failed while attempting match" << std::endl;
     return -1;
   }
 
+  if (match == rdbModel::MATCHfail) { // try again without dbname match
+    match = con->matchSchema(rdb, false);
+
+    switch (match) {
+    case rdbModel::MATCHequivalent:
+      std::cout << "XML schema and MySQL database are equivalent!" 
+                << std::endl;
+      break;
+    case rdbModel::MATCHcompatible:
+      std::cout << "XML schema and MySQL database are compatible" << std::endl;
+      break;
+    case rdbModel::MATCHfail:
+      std::cout << "XML schema and MySQL database are NOT compatible" 
+                << std::endl;
+      //    return -2;
+    case rdbModel::MATCHnoConnection:
+      std::cout << "Connection failed while attempting match" << std::endl;
+      return -1;
+    }
+
+  }
   return 0;
 }
   
