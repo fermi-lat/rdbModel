@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu May 20 09:24:24 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Little bug fix in select
+
+    *
+------------------------------------------------------------
 User: jrb  Wed May 19 15:10:51 PDT 2004
 rdbModel/src/Db
 
