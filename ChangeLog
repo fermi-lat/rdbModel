@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 28 12:41:08 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Added (optional) nullCols argument to update method *and* fixed update method
+so it should work either with or without nullCols
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 28 12:40:24 PDT 2004
 rdbModel/rdbModel/Db
 
