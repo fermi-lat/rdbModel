@@ -1,9 +1,8 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.4 2004/04/27 00:04:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.5 2004/11/11 21:26:48 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
 
 #include "rdbModel/Management/Builder.h"
-#include "xml/XmlParser.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 #include "rdbModel/Tables/Column.h"
