@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun  9 10:27:49 PDT 2004
+rdbModel/xml
+
+Modified Files:
+	calibMetaDb.xml calibTest.xml rdbmsDescrip.dtd 
+Log Message:
+Define and use new attribute of <from> element. Of interest only
+when agent="service" 
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jun  9 10:26:19 PDT 2004
 rdbModel/src/Management
 
