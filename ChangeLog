@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar  5 17:14:09 PST 2004
+rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+Added verification while building Assertion objects
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar  5 17:13:29 PST 2004
 rdbModel/src
 
