@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.3 2004/03/06 01:13:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.4 2004/03/24 02:05:08 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -21,6 +21,13 @@ namespace rdbModel{
          of connection) can save some time.  
       2. As a WHERE clause in a client-institued UPDATE or SELECT. These
          are only around long enough to do the UPDATE or SELECT.
+
+      The bulk of the information comprising an assertion is kept in a
+      tree whose nodes are "operations".  An operation may be either 
+      a comparison ( =, <=, etc. and also "is null") or an operation which
+      has child operations:  OR, AND, NOT, for all, there exists, hence
+      a node is a leaf node iff it's a comparison.
+ 
   */
   class Assertion {
     class Operator;         // nested class declared below
@@ -38,6 +45,7 @@ namespace rdbModel{
     WHEN getWhen() const {return m_when;}
     Visitor::VisitorState accept(Visitor* v);
 
+    Operator* getOperator() const {return m_op;}
     /// 
     const std::string& getPrecompiled() const {return m_compiled;}
     
@@ -58,17 +66,18 @@ namespace rdbModel{
     enum OPTYPE {
       OPTYPEor = 1,
       OPTYPEand,
-      OPTYPEisNull,
       OPTYPEexists,
       OPTYPEforAll,
       OPTYPEnot,
-      OPTYPEequal,           // first of compare ops
+      OPTYPEisNull,
+      OPTYPEequal,           // first of 2-operand compare ops
       OPTYPEnotEqual,
       OPTYPElessThan,
       OPTYPEgreaterThan,
       OPTYPElessOrEqual,
       OPTYPEgreaterOrEqual
     };
+    const int OPTYPElast = OPTYPgreaterOrEqual;
 
     // Compare operators take two arguments.  One must be a column
     // name, the other may be a column name or a constant
@@ -82,6 +91,22 @@ namespace rdbModel{
       /// have compatible types
       bool validCompareOp(Table* table) const;
 
+      /// True if operator is "isNull" or any of the usual arithmetic
+      /// comparisons
+      bool isCompareOp() const {return (m_opType >= OPTYPEisNull);}
+
+      /// Throw exception if Operator is not a comparison operator
+      const std::string[2]& getCompareArgs() const;
+
+      /// Throw exception if Operator is not a comparison operator
+      const bool[2]& getLiteralness() const;
+
+      /// Throw exception if Operator is a comparison operator
+      const std::vector<Operator* >& getChildren() const;
+
+      OPTYPE getOpType() const {return m_opType;}
+      
+    private:
       OPTYPE m_opType;
 
       // Following two lines apply only to compare operators
