@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Apr  6 00:27:53 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Several little fixes to visitor for comparing schema with MySQL db
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 00:27:05 PDT 2004
 rdbModel/rdbModel/Db
 
