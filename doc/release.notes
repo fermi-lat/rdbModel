@@ -3,9 +3,10 @@
    @verbatim	   
 
    Coordinator: J. Bogart
- 
-   v1r0     3-Mar-2004  jrb   initial import
+
+   v1r1p0   8-Jul-2004  jrb   Loosen dependency on GlastPolicy to just v*
    v1r1     1-Jul-2004  jrb   First released version
+   v1r0     3-Mar-2004  jrb   initial import
 
    @endverbatim
  */
