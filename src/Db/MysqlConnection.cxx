@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.10 2004/04/07 23:06:49 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.11 2004/04/08 01:35:31 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -67,14 +67,19 @@ namespace {
 namespace rdbModel {
   bool   MysqlConnection::m_compileInit = false;
 
-  MysqlConnection::MysqlConnection() : m_mysql(0), m_connected(0),
-                                       m_visitorType(VISITORundefined),
-                                       m_tempRes(0) {
-    m_mysql = new MYSQL;
-
+  MysqlConnection::MysqlConnection(std::ostream* out,
+                                   std::ostream* errOut) :
+    m_mysql(0), m_connected(0), m_out(out), m_err(errOut),
+    m_visitorType(VISITORundefined), m_tempRes(0) {
+    if (m_out == 0) m_out = &std::cout;
+    if (m_err == 0) m_err = &std::cerr;
   }
 
   bool MysqlConnection::close() {
+    if (m_tempRes) {
+      mysql_free_result(m_tempRes);
+      m_tempRes = 0;
+    }
     mysql_close(m_mysql);
     m_mysql = 0;
     m_connected = false;
@@ -93,25 +98,28 @@ namespace rdbModel {
                              const std::string& dbName,
                              unsigned int       port) {
     if (dbName.size() == 0) {
-      std::cerr << 
+      (*m_err) << 
         "rdbModel::MysqlConnection::open : null db name not allowed!" <<
         std::endl;
       return false;
     } 
 
+    m_mysql = new MYSQL;
     mysql_init(m_mysql);
+
+    //    mysql_init(m_mysql);
     MYSQL *connected = mysql_real_connect(m_mysql, host.c_str(), user.c_str(),
                                           password.c_str(), dbName.c_str(),
                                           port, NULL, 0);
 
     if (connected != 0) {  // Everything is fine.  Put out an info message
-      std::cout << "Successfully connected to MySQL host " << 
+      (*m_out) << "Successfully connected to MySQL host " << 
         host << std::endl;
       m_connected = true;
       m_dbName = dbName;
     }
     else {
-      std::cerr <<  "Failed to connect to MySQL host " << host <<
+      (*m_err) <<  "Failed to connect to MySQL host " << host <<
         "with error " << mysql_error(m_mysql) << std::endl;
       m_connected = false;
     }
@@ -123,7 +131,7 @@ namespace rdbModel {
     xml::XmlParser parser;
     DOM_Document doc = parser.parse(parms.c_str(), "mysqlConnection");
     if (doc == DOM_Document()) {
-      std::cerr << "parse of connection parameters failed" << std::endl;
+      (*m_err) << "parse of connection parameters failed" << std::endl;
       return false;
     }
     DOM_Element  conn = doc.getDocumentElement();
@@ -134,7 +142,7 @@ namespace rdbModel {
     std::string dbname = xml::Dom::getAttribute(conn, "dbname");
     int port = xml::Dom::getIntAttribute(conn, "port");
     if (password.size() == 0 ) { // prompt for password?
-      std::cout << "interactive login NYI " << std::endl;
+      (*m_out) << "interactive login NYI " << std::endl;
       return false;
     }
     return this->open(host, user, password, dbname, port);
@@ -178,7 +186,7 @@ namespace rdbModel {
     // check that sizes of vectors match
     unsigned  nCol = colNames.size();    
     if (!nCol || (nCol != values.size()  ) ) {
-      std::cerr << " MysqlConnection::insertRow: vector lengths incompatible"
+      (*m_err) << " MysqlConnection::insertRow: vector lengths incompatible"
                 << std::endl;
       return false;
     }
@@ -195,7 +203,7 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, ins.c_str());
 
     if (mysqlRet) {
-      std::cerr << "MySQL error during INSERT, code " << mysqlRet << std::endl;
+      (*m_err) << "MySQL error during INSERT, code " << mysqlRet << std::endl;
       return false;
     }
     if (auto_value) {
@@ -212,8 +220,8 @@ namespace rdbModel {
 
     unsigned int nCol = colNames.size();
     if (nCol != values.size()) {
-      std::cerr << "rdbModel::mysqlConnection::update: ";
-      std::cerr << "Incompatible vector arguments " << std::endl;
+      (*m_err) << "rdbModel::mysqlConnection::update: ";
+      (*m_err) << "Incompatible vector arguments " << std::endl;
       return 0;
     }
     std::string sqlString = "UPDATE " + tableName + " SET ";
@@ -229,8 +237,8 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
-      std::cerr << "rdbModel::MysqlConnection::update: ";
-      std::cerr << "MySQL error during UPDATE, code " << mysqlRet << std::endl;
+      (*m_err) << "rdbModel::MysqlConnection::update: ";
+      (*m_err) << "MySQL error during UPDATE, code " << mysqlRet << std::endl;
       return 0;
     }
     my_ulonglong nModLong = mysql_affected_rows(m_mysql);
