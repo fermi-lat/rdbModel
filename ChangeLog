@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Nov 11 13:25:35 PST 2004
+rdbModel/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Changes for Xerces 2.6.0 (use xml v5r*)
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Aug 26 09:01:55 PDT 2004
 rdbModel/xml/maint
 
