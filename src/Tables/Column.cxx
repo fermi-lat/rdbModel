@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.2 2004/03/06 01:15:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.3 2004/03/28 08:25:22 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -26,9 +26,15 @@ namespace rdbModel {
     return m_type->isCompatible(otherCol->m_type);
   }
 
+  bool Column::isAutoIncrement() const {
+    return (getSource()->m_from == ColumnSource::FROMautoIncrement);
+  }
+
   Visitor::VisitorState Column::accept(Visitor* v) {
 
-    return v->visitColumn(this);
+    Visitor::VisitorState state = v->visitColumn(this);
+    if (state == Visitor::BRANCHDONE) return Visitor::CONTINUE;
+    return state;
   }
 
 }

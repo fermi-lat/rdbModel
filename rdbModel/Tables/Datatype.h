@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.5 2004/03/20 00:48:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.6 2004/03/28 08:23:42 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -56,6 +56,8 @@ namespace rdbModel{
     /// is in accord with restriction, if any
     bool okValue(const std::string& val) const;
     bool isCompatible(const Datatype* other) const;
+    TYPES getType() const {return m_type;}
+    int   getOuputSize() const {return m_outputSize;}
 
     /// Return pointer to Enum object owned by datatype (if none, return
     /// null pointer).

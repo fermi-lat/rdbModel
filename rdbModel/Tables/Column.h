@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.5 2004/03/20 00:48:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.6 2004/03/28 08:23:42 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -43,6 +43,12 @@ namespace rdbModel{
     /// Return true if otherCol and this have compatible datatypes
     bool isCompatible(const Column* otherCol) const;
 
+    /// Returns true if column may take on value NULL
+    bool nullAllowed() { return getSource()->m_null;}
+
+    bool isAutoIncrement() const;  
+
+                               
     Visitor::VisitorState accept(Visitor* v);
     //    Visitor::VisitorState acceptNotRec(Visitor* v);
 
@@ -65,6 +71,7 @@ namespace rdbModel{
     // So far no need for anything other than default constructor
     // and destructor.  Might end up embedding this in Column altogether.
 
+      /// Source of value.
       enum FROM {
         FROMdefault = 1,          // enduser can override default, however
         FROMautoIncrement,
@@ -75,6 +82,8 @@ namespace rdbModel{
       
       std::string m_default;
       FROM m_from;
+
+      /// Can this field have the value NULL?
       bool m_null;
     };                     // end nested ColumnSource class
 

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.1 2004/03/05 01:38:52 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.2 2004/03/06 01:15:25 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -53,7 +53,8 @@ namespace rdbModel {
   Visitor::VisitorState Table::accept(Visitor* v) {
     
     Visitor::VisitorState state = v->visitTable(this);
-    if (state != Visitor::CONTINUE) return state;
+    if (state == Visitor::BRANCHDONE) return Visitor::CONTINUE;
+    if (state != Visitor::CONTINUE)       return state;
 
     unsigned n = m_cols.size();
 
