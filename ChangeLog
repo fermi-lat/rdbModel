@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue May 18 16:13:40 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx MysqlResults.cxx 
+Log Message:
+Add new option limitOffset argument to select method; also some bug fixes
+
+    *
+------------------------------------------------------------
 User: jrb  Tue May 18 16:13:18 PDT 2004
 rdbModel/rdbModel/Db
 
