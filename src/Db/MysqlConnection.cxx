@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.9 2004/04/07 00:32:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.10 2004/04/07 23:06:49 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -279,13 +279,41 @@ namespace rdbModel {
       std::string codeString;
       facilities::Util::itoa(mysqlRet, codeString);
       msg += codeString;
-      throw RdbException(msg);
+      throw RdbException(msg, mysqlRet);
       return 0;
     }
 
     MYSQL_RES *myres = mysql_store_result(m_mysql);
     MysqlResults* results = new MysqlResults(myres);
     return results;
+  }
+
+  ResultHandle* MysqlConnection::dbRequest(const std::string& request) {
+    int mysqlRet = mysql_query(m_mysql, request.c_str());
+    if (mysqlRet) {
+      std::string msg = 
+        "rdbModel::MysqlConnection::dbRequest: mysql_query error, code ";
+      std::string codeString;
+      facilities::Util::itoa(mysqlRet, codeString);
+      msg += codeString;
+      throw RdbException(msg, mysqlRet);
+      return 0;
+    }
+
+    MYSQL_RES *myres = mysql_store_result(m_mysql);
+    if (!myres) {
+      // Was it supposed to return data?
+      if (mysql_field_count(m_mysql) == 0) { // no data expected
+        return 0;
+      }
+      else {
+        std::string msg =
+          "rdbModel::MysqlConnection::dbRequest: expected data; none returned";
+        throw RdbException(msg);
+        return 0;
+      }
+    }
+    return new MysqlResults(myres);
   }
 
   bool MysqlConnection::compileAssertion(const Assertion* a, 
