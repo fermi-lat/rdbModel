@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  1 19:05:05 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Column.cxx Index.cxx Table.cxx 
+Log Message:
+Little changes so that MysqlConnection::matchSchema  can do its thing
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr  1 19:04:45 PST 2004
 rdbModel/src/Management
 
