@@ -1,4 +1,4 @@
-// $Header:  $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -13,7 +13,7 @@ namespace rdbModel{
   public:
     // Include MySQL-supported types we might conceivably use
     enum TYPES {
-      TYPEenum = 1,
+      TYPEenum = 0,
       TYPEdatetime,
       TYPEtimestamp,
       TYPEint,
@@ -33,14 +33,11 @@ namespace rdbModel{
       RESTRICTfile      // value must have valid file path syntax
     };
 
-    Datatype() : m_restrict(0), m_enum(0)  {}
+    Datatype() : m_restrict(0), m_enum(0), m_isInt(false)  {}
     ~Datatype() {if (m_enum) delete m_enum;}
     /// Check that supplied string has proper syntax for our type and
     /// is in accord with restriction, if any
     bool okValue(const std::string& val);
-
-    Visitor::VisitorState accept(Visitor* v);
-    Visitor::VisitorState acceptNotRec(Visitor* v);
 
   private:    // embedded class since Enum restriction is a bit more complex
     class Enum {
@@ -53,7 +50,19 @@ namespace rdbModel{
 
   private:
     friend XercesBuilder;
+
+    // Bring all internal data specific to type up to date.  
+    // Return type discovered, or -1 if unrecognized
+    int setType(std::string name);
+
+    // In case restriction type is RESTRICTinterval, bring internal data
+    // up to date.  Return true if strings represent valid min and
+    // max for column datatype
+    bool setInterval(const std::string& min, const std::string& max);
+
     std::string m_typename;
+
+    int m_outputSize;
 
     TYPES m_type;    // Do we want this or is string rep. good enough?
     RESTRICT m_restrict;
@@ -62,6 +71,9 @@ namespace rdbModel{
     Enum* m_enum;
     std::string m_min;   // form of these depends on value of m_type
     std::string m_max;   
+    bool m_isInt;
+    int m_minInt;         // applies only to integer types
+    int m_maxInt; 
 
   };
 }
