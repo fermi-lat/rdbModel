@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.6 2004/04/03 00:21:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.7 2004/04/03 00:58:05 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -64,7 +64,9 @@ namespace {
 namespace rdbModel {
   bool   MysqlConnection::m_compileInit = false;
 
-  MysqlConnection::MysqlConnection() : m_mysql(0), m_connected(0) {
+  MysqlConnection::MysqlConnection() : m_mysql(0), m_connected(0),
+                                       m_visitorType(VISITORundefined),
+                                       m_tempRes(0) {
     m_mysql = new MYSQL;
 
   }
@@ -100,7 +102,7 @@ namespace rdbModel {
                                           port, NULL, 0);
 
     if (connected != 0) {  // Everything is fine.  Put out an info message
-      std::cout << "Successfully connected to MySQL host" << 
+      std::cout << "Successfully connected to MySQL host " << 
         host << std::endl;
       m_connected = true;
       m_dbName = dbName;
@@ -460,19 +462,20 @@ namespace rdbModel {
     }
     
     // Null
-    bool nullable = (colDescrip[2] == "NULL");
+    bool nullable = (std::string(colDescrip[2]) == std::string("YES"));
     if (nullable != col->nullAllowed()) {
       m_matchReturn = MATCHfail;
       return Visitor::ERRORABORT;
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
     // Save primary key info, if any
-    if (colDescrip[3] == "PRI") {
+    if (std::string(colDescrip[3]) == std::string("PRI")) {
       m_primColName = myName;
     }
 
+    // Field 4 is default
     // Extra (may say auto_increment)
-    bool autoInc = (colDescrip[4] == "auto_increment");
+    bool autoInc = (colDescrip[5] == "auto_increment");
     if (autoInc != col->isAutoIncrement()) {
       m_matchReturn = MATCHfail;
       return Visitor::ERRORABORT;
@@ -483,7 +486,10 @@ namespace rdbModel {
   bool MysqlConnection::checkDType(Datatype* dtype, 
                                    const std::string& sqlType) {
     std::string base;
-    int sqlSize = extractSize(sqlType);
+    int sqlSize;
+    if (dtype->getType() != Datatype::TYPEenum) {
+      sqlSize = extractSize(sqlType);
+    }
 
     // Cases  char, varchar, enum and datetime are handled entirely within
     // the switch statement, but most do the bulk of the work in
