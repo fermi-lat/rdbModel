@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.8 2004/04/06 07:27:53 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.9 2004/04/07 00:32:01 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -151,7 +151,7 @@ namespace rdbModel {
     m_matchReturn = MATCHequivalent;
     unsigned int ret = rdb->accept(this);
 
-    if ((ret == Visitor::ERROR) || (ret == Visitor::ERRORABORT)) {
+    if ((ret == Visitor::VERROR) || (ret == Visitor::VERRORABORT)) {
       return MATCHfail;
     }
     else return m_matchReturn;
@@ -343,7 +343,7 @@ namespace rdbModel {
                                         std::string &sqlString) {
     if (op->isCompareOp() ) return compileComparison(op, sqlString);
     
-    bool ret;
+    bool ret = true;
 
     const std::vector<Assertion::Operator*>& children = op->getChildren();
     unsigned nChild = children.size();
@@ -408,7 +408,7 @@ namespace rdbModel {
     
     if (m_dbName != rdb->getDbName()) {
       m_matchReturn = MATCHfail;
-      return Visitor::DONE;
+      return Visitor::VDONE;
     }
     
     unsigned int nLocal = rdb->getNTable();
@@ -418,18 +418,18 @@ namespace rdbModel {
     MYSQL_RES* res = mysql_list_tables(m_mysql, 0);
     if (!res) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
     unsigned int nRemote = mysql_num_rows(res);
     mysql_free_result(res);
 
     if (nRemote < nLocal) {
       m_matchReturn = MATCHfail;
-      return Visitor::DONE;
+      return Visitor::VDONE;
     }
     else if (nRemote > nLocal) m_matchReturn = MATCHcompatible;
 
-    return Visitor::CONTINUE;
+    return Visitor::VCONTINUE;
   }
 
   Visitor::VisitorState MysqlConnection::visitTable(Table* table) {
@@ -447,13 +447,13 @@ namespace rdbModel {
     int ret = mysql_query(m_mysql, query.c_str());
     if (ret) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
       
     m_tempRes = mysql_store_result(m_mysql);
     if (!m_tempRes) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
     // Result set is a table with fields "Field"(the name) "Type" "Null"(yes
     // or no) "Key" "Default", "Extra"  
@@ -465,7 +465,7 @@ namespace rdbModel {
       std::string name = std::string(colDescrip[0]);
       m_colIx[name] = iRow;
     }
-    return Visitor::CONTINUE;
+    return Visitor::VCONTINUE;
 
   }
 
@@ -473,7 +473,7 @@ namespace rdbModel {
     std::string myName = col->getName();
     if (m_colIx.find(myName) == m_colIx.end()) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
     unsigned int ix = m_colIx[myName];
     mysql_data_seek(m_tempRes, ix);
@@ -484,14 +484,14 @@ namespace rdbModel {
     Datatype* dtype = col->getDatatype();
     if (!checkDType(dtype, sqlDtype)) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
     
     // Null
     bool nullable = (std::string(colDescrip[2]) == std::string("YES"));
     if (nullable != col->nullAllowed()) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
     // Save primary key info, if any
@@ -504,9 +504,9 @@ namespace rdbModel {
     bool autoInc = (colDescrip[5] == "auto_increment");
     if (autoInc != col->isAutoIncrement()) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
-    return Visitor::CONTINUE;
+    return Visitor::VCONTINUE;
   }
 
   bool MysqlConnection::checkDType(Datatype* dtype, 
@@ -525,7 +525,7 @@ namespace rdbModel {
       base = "enum";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return Visitor::ERRORABORT;
+        return false;
       }
       Enum* ourEnum = dtype->getEnum();
       // Finally compare local list of choices to those listed in sqlType
@@ -536,7 +536,7 @@ namespace rdbModel {
       base = "varchar";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return Visitor::ERRORABORT;
+        return false;
       }
       // size in db must be at least as large as size in Col.
       if (sqlSize < dtype->getOutputSize()) {
@@ -552,7 +552,7 @@ namespace rdbModel {
       base = "char";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return Visitor::ERRORABORT;
+        return Visitor::VERRORABORT;
       }
       //  For char datatype unspecified size is equivalent to size=1
       if (!sqlSize) sqlSize = 1;
@@ -604,7 +604,7 @@ namespace rdbModel {
     }     // end switch
     if (sqlType.find(base) != 0) {
       m_matchReturn = MATCHfail;
-      return Visitor::ERRORABORT;
+      return Visitor::VERRORABORT;
     }
     // Now check size.  It's only for display, so mismatch is not failure
     if (sqlSize != dtype->getOutputSize()) {
@@ -617,12 +617,12 @@ namespace rdbModel {
 
 
   Visitor::VisitorState MysqlConnection::visitIndex(Index* ) {
-    return Visitor::CONTINUE;
+    return Visitor::VCONTINUE;
     // might put something real here later
   }
 
   Visitor::VisitorState MysqlConnection::visitAssertion(Assertion*) {
-    return Visitor::CONTINUE;
+    return Visitor::VCONTINUE;
   }
 
 } // end namespace rdbModel

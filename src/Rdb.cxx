@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.1 2004/03/04 01:07:44 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.2 2004/03/06 01:13:29 jrb Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 
@@ -41,13 +41,13 @@ namespace rdbModel {
 
   unsigned int Rdb::accept(Visitor* v) {
     Visitor::VisitorState state = v->visitRdb(this);
-    if (state != Visitor::CONTINUE) return state;
+    if (state != Visitor::VCONTINUE) return state;
 
     unsigned nTable = m_tables.size();
 
     for (unsigned i = 0; i < nTable; i++) {
       state = m_tables[i]->accept(v);
-      if (state != Visitor::CONTINUE) return state;
+      if (state != Visitor::VCONTINUE) return state;
     }
     return state;
   }
