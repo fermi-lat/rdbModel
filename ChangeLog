@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Apr  6 17:32:01 PDT 2004
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Implement alternate "open" method which retrieves connection parameters from
+a file
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Apr  6 17:31:42 PDT 2004
 rdbModel/rdbModel/Db
 
