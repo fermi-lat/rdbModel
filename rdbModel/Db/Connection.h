@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.8 2004/04/15 22:03:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.9 2004/05/06 01:33:01 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -87,7 +87,8 @@ namespace rdbModel{
     virtual bool insertRow(const std::string& tableName, 
                            const StringVector& colNames, 
                            const StringVector& values,
-                           int* auto_value=0) = 0;
+                           int* auto_value=0,
+                           const StringVector* nullCols = 0) = 0;
 
     /*
        So far anticipated uses of UPDATE would just modify a single row

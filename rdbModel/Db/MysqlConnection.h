@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.9 2004/04/15 22:03:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.10 2004/05/06 01:33:01 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -62,6 +62,9 @@ namespace rdbModel{
         the dbms. Return true if row was inserted successfully
         If @a auto_value is non-zero and the table has an auto-increment
         column, its value will be returned.
+        If @a nullCols is non-zero, insertRow will treat each string
+        in the vector as a column name whose value should be set to
+        NULL
 
         Might also want to add a routine for INSERT ... SELECT
     */
@@ -69,7 +72,8 @@ namespace rdbModel{
     virtual bool insertRow(const std::string& tableName, 
                            const StringVector& colNames, 
                            const StringVector& values,
-                           int* auto_value=0);
+                           int* auto_value=0,
+                           const StringVector* nullCols = 0);
 
 
     /**
