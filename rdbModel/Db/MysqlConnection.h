@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.7 2004/04/08 01:34:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.8 2004/04/10 01:15:27 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -39,8 +39,8 @@ namespace rdbModel{
     virtual ~MysqlConnection();
     virtual bool open(const std::string& host, const std::string& userid,
                       const std::string& password,
-                      const std::string& dbName,
-                      unsigned int       port=0);
+                      const std::string& dbName);
+                      //                      ,unsigned int       port=0);
 
     /** Parameter is normally path for an xml file descrbing the 
         connection parameters */

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.11 2004/04/08 01:35:31 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.12 2004/04/10 01:15:57 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -95,8 +95,8 @@ namespace rdbModel {
   bool MysqlConnection::open(const std::string& host, 
                              const std::string& user,
                              const std::string& password,
-                             const std::string& dbName,
-                             unsigned int       port) {
+                             const std::string& dbName) {
+                             //     , unsigned int       port) {
     if (dbName.size() == 0) {
       (*m_err) << 
         "rdbModel::MysqlConnection::open : null db name not allowed!" <<
@@ -107,8 +107,31 @@ namespace rdbModel {
     m_mysql = new MYSQL;
     mysql_init(m_mysql);
 
+    // 'host' argument is of the form hostname[:port]
+    //  That is, port section is optional.  If not supplied, use
+    // default port.
+    std::string hostOnly;
+    int port = 0;
+    unsigned int colonLoc = host.find(":");
+    if (colonLoc == std::string::npos) {
+      hostOnly = host;
+    }
+    else {
+      hostOnly = host.substr(0, colonLoc);
+      std::string portString = host.substr(colonLoc+1);
+      try {
+        port = facilities::Util::stringToInt(portString);
+      }
+      catch (facilities::WrongType ex) {
+        (*m_err) << "From MysqlConnection::connect.  Bad port: "
+                 << ex.getMsg() << std::endl;
+        return false;
+      }
+
+    }
     //    mysql_init(m_mysql);
-    MYSQL *connected = mysql_real_connect(m_mysql, host.c_str(), user.c_str(),
+    MYSQL *connected = mysql_real_connect(m_mysql, hostOnly.c_str(), 
+                                          user.c_str(),
                                           password.c_str(), dbName.c_str(),
                                           port, NULL, 0);
 
@@ -140,12 +163,13 @@ namespace rdbModel {
     std::string user = xml::Dom::getAttribute(conn, "user");
     std::string password = xml::Dom::getAttribute(conn, "password");
     std::string dbname = xml::Dom::getAttribute(conn, "dbname");
-    int port = xml::Dom::getIntAttribute(conn, "port");
+    //    int port = xml::Dom::getIntAttribute(conn, "port");
     if (password.size() == 0 ) { // prompt for password?
       (*m_out) << "interactive login NYI " << std::endl;
       return false;
     }
-    return this->open(host, user, password, dbname, port);
+    //    return this->open(host, user, password, dbname, port);
+    return this->open(host, user, password, dbname);
   }
 
 
