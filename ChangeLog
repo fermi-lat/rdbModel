@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 30 18:11:58 PST 2004
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx 
+Log Message:
+Implemnt new constructors for Assertion and Assertion::Operator
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Mar 30 18:11:36 PST 2004
 rdbModel/src/Management
 
