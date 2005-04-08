@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Fri Apr  8 12:24:01 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_test.xml calib_user.xml 
+Log Message:
+Add a few more standard values for calib_type to the list: TKR_ChargeScale,
+TKR_TrgThresh, TKR_DataThresh.  (even though there is no support for 
+the thresholds yet in remainder of calibration infrastructure).
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v1r6p4, operation: add
 Package: rdbModel
