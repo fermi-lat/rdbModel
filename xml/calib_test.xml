@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE rdbms SYSTEM "./rdbmsDescrip.dtd" >
 <rdbms dbs="calib_test"
-       DTDversion="1.0"
-       DTDexpected="1.0"
-       CVSid= "$Id: calib_test.xml,v 1.1 2005/02/24 20:53:54 jrb Exp $" 
+       DTDversion="1.1"
+       DTDexpected="1.1"
+       CVSid= "$Id: calib_test.xml,v 1.2 2005/04/08 19:24:01 jrb Exp $" 
  >
 <table name="metadata_v2r1" 
    comment="metadata table for LAT calibrations" version="v2r1">
@@ -29,8 +29,9 @@
   </col>
 
   <col name="instrument" >
-     <src  null="false">  <!-- i.e. this is a required field -->
-       <from agent="enduser" />
+      <!-- this is a required field -->
+     <src  null="false" stickyInsert="true"> 
+       <from agent="enduser"  />
      </src>
      <type typename="varchar" size="24">
        <restriction>
@@ -60,7 +61,7 @@
   </col>
 
   <col name="flavor" >
-    <src null="false">
+    <src null="false" stickyInsert="true">
       <default value="vanilla" />
     </src>
     <type typename="varchar" size="40">
@@ -74,7 +75,7 @@
   </col>
 
   <col name="data_fmt" >
-    <src null="false" >
+    <src null="false" stickyInsert="true">
       <from agent="enduser" />
     </src>
     <type typename="varchar" size="10">
@@ -107,7 +108,7 @@
   </col>
 
   <col name="vstart" >
-    <src  null="false" > 
+    <src  null="false" stickyInsert="true"> 
       <from agent="enduser" />
     </src>
     <type typename="datetime">
@@ -123,7 +124,7 @@
     <!-- If no value is supplied, calibration is marked as being
       valid until the last possible time
      -->
-    <src null="true"> 
+    <src null="true" stickyInsert="true"> 
       <default value="2037-12-31" />
     </src>
     <type typename="datetime">
@@ -135,7 +136,7 @@
   </col>
 
   <col name="proc_level" >
-    <src null="false" >
+    <src null="false" stickyInsert="true">
       <default value="TEST" />
     </src>
     <type typename="enum">
@@ -152,7 +153,7 @@
 
 
   <col name="completion" >
-    <src null="false" >
+    <src null="false" stickyInsert="true">
       <from agent="enduser"  />
     </src>
     <type typename="enum">
@@ -170,7 +171,7 @@
 
   <col name="locale" >
     <!-- Should it be required rather than defaulted? -->
-    <src null="false" > 
+    <src null="false" stickyInsert="true"> 
       <default value="orbit" />
     </src>
     <type typename="varchar" size="12">
@@ -185,7 +186,7 @@
 
 
   <col name="input_desc" >
-    <src null="true" >
+    <src null="true" stickyInsert="true">
       <from agent="enduser" />
     </src>
     <type typename="varchar" size="255" />
@@ -203,7 +204,7 @@
 
   <col name="fmt_version" >
     <!-- optional; enduser specifies if anyone does -->
-    <src null="true">
+    <src null="true" stickyInsert="true">
       <from agent="enduser"  />
     </src>
     <type typename="varchar" size="16" />
@@ -223,7 +224,7 @@
          Note src element is redundant once we know type is "timestamp"
      -->
     <src null="true">
-      <from agent="now"  />         
+      <from agent="service" contents="update_time" />         
     </src>
     <type typename="timestamp" size="14" />
     <comment>Time of last modification to row. Equal to time it was entered
@@ -249,7 +250,7 @@
      
 
   <col name="prod_start" >
-    <src null="true">
+    <src null="true" stickyInsert="true">
       <from agent="enduser" />
     </src>
     <type typename="datetime" >
@@ -263,7 +264,7 @@
   </col>
 
   <col name="prod_end" >
-    <src  null="true" >
+    <src  null="true" stickyInsert="true">
       <from agent="enduser" />
     </src>
     <type typename="datetime" >
@@ -277,7 +278,7 @@
   </col>
 
   <col name="input_start" >
-    <src null="true">
+    <src null="true" stickyInsert="true">
       <from agent="enduser" />
     </src>
     <type typename="datetime" >
@@ -292,7 +293,7 @@
   </col>
 
   <col name="input_end" >
-    <src  null="true" >
+    <src  null="true" stickyInsert="true">
       <from agent="enduser" />
     </src>
     <type typename="datetime" >
