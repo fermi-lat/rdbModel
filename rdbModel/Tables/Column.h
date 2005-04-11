@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.11 2004/07/21 05:36:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.12 2004/08/24 00:04:21 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -21,11 +21,13 @@ namespace rdbModel {
     //    class ColumnSource;      // embedded class, described below
 
   public:
-    /// Source of value.
+    /// Source of value.  Note timestamp with value current time should
+    /// be indicated by contents value CONTENTSupdateTime or (if only
+    /// upon insert) CONTENTS enterTime
     enum FROM {
       FROMdefault = 1,          // enduser can override default, however
       FROMautoIncrement,
-      FROMnow,                  // datatype must be timestamp
+      FROMnow,                  // datatype must be timestamp - deprecated
       FROMprogram,
       FROMendUser
     };
@@ -35,7 +37,8 @@ namespace rdbModel {
       CONTENTSunspecified = 0,
       CONTENTSserviceName = 1,
       CONTENTSusername    = 2,
-      CONTENTSenterTime
+      CONTENTSinsertTime   = 3,
+      CONTENTSupdateTime = 4
     };
 
     Column(Table* myTable=0) : m_myTable(myTable), m_type(0), 
@@ -69,6 +72,8 @@ namespace rdbModel {
 
     /// Returns true if column may take on value NULL
     bool nullAllowed() const { return m_null;}
+   
+    bool stickyInsert() const { return m_stickyInsert;}
 
     bool isPrimaryKey() const {return m_isPrimaryKey;}
 
@@ -92,8 +97,11 @@ namespace rdbModel {
     FROM m_from;
     CONTENTS m_contents;
 
-      /// Can this field have the value NULL?
+    /// Can this field have the value NULL?
     bool m_null;
+    ///  For multi-insert, does this column normally keep same value
+    /// for all the inserts?
+    bool m_stickyInsert;  
     
     /// Is this column a primary key?
     bool m_isPrimaryKey;

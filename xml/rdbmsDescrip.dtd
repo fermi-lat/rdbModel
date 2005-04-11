@@ -1,5 +1,5 @@
 <!--
-$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.4 2004/06/09 17:27:49 jrb Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.5 2004/08/24 00:06:37 jrb Exp $
  /** @file 
   @anchor dtd
   dtd for describing contents of sql tables, including constraints
@@ -20,7 +20,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.4 2004/0
 
 <!ELEMENT rdbms (table+) >
 <!ATTLIST rdbms dbs NMTOKEN #REQUIRED     
-          DTDversion NMTOKEN #FIXED "1.0"
+          DTDversion NMTOKEN #FIXED "1.1"
           DTDexpected NMTOKEN #REQUIRED 
           CVSid      CDATA #REQUIRED >
 
@@ -35,18 +35,24 @@ $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/xml/rdbmsDescrip.dtd,v 1.4 2004/0
 <!ATTLIST col name ID #REQUIRED >
 
 <!ELEMENT src  (default | from) >
-<!ATTLIST src null (true | false) #REQUIRED >
+<!ATTLIST src null (true | false) #REQUIRED
+              stickyInsert (true | false) "false" >
+
 
 <!-- The contents attribute is only of interest when agent="service".
      The service is expected to fill columns when doing an INSERT 
      in case contents="service_name" or contents="username" .  
      In the first case the column value should be some string identifying
      the service; in the second the value should be user id or other
-     identifying information of program user. -->
+     identifying information of program user. 
+     Note old possible value of "now" has been eliminated. -->
 <!ELEMENT from EMPTY>
-<!ATTLIST from agent (auto_increment | now | enduser | service) #REQUIRED 
-               contents (unspecified | service_name | username | insert_time) 
-         "unspecified" >
+<!ATTLIST from 
+             agent (auto_increment |  enduser | service) #REQUIRED 
+             contents (unspecified | service_name | username | insert_time
+                                   | update_time) 
+                           "unspecified" >
+
 
 <!ELEMENT default EMPTY>
 <!ATTLIST default value NMTOKEN #REQUIRED>
