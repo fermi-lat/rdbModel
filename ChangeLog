@@ -1,5 +1,20 @@
 ------------------------------------------------------------
 User: jrb  Mon Apr 11 00:10:32 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_test.xml calib_user.xml rdbmsDescrip.dtd 
+Log Message:
+rdbmsDescrip.dtd:  Add new value for content type attribute of <src>
+    ("insert_time") and add new attribute stickyInsert
+*.xml:  enter_time now has content type "insert_time";
+        set stickyInsert to "true" as appropriate
+Column.*:  support new attribute stuff for <col>
+XercesBuilder.*:  Make consistent with new <col> definition
+
+    *
+------------------------------------------------------------
+User: jrb  Mon Apr 11 00:10:32 PDT 2005
 rdbModel/src/Management
 
 Modified Files:
