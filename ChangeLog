@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Apr 11 09:06:42 PDT 2005
+rdbModel/xml
+
+Removed Files:
+	calibMetaDb.xml calibTest.xml calibUser.xml 
+Log Message:
+Remove obsolete files.  Standard files are calib.xml, calib_user.xml and 
+calib_test.xml.
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Apr 11 00:10:32 PDT 2005
 rdbModel/xml
 
