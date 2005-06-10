@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    elementFormDefault="unqualified" >
+  <xs:element name="rdbms">
+    <xs:annotation>
+      <xs:documentation>
+       Root element for relational database 
+                   description
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="table"  type="tableType" maxOccurs="unbounded" >
+
+          <xs:key name="colId">
+            <xs:selector xpath="col" />
+            <xs:field    xpath="@name" />
+          </xs:key >
+
+          <xs:key name="assertId">
+            <xs:selector xpath="assert" />
+            <xs:field    xpath="@name" />
+          </xs:key >
+
+          <xs:keyref name="primaryColumn" refer="colId">
+            <xs:selector xpath="primary" />
+            <xs:field    xpath="@col" />
+          </xs:keyref>
+
+          <xs:keyref name="nullColumn" refer="colId">
+            <xs:selector xpath="assert/isNull" />
+            <xs:field    xpath="@col" />
+          </xs:keyref>
+
+          <xs:keyref name="colRefColumn" refer="colId">
+            <xs:selector xpath=".//colRef" />
+            <xs:field    xpath="@val" />
+          </xs:keyref>
+<!-- the troublemaker is this keyref -->
+          <xs:keyref name="setDestColumn" refer="colId">
+            <xs:selector xpath=".//set" />
+            <xs:field    xpath="@destCol" />
+          </xs:keyref>
+
+          <xs:keyref name="selectColumn" refer="colId">
+            <xs:selector xpath=".//select" />
+            <xs:field    xpath="." />
+          </xs:keyref>
+
+          <xs:keyref name="queryAssert" refer="assertId">
+            <xs:selector xpath=".//query" />
+            <xs:field    xpath="@assertRef" />
+          </xs:keyref>
+
+
+          <xs:keyref name="insertOfficial" refer="assertId">
+            <xs:selector xpath="insertNew" />
+            <xs:field    xpath="@official" />
+          </xs:keyref>
+
+          <xs:keyref name="insertInternal" refer="assertId">
+            <xs:selector xpath="insertNew" />
+            <xs:field    xpath="@internalCond" />
+          </xs:keyref>
+
+          <xs:keyref name="superOnlyIf" refer="assertId">
+            <xs:selector xpath="supersede" />
+            <xs:field    xpath="@onlyIf" />
+          </xs:keyref>
+
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="dbs" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="DTDexpected" type="xs:NMTOKEN" fixed="2.0" />
+      <xs:attribute name="DTDversion" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="CVSid" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:key name="tableId">
+      <xs:selector xpath="table" />
+      <xs:field    xpath="@name" />
+    </xs:key>
+
+  </xs:element>
+
+  <xs:complexType name="tableType">
+    <xs:sequence>
+      <xs:element name="col" type="columnType" maxOccurs="unbounded" />
+      <xs:element name="primary" minOccurs="0" >
+        <xs:complexType>
+          <xs:attribute name="col" type="xs:NMTOKEN" use="required" />
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="index" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+          <xs:attribute name="cols" type="xs:NMTOKENS" use="required" />
+          <xs:attribute name="primary" type="xs:boolean" default="false" />
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="assert" type="assertType" minOccurs="0" 
+                  maxOccurs="unbounded" />
+
+      <xs:element name="insertNew" type="insertNewType" minOccurs="0" />
+      <xs:element name="supersede" type="supersedeType" minOccurs="0" />
+
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+    <xs:attribute name="version" type="xs:NMTOKEN" use="required" />
+    <xs:attribute name="comment" type="xs:string" />
+
+  </xs:complexType>       <!-- end tableType definition -->
+
+
+  <xs:complexType name="columnType">
+    <xs:sequence>
+      <xs:element name="src" >
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="default">
+              <xs:complexType>
+                <xs:attribute name="value" type="xs:NMTOKEN" use="required" />
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="from" >
+              <xs:complexType>
+                <xs:attribute name="agent" use="required" >
+                  <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                      <xs:enumeration value="auto_increment" />
+                      <xs:enumeration value="enduser" />
+                      <xs:enumeration value="service" />
+                   </xs:restriction>
+                 </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="contents" default="unspecified" >
+                  <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                      <xs:enumeration value="unspecified" />
+                      <xs:enumeration value="service_name" />
+                      <xs:enumeration value="username" />
+                      <xs:enumeration value="insert_time" />
+                      <xs:enumeration value="update_time" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:attribute name="null" type="xs:boolean" use="required" />
+          <xs:attribute name="stickyInsert" type="xs:boolean" 
+                        default="false" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="type" type="typeType" />
+      <xs:element name="comment" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+  </xs:complexType>            <!-- end of columnType definition -->
+
+  <xs:complexType name="typeType"  >
+    <xs:sequence>
+      <xs:element name="restriction" minOccurs="0" >
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="nonnegative" >
+              <xs:complexType />
+            </xs:element>
+            <xs:element name="positive" >
+              <xs:complexType />
+            </xs:element>
+            <xs:element name="interval" >
+              <xs:complexType >
+                <xs:attribute name="min" type="xs:NMTOKEN" use="required" />
+                <xs:attribute name="max" type="xs:NMTOKEN" use="required" />
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="enum" >
+              <xs:complexType >
+                <xs:attribute name="values" type="xs:NMTOKENS" 
+                               use="required" />
+
+                <xs:attribute name="use" use="required" >
+                  <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                      <xs:enumeration value="prefer" />
+                      <xs:enumeration value="require" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="file" >
+              <xs:complexType />
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>                 <!-- end of <restriction> def. -->
+    </xs:sequence>
+    <xs:attribute name="size" type="xs:positiveInteger" />
+    <xs:attribute name="typename" use="required" >
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="enum" />
+          <xs:enumeration value="datetime" />
+          <xs:enumeration value="timestamp" />
+          <xs:enumeration value="int" />
+          <xs:enumeration value="mediumint" />
+          <xs:enumeration value="smallint" />
+          <xs:enumeration value="real" />
+          <xs:enumeration value="double" />
+          <xs:enumeration value="varchar" />
+          <xs:enumeration value="char" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>             <!-- end of typeType definition -->
+
+<!-- stub assertType definition for now -->
+  <xs:complexType name="assertType" >
+
+    <xs:group ref="operands" />
+    <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+  </xs:complexType>
+
+  <xs:group name="operands" >
+    <xs:choice>
+      <xs:element name="or" type="operandsType" />
+      <xs:element name="and" type="operandsType" />
+<!--      <xs:element name="exists" type="existsType" /> -->
+      <xs:element name="not" type="operandType" />
+      <xs:element name="isNull" >
+        <xs:complexType>
+          <xs:attribute name="col" type="xs:NMTOKEN" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="compare" type="compareType" />
+    </xs:choice>
+  </xs:group>
+
+<!-- multiple operands -->
+  <xs:complexType name="operandsType" >
+    <xs:sequence>
+      <xs:group ref="operands" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+<!-- single operand -->
+  <xs:complexType name="operandType" >
+    <xs:sequence>
+      <xs:group ref="operands" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="compareType">
+    <xs:choice>
+      <xs:sequence>
+        <xs:element ref="colRef" />
+        <xs:element ref="value" />
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element ref="colRef" />
+        <xs:element ref="colRef" />
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element ref="value" />
+        <xs:element ref="colRef" />
+      </xs:sequence>
+    </xs:choice>
+    <xs:attribute name="relation" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="lessThan" />
+          <xs:enumeration value="greaterThan" />
+          <xs:enumeration value="equal" />
+          <xs:enumeration value="notEqual" />
+          <xs:enumeration value="lessOrEqual" />
+          <xs:enumeration value="greaterOrEqual" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="colRef">
+    <xs:complexType>
+      <xs:attribute name="which" use="optional" default="old">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="old" />
+            <xs:enumeration value="toBe" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <!-- if value of force attribute is false, the value specified
+           by colRef is merely intended as a default which may be overridden
+      -->
+      <xs:attribute name="force" type="xs:boolean" use="optional" 
+                    default="true" />
+
+      <xs:attribute name="val" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="value" type="xs:NMTOKEN" />
+
+ <xs:element name='quit'>
+  <xs:complexType/>
+ </xs:element>
+
+ <xs:element name='ask'>
+  <xs:complexType/>
+ </xs:element>
+
+
+
+  <xs:complexType name="insertNewType">
+    <xs:sequence>
+      <xs:element ref="interRow" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="official" type="xs:NMTOKEN" use="optional" />
+    <xs:attribute name="internalCond" type="xs:NMTOKEN" use="optional" />
+  </xs:complexType>
+
+  <xs:element name="interRow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="query" />
+        <xs:choice>
+          <xs:element ref="quit" />
+          <xs:element ref="set" maxOccurs="unbounded" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="query">
+    <xs:annotation>
+      <xs:documentation>
+         Each &lt;select&gt; element refers to a  &lt;col&gt;. 
+         assertRef is ref to &lt;assert&gt; 
+      </xs:documentation>
+   </xs:annotation>
+   <xs:complexType>
+      <xs:sequence>
+         <xs:element name="select" type="xs:NMTOKEN" maxOccurs="unbounded" /> 
+      </xs:sequence>
+      <xs:attribute name="assertRef" type="xs:NMTOKEN" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="set">
+    <xs:annotation>
+       <xs:documentation>
+      Element to specify how to set a particular column in a particular row
+      to another value.  This is all in the context of an old row, already
+      in a table, and a new row being composed, so the only possible values
+      for the dest. row are "old" and "toBe".  The destination column is
+      specified by name (there is a keyref definition for it above).
+      The source information may be a literal value or may come from some
+      column in the old or toBe row.  In the latter case, the value may
+      just be a default, possibly to be overridden by the client, or not.
+
+       </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="colRef" />
+        <xs:element ref="value" />
+        <xs:element ref="ask" />
+      </xs:choice>
+      <xs:attribute name="destRow" use="optional" default="old">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="old" />
+            <xs:enumeration value="toBe" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="destCol" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="supersedeType">
+    <xs:sequence>
+      <xs:element ref="set" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="onlyIf" type="xs:NMTOKEN" />
+  </xs:complexType>
+
+</xs:schema>
