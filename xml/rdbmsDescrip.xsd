@@ -34,7 +34,7 @@
 
           <xs:keyref name="colRefColumn" refer="colId">
             <xs:selector xpath=".//colRef" />
-            <xs:field    xpath="@val" />
+            <xs:field    xpath="@col" />
           </xs:keyref>
 <!-- the troublemaker is this keyref -->
           <xs:keyref name="setDestColumn" refer="colId">
@@ -285,8 +285,10 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:element name="colRef">
-    <xs:complexType>
+  <xs:element name="colRef" type="colRefType" />
+
+
+    <xs:complexType name="colRefType">
       <xs:attribute name="which" use="optional" default="old">
         <xs:simpleType>
           <xs:restriction base="xs:NMTOKEN">
@@ -295,25 +297,37 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <!-- if value of force attribute is false, the value specified
-           by colRef is merely intended as a default which may be overridden
-      -->
-      <xs:attribute name="force" type="xs:boolean" use="optional" 
-                    default="true" />
 
-      <xs:attribute name="val" type="xs:NMTOKEN" use="required" />
+      <!-- name of column referred to -->
+      <xs:attribute name="col" type="xs:NMTOKEN" use="required" />
+
+
+    </xs:complexType>
+
+
+  <xs:element name="setColRef">
+    <xs:complexType>
+      <xs:complexContent> 
+        <xs:extension base="colRefType" >
+            <!-- if value of force attribute is false, the value specified
+             by colRef is merely intended as a default which may be overridden
+              -->
+          <xs:attribute name="force" type="xs:boolean" use="optional" 
+                        default="true" />
+        </xs:extension>
+      </xs:complexContent>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="value" type="xs:NMTOKEN" />
 
- <xs:element name='quit'>
-  <xs:complexType/>
- </xs:element>
+  <xs:element name='quit'>
+    <xs:complexType/>
+  </xs:element>
 
- <xs:element name='ask'>
-  <xs:complexType/>
- </xs:element>
+  <xs:element name='ask'>
+    <xs:complexType/>
+  </xs:element>
 
 
 
@@ -370,7 +384,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice>
-        <xs:element ref="colRef" />
+        <xs:element ref="setColRef" />
         <xs:element ref="value" />
         <xs:element ref="ask" />
       </xs:choice>
