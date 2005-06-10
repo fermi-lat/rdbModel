@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Thu Jun  9 17:35:31 PDT 2005
+rdbModel/xml
+
+Added Files:
+	rdbmsDescrip.xsd 
+Log Message:
+XML schema which Describe everything - maybe - rdbModel code will need to 
+know about a MySQL database and how to update it.  Likely will get tweaked 
+some more as new rdbModel code is written.
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v1r7, operation: add
 Package: rdbModel
