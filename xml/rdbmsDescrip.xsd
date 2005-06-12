@@ -27,16 +27,12 @@
             <xs:field    xpath="@col" />
           </xs:keyref>
 
-          <xs:keyref name="nullColumn" refer="colId">
-            <xs:selector xpath="assert/isNull" />
-            <xs:field    xpath="@col" />
-          </xs:keyref>
 
           <xs:keyref name="colRefColumn" refer="colId">
             <xs:selector xpath=".//colRef" />
             <xs:field    xpath="@col" />
           </xs:keyref>
-<!-- the troublemaker is this keyref -->
+
           <xs:keyref name="setDestColumn" refer="colId">
             <xs:selector xpath=".//set" />
             <xs:field    xpath="@destCol" />
@@ -234,7 +230,9 @@
       <xs:element name="not" type="operandType" />
       <xs:element name="isNull" >
         <xs:complexType>
-          <xs:attribute name="col" type="xs:NMTOKEN" use="required" />
+          <xs:sequence>
+            <xs:element  ref="colRef"  />
+          </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="compare" type="compareType" />
