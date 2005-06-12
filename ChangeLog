@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: jrb  Sun Jun 12 00:06:05 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.xsd 
+Added Files:
+	calib_test_S.xml 
+Log Message:
+1. Small change to schema rdbmsDescrip.xsd to get 'isNull' operator right
+2. Add xml file using the schema version of rdbmsDescrip, making use of
+   new elements <supersede> and <insertNew>
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Jun 10 11:51:01 PDT 2005
 rdbModel/xml
 
