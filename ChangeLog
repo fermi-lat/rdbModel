@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Sun Jun 19 13:39:20 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Table.cxx 
+Added Files:
+	InsertNew.cxx InterRow.cxx Query.cxx Set.cxx Supersede.cxx 
+Log Message:
+Upgrade code to use new form of XML file db description.  Some new features
+are not yet implemented.  Interface changes will force a major version tag. 
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Jun 19 13:39:19 PDT 2005
 rdbModel/src/Management
 
