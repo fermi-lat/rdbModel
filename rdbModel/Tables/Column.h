@@ -1,9 +1,10 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.12 2004/08/24 00:04:21 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.13 2005/04/11 07:10:32 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
 #include <string>
 #include "rdbModel/Management/Visitor.h"
+#include "rdbModel/Tables/Table.h"
 
 namespace rdbModel {
 
@@ -12,6 +13,7 @@ namespace rdbModel {
   class Enum;
 
   class XercesBuilder;
+
 
 
   /** 
@@ -53,6 +55,8 @@ namespace rdbModel {
     const std::string& getComment() const {return m_comment;};
 
     const std::string& getDefault() const {return m_default;}
+
+    const std::string& getTableName() const {return m_myTable->getName();}
 
     Datatype* getDatatype() const {return m_type;};
 

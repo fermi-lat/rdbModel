@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.12 2004/06/28 19:41:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.13 2004/08/09 17:32:26 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -19,7 +19,8 @@
 int doInsert(rdbModel::Connection* con);
 int doUpdate(rdbModel::Connection*, int serial);
 int main(int, char**) {
-  std::string infile("$(RDBMODELROOT)/xml/calibTest.xml");
+  std::string infile("$(RDBMODELROOT)/xml/calib_test_S.xml");
+  //  std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
 
   rdbModel::Manager* man = rdbModel::Manager::getManager();
 
@@ -75,7 +76,7 @@ int main(int, char**) {
   std::string connectfileT("$(RDBMODELROOT)/xml/connect/mysqlSlacT.xml");
 #endif
   
-  // Connect to real database
+  // Connect to production database, read only
   rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
 
   std::string connectfile("$(RDBMODELROOT)/xml/connect/mysqlSlac.xml");
@@ -106,10 +107,11 @@ int main(int, char**) {
 
 
   // Make a query
-  std::string rq[2];
+  std::string rq[3];
   rq[0] ="select * from metadata_v2r1";
-  rq[1] ="select garbage from metadata_v2r1";
-  for (int i = 0; i < 2; i++) {
+  rq[1] ="select calib_type from metadata_v2r1";
+  rq[2] ="select garbage from metadata_v2r1";
+  for (int i = 0; i < 3; i++) {
     try {
       rdbModel::ResultHandle* res = 
         con->dbRequest(rq[i]);
@@ -275,6 +277,7 @@ int doInsert(rdbModel::Connection* con) {
 
 int doUpdate(rdbModel::Connection* con, int serial) {
   using rdbModel::Assertion;
+  using rdbModel::Column;
   using facilities::Util;
 
   // Set up WHERE clause, always the same
@@ -282,9 +285,11 @@ int doUpdate(rdbModel::Connection* con, int serial) {
   Util::itoa(serial, serialStr);
   Assertion::Operator* serEquals = 
     new Assertion::Operator(rdbModel::OPTYPEequal, "ser_no",
-                            serialStr, false, true);
+                            serialStr, rdbModel::FIELDTYPEold, 
+                            rdbModel::FIELDTYPElit);
 
-  Assertion* whereSer = new Assertion(Assertion::WHENwhere, serEquals);
+  Assertion* whereSer = new Assertion(serEquals);
+  //  Assertion* whereSer = new Assertion(Assertion::WHENwhere, serEquals);
 
   // First call an update without any null columns; change notes field
   // and set data_size to something.

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.4 2004/04/02 03:03:30 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.5 2004/04/07 23:06:49 jrb Exp $
 #ifndef RDBMODEL_VISITOR_H
 #define RDBMODEL_VISITOR_H
 #include <string>
@@ -10,6 +10,11 @@ namespace rdbModel {
   class Column;
   class Index;
   class Assertion;
+  class InsertNew;
+  class Supersede;
+  class Query;
+  class InterRow;
+  class Set;
 
   /**
    * This abstract class is the base for the visitors hierarchy; its
@@ -45,6 +50,12 @@ namespace rdbModel {
     virtual VisitorState visitColumn(Column*) = 0;
     virtual VisitorState visitIndex(Index*) = 0;
     virtual VisitorState visitAssertion(Assertion*) = 0;
+    virtual VisitorState visitInsertNew(InsertNew*) = 0;
+    virtual VisitorState visitSupersede(Supersede*) = 0;
+    virtual VisitorState visitQuery(Query*) = 0;
+    virtual VisitorState visitSet(Set*) = 0;
+    virtual VisitorState visitInterRow(InterRow*) = 0;
+
     
   protected:
     /// If this is true, the visitor is recursive, otherwise it is not.

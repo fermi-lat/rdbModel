@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.5 2004/11/11 21:26:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.6 2005/01/05 01:22:38 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
 
@@ -10,14 +10,13 @@
 namespace rdbModel{
 
   class Table;    // single rdbms table
-  //  class Column;   // column description
-  //  class Column::ColumnSource;
   class Index;    // index/key (may be primary or not)
-  //  class Assertion; // represents logic in some sort of validity check
-  //  class Assertion::Operator;
   class Datatype;
-
-  //  class DMDocClient;
+  class Supersede;
+  class InterRow;
+  class InsertNew;
+  class Query;
+  class Set;
   /**
    * This class is a concrete Builder that use the Xerces parser and the
    * DOM functionalities to parse the xml file and build the generic model
@@ -32,28 +31,25 @@ namespace rdbModel{
      */
     XercesBuilder();
 
-
     virtual ~XercesBuilder() {};
   
-    /**  Invoke xml parser to produce DOM (in-memory) representation
-     */
+    /**  
+         Invoke xml parser to produce DOM (in-memory) representation 
+         Concrete implementation of Builder::parseInput
+    */
     virtual unsigned int parseInput(const std::string& inputPath);
 
-    /**
-     * This method implements the virtal method of Builder
-     */
+    /** Concrete implementation of pure virtual Builder::buildRdb */
     virtual int buildRdb();
 
   private:
-    /**
-     * This method builds an individual Table object from its xml description
-     * and returns a pointer to it
-     */
+    // A bunch of private methods to handle the details of creating an
+    // object from the corresponding xml description
+
+    /** Build an individual Table object from its xml description     */
     Table* buildTable(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e);
 
-    /**
-     *  build a Column from its xml description and return a pointer to it
-     */
+    /**  build a Column from its xml description */
     Column* buildColumn(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e,Table* t);
 
     /**
@@ -65,11 +61,26 @@ namespace rdbModel{
 
     Assertion* buildAssertion(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
                               Table* t);
- 
+
     Assertion::Operator* 
     buildOperator(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, Table* t);
 
     Datatype* buildDatatype(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e);
+    Set* buildSet(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, Table* t);
+
+    InsertNew* buildInsertNew(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
+                              Table* t);
+
+    InterRow* buildInterRow(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
+                            Table* t);
+
+    Query* buildQuery(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
+                      Table* t);
+
+    //   Set* buildSet(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, Table* t);
+
+    Supersede* buildSupersede(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, 
+                             Table* t);
 
     XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* m_doc;
     Rdb* m_rdb;

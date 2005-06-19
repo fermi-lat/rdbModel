@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.24 2005/01/05 01:22:53 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.25 2005/02/15 22:43:32 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -68,7 +68,7 @@ namespace rdbModel {
   MysqlConnection::MysqlConnection(std::ostream* out,
                                    std::ostream* errOut) :
     m_mysql(0), m_connected(0), m_out(out), m_err(errOut),
-    m_visitorType(VISITORundefined), m_tempRes(0) {
+    m_visitorType(VISITORundefined), m_rdb(0), m_tempRes(0) {
     if (m_out == 0) m_out = &std::cout;
     if (m_err == 0) m_err = &std::cerr;
   }
@@ -410,6 +410,14 @@ namespace rdbModel {
     return;
   }
 
+
+
+  /*  
+     Need significant changes here to deal with which="toBe" case
+     In that case, the output isn't going to be SQL; in fact, it's
+     not clear what it should be, exactly!
+  */
+
   /** Result is appended to caller-supplied string
    Convention is to use "   "  around literal values
    Note no verification is done here; that operator is in fact a comparison
@@ -418,6 +426,8 @@ namespace rdbModel {
   */
   bool MysqlConnection::compileComparison(Assertion::Operator* op, 
                                           std::string& sqlString) {
+    if (op->getToBe()) return false;  // can't compile
+
     OPTYPE opType = op->getOpType();
     if (opType == OPTYPEisNull) {
       sqlString +="(";
@@ -427,9 +437,13 @@ namespace rdbModel {
       return true;
     }
     sqlString += "(";
-    addArg(op->getLiteralness()[0], op->getCompareArgs()[0], sqlString);
+
+    bool literal0 = (op->getCompareType()[0] == FIELDTYPElit);
+    bool literal1 = (op->getCompareType()[1] == FIELDTYPElit);
+
+    addArg(literal0, op->getCompareArgs()[0], sqlString);
     sqlString += opSymbols[opType];
-    addArg(op->getLiteralness()[1], op->getCompareArgs()[1], sqlString);
+    addArg(literal1, op->getCompareArgs()[1], sqlString);
     sqlString += ")";
 
     return true;
@@ -438,7 +452,7 @@ namespace rdbModel {
   bool MysqlConnection::compileOperator(Assertion::Operator* op, 
                                         std::string &sqlString) {
     if (op->isCompareOp() ) return compileComparison(op, sqlString);
-    
+    if (op->getToBe()) return false;  // can't compile in this case
     bool ret = true;
 
     const std::vector<Assertion::Operator*>& children = op->getChildren();
@@ -732,5 +746,28 @@ namespace rdbModel {
   Visitor::VisitorState MysqlConnection::visitAssertion(Assertion*) {
     return Visitor::VCONTINUE;
   }
+
+  Visitor::VisitorState MysqlConnection::visitInsertNew(InsertNew*) {
+    return Visitor::VCONTINUE;
+  }
+
+  Visitor::VisitorState MysqlConnection::visitSupersede(Supersede*) {
+    return Visitor::VCONTINUE;
+  }
+
+  Visitor::VisitorState MysqlConnection::visitQuery(Query*) {
+    return Visitor::VCONTINUE;
+  }
+
+  Visitor::VisitorState MysqlConnection::visitSet(Set*) {
+    return Visitor::VCONTINUE;
+  }
+
+  Visitor::VisitorState MysqlConnection::visitInterRow(InterRow*) {
+    return Visitor::VCONTINUE;
+  }
+
+
+
 
 } // end namespace rdbModel
