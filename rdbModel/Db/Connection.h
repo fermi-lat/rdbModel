@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.11 2004/05/18 23:13:18 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.12 2004/06/28 19:40:24 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -92,6 +92,18 @@ namespace rdbModel{
                            const StringVector& values,
                            int* auto_value=0,
                            const StringVector* nullCols = 0) = 0;
+
+    /**
+       insert row, first checking and correcting conflicts with other
+       rows.  Must have already done successful schema match. 
+       Probably should also handles rows where agent="service".
+       Should we return some information about other rows updated?
+    */
+    virtual bool insertSmart(const std::string& tableName, 
+                             const StringVector& colNames, 
+                             const StringVector& values,
+                             int* auto_value=0,
+                             const StringVector* nullCols = 0) = 0;
 
     /*
        So far anticipated uses of UPDATE would just modify a single row

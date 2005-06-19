@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.5 2004/04/02 03:00:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.6 2004/07/02 14:21:41 riccardo Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -15,6 +15,17 @@ namespace rdbModel {
   //  class Assertion;
   class XercesBuilder;
   class Connection;
+
+    // Values for database fields may be specified in various ways
+  enum FIELDTYPE {
+    FIELDTYPElit = 0,  // literal value
+    FIELDTYPEold,      // col name, refers to (value of) col in existing row
+    FIELDTYPEtoBe,     // col name, refers to (value of) col in proposed row
+    FIELDTYPEask,       // supply value at the time of the operation
+    FIELDTYPElitDef,   // literal but may be overridden
+    FIELDTYPEoldDef,   // comes from existing row, may be overridden
+    FIELDTYPEtoBeDef  // comes from proposed row, may be overridden
+  };
 
   /**
    * This is the main container of all the rdb description.
@@ -34,9 +45,10 @@ namespace rdbModel {
      */
     virtual ~Rdb();
 
-    /// This method gives back the DTDversion
-    const std::string& getDTDversion(){return m_DTDversion;};
-    /// This method gives back the CVSid  
+
+    unsigned getMajorVersion(){return m_majorVersion;};
+    unsigned getMinorVersion(){return m_minorVersion;};
+
     const std::string& getCVSid(){return m_CVSid;};
 
     const std::string& getDbName(){return m_dbName;};
@@ -76,7 +88,7 @@ namespace rdbModel {
     // derived classes don't inherit friendliness.
     friend class rdbModel::XercesBuilder;
 
-    void setDTDversion(std::string pdtd){m_DTDversion = pdtd;};
+    //    void setDTDversion(std::string pdtd){m_DTDversion = pdtd;};
     void setCVSid(std::string pcvs){m_CVSid = pcvs;};
 
     void addTable(Table* t){m_tables.push_back(t);};
@@ -90,8 +102,10 @@ namespace rdbModel {
   
     /// SQL database name (e.g., "calib") 
     std::string m_dbName;
-    /// The DTDversion from the input xml description
-    std::string m_DTDversion;
+    /// The Schema version from the input xml description
+    unsigned m_majorVersion;
+    unsigned m_minorVersion;
+    //    std::string m_DTDversion;
     /// The CVSid from the input xml description
     std::string m_CVSid;
     Connection* m_connection;

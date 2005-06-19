@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.5 2004/04/27 00:05:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.6 2005/03/01 20:00:17 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -26,6 +26,7 @@ namespace rdbModel {
     const std::string& getName() const { return m_name;}
     Column* getColumnByName(const std::string& name) const;
     Index* getIndexByName(const std::string& name) const;
+    Assertion* getAssertionByName(const std::string& name) const;
     /// Verify that the input can be used to form an appropriate INSERT 
     /// statement for this row; if so and if we have a connection,
     /// ask the connection to do the insert and return status (an int,

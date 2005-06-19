@@ -2,9 +2,9 @@
 <rdbms        xsi:noNamespaceSchemaLocation="rdbmsDescrip.xsd"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        dbs="calib_test"
-       DTDversion="2.0"
-       DTDexpected="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.3 2005/04/11 07:10:32 jrb Exp $"   >
+       SchemaVersion="2.0"
+       SchemaExpected="2.0"
+       CVSid= "$Id: calib_test_S.xml,v 1.1 2005/06/12 07:06:05 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->

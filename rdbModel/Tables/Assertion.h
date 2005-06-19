@@ -1,9 +1,11 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.9 2004/04/20 00:13:02 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.10 2005/02/15 22:43:06 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
 #include <string>
+#include "rdbModel/Rdb.h"
 #include "rdbModel/Management/Visitor.h"
+#include "rdbModel/Tables/Column.h"
 
 namespace rdbModel{
 
@@ -24,6 +26,7 @@ namespace rdbModel{
       OPTYPEgreaterOrEqual,
       OPTYPElast
     };
+
 
   /** 
       Assertions are used in at least two ways:
@@ -55,12 +58,14 @@ namespace rdbModel{
 
   public:
     // when does this assertion get applied?
+    /*
     enum WHEN {
       WHENundefined = 0,
       WHENglobalCheck = 1,
       WHENchangeRow,
       WHENwhere     // as a WHERE clause, used and then discarded
     };
+    */
 
     class Operator {
     public:
@@ -71,7 +76,7 @@ namespace rdbModel{
       /// rightArg and rightLiteral are ignored.
       Operator(OPTYPE type, const std::string& leftArg, 
                const std::string& rightArg, 
-               bool leftLiteral, bool rightLiteral);
+               FIELDTYPE leftType, FIELDTYPE rightType);
 
       /// Constructor for EXISTS
       Operator(OPTYPE type, const std::string& tableName, Operator* child=0);
@@ -98,28 +103,46 @@ namespace rdbModel{
       const std::string& getTableName() const;
 
       /// Throw exception if Operator is not a comparison operator
-      const bool* getLiteralness() const;
+      const FIELDTYPE* getCompareType() const;
 
       /// Throw exception if Operator is a comparison operator
       const std::vector<Operator* >& getChildren() const;
 
       OPTYPE getOpType() const {return m_opType;}
-      
+
+      /// True if operator or sub-operator refers to future row
+      bool getToBe() const {return m_toBe;}
+
+      /// True if operator or sub-operator refers to existing row
+      bool getOld() const {return m_old;}
+
     private:
       OPTYPE m_opType;
 
-      // Following two lines apply only to compare operators
-      // In order to format properly in an SQL query, need to
-      // keep track of whether compare arg is literal or column name.
+      /** Following two lines apply only to compare operators
+          In order to format properly in an SQL query, need to
+          keep track of whether compare arg is literal, column name
+          referring to current row under consideration, or column
+          name referring to proposed row (in case this is part of an
+          assertion about relation of existing rows to proposed row)
+      */
       std::string m_compareArgs[2];
-      bool m_literal[2];     
+      FIELDTYPE m_compareType[2]; 
 
-      // Following used only for EXSITS
+      /// Following used only for EXISTS
       std::string m_tableName;
       bool        m_keepChildren;
 
-      // Following is used only for non-compare operators
+      /// Following is used only for non-compare operators
       std::vector<Operator* > m_operands;  // #allowed depends on opType
+
+      /// Following is true if this operator or suboperator has an arg.
+      /// column name referring to a "toBe" row
+      bool  m_toBe; 
+
+      /// Following is true if this operator or suboperator has an arg.
+      /// column name referring to a  row already in the table
+      bool  m_old;
     };
 
     /**  
@@ -127,34 +150,42 @@ namespace rdbModel{
          when the assertion itself is deleted, but this won't happen if
          keepOp is set to true.
      */
-    Assertion(WHEN when = WHENundefined, Operator* op = 0, 
-              Table* myTable=0, bool keepOp=false) : 
-      m_when(when), m_op(op), m_myTable(myTable), m_keepOp(keepOp)
-    { m_compiled.clear();};
+    //    Assertion(WHEN when = WHENundefined, Operator* op = 0, 
+    //              Table* myTable=0, bool keepOp=false) : 
+    //      m_when(when), m_op(op), m_myTable(myTable), m_keepOp(keepOp)
+    Assertion(Operator* op = 0, Table* myTable=0, bool keepOp=false) : 
+      m_op(op), m_myTable(myTable), m_keepOp(keepOp)
+    { m_compiled.clear(); m_name.clear();};
 
     ~Assertion();
-    WHEN getWhen() const {return m_when;}
+    //    WHEN getWhen() const {return m_when;}
     Visitor::VisitorState accept(Visitor* v);
 
     Operator* getOperator() const {return m_op;}
     /// 
     const std::string& getPrecompiled() const {return m_compiled;}
     
+    /// True if associated operator or descendant refers to future row
+    /// (in which case can't call MySql::compileAssertion)
+    bool getToBe() const {return m_op->getToBe();}
+
+    /// True if associated operator or descendant refers to existing row
+    bool getOld() const {return m_op->getOld();}
+
+    const std::string& getName() const {return m_name;}
+    void setName(const std::string& name) {m_name = name;}
 
   private:
-    WHEN m_when;
+    //    WHEN m_when;
     Operator* m_op;
     Table* m_myTable;
     bool   m_keepOp;
+    std::string m_name;
 
     /// Let's hope that, independent of connection type, std::string is
     /// a reasonable choice for "compiled" form of the assertion
     std::string m_compiled;  
 
-    // Compare operators take two arguments.  One must be a column
-    // name, the other may be a column name or a constant
-    // Other operators take 1 or more other operators as arguments
-      
   };
 }
 #endif

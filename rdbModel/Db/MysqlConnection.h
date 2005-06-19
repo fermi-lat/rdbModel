@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.12 2004/05/18 23:13:18 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.13 2004/06/28 19:40:24 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -57,6 +57,9 @@ namespace rdbModel{
        Check to what degree local schema definition is compatible with
        remote db accessed via this connection.  By default check db names
        match, but this may be disabled.
+
+       If match is successful, may also want to cache information about
+       some things; for example, rows for which agent = "service"
     */
     virtual MATCH matchSchema(Rdb *rdb, bool matchDbName=true);
 
@@ -78,6 +81,20 @@ namespace rdbModel{
                            int* auto_value=0,
                            const StringVector* nullCols = 0);
 
+    /**
+       insert row, first checking and correcting conflicts with other
+       rows.  Must have already done successful schema match. 
+       Probably should also handles rows where agent="service".
+       Should we return some information about other rows updated?
+
+       Not yet implemented.
+    */
+    virtual bool insertSmart(const std::string& tableName, 
+                             const StringVector& colNames, 
+                             const StringVector& values,
+                             int* auto_value=0,
+                             const StringVector* nullCols = 0) 
+    {return false;}
 
     /**
       Generic UPDATE. Return value is number of rows changed.
@@ -133,6 +150,13 @@ namespace rdbModel{
     virtual Visitor::VisitorState visitIndex(Index*);
     virtual Visitor::VisitorState visitAssertion(Assertion*);
 
+    virtual VisitorState visitInsertNew(InsertNew*);
+    virtual VisitorState visitSupersede(Supersede*);
+    virtual VisitorState visitQuery(Query*);
+    virtual VisitorState visitSet(Set*);
+    virtual VisitorState visitInterRow(InterRow*);
+
+
 
   private:
     /// Someday we may want more than one kind of visitor; for example,
@@ -157,6 +181,13 @@ namespace rdbModel{
 
     /// Keep track of status during matching process
     MATCH   m_matchReturn;
+
+    /// If successful match, save pointer to schema for use with smart insert
+    Rdb*   m_rdb;
+
+    /// Also save list of columns we ("service") are responsible for
+    /// Could organize this by table, or just use Column::getTableName()
+    std::vector<Column* >  m_ourCols;
 
     /// For query results while visiting.
     MYSQL_RES* m_tempRes;

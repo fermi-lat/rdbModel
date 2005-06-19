@@ -4,8 +4,9 @@
   <xs:element name="rdbms">
     <xs:annotation>
       <xs:documentation>
-       Root element for relational database 
-                   description
+       Root element for relational database  description
+       Note attributes SchemaVersion and SchemaExpected are decimal.  
+       Integer to left of decimal point is major version.
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -67,8 +68,8 @@
         </xs:element>
       </xs:sequence>
       <xs:attribute name="dbs" type="xs:NMTOKEN" use="required" />
-      <xs:attribute name="DTDexpected" type="xs:NMTOKEN" fixed="2.0" />
-      <xs:attribute name="DTDversion" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="SchemaExpected" type="xs:decimal" fixed="2.0" />
+      <xs:attribute name="SchemaVersion" type="xs:decimal" use="required" />
       <xs:attribute name="CVSid" type="xs:string" use="required" />
     </xs:complexType>
 
@@ -222,6 +223,11 @@
     <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
   </xs:complexType>
 
+<!-- This definition serves somewhat the same function as a parameter
+     entity describing a content model (in the case of the "operands"
+     group defined below, the content model would look like  
+                 (or | and | not | isNull)
+  -->
   <xs:group name="operands" >
     <xs:choice>
       <xs:element name="or" type="operandsType" />
@@ -239,14 +245,14 @@
     </xs:choice>
   </xs:group>
 
-<!-- multiple operands -->
+<!-- for operations taking multiple operands -->
   <xs:complexType name="operandsType" >
     <xs:sequence>
       <xs:group ref="operands" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
-<!-- single operand -->
+<!-- for operations taking a single operand -->
   <xs:complexType name="operandType" >
     <xs:sequence>
       <xs:group ref="operands" />
@@ -258,15 +264,14 @@
     <xs:choice>
       <xs:sequence>
         <xs:element ref="colRef" />
-        <xs:element ref="value" />
+        <xs:choice>
+            <xs:element ref="value" />
+            <xs:element ref="colRef" />	
+        </xs:choice>
       </xs:sequence>
       <xs:sequence>
-        <xs:element ref="colRef" />
-        <xs:element ref="colRef" />
-      </xs:sequence>
-      <xs:sequence>
         <xs:element ref="value" />
-        <xs:element ref="colRef" />
+        <xs:element ref="colRef" />	
       </xs:sequence>
     </xs:choice>
     <xs:attribute name="relation" use="required">
