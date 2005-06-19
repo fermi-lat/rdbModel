@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Sun Jun 19 13:39:19 PDT 2005
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Upgrade code to use new form of XML file db description.  Some new features
+are not yet implemented.  Interface changes will force a major version tag. 
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Jun 19 13:39:18 PDT 2005
 rdbModel/cmt
 
