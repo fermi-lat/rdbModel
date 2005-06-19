@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: jrb  Sun Jun 19 13:39:20 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_test.xml calib_test_S.xml calib_user.xml 
+	rdbmsDescrip.xsd 
+Log Message:
+Upgrade code to use new form of XML file db description.  Some new features
+are not yet implemented.  Interface changes will force a major version tag. 
+
+    *
+------------------------------------------------------------
+User: jrb  Sun Jun 19 13:39:20 PDT 2005
 rdbModel/src/test
 
 Modified Files:
