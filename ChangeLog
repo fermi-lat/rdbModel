@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Jun 21 16:19:26 PDT 2005
+rdbModel/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Swapping position of use xmlBase and use facilities eliminated run-time problem
+with test program finding rdbModel.so (don't ask me why)
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Jun 19 13:39:20 PDT 2005
 rdbModel/xml
 
