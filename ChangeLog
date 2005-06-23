@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: jrb  Wed Jun 22 18:20:01 PDT 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add some machinery so that assertions can be checked against data
+in rows. This is needed for smart insert and update
+
+    *
+------------------------------------------------------------
+User: jrb  Wed Jun 22 18:20:01 PDT 2005
 rdbModel/rdbModel/Tables
 
 Modified Files:
