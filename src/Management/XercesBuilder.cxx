@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.21 2005/04/11 07:10:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.22 2005/06/19 20:39:19 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -89,6 +89,7 @@ namespace rdbModel {
 
     for (unsigned int iTable = 0; iTable < nTable; iTable++) {
       Table* newTable = buildTable(tables[iTable]);
+
       if (newTable) {
         m_rdb->addTable(newTable);
         processed++;
@@ -117,6 +118,8 @@ namespace rdbModel {
         newTable->addColumn(newCol);
       }
     }
+
+    newTable->sortColumns();
 
     // Look for primary key element, if any
     DOMElement* primaryKey = 

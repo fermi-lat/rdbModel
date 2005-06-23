@@ -1,27 +1,36 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.6 2005/03/01 20:00:17 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.7 2005/06/19 20:39:19 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
 #include <string>
 #include "rdbModel/Management/Visitor.h"
+#include "rdbModel/Tables/Column.h"
 
 namespace rdbModel {
 
-  class Column;
+  //  class Column;
   class Index;
   class Assertion;
 
   class XercesBuilder;
   class Connection;
 
+  /// Function object used to sort columns by column name
+  class ColCompare {
+  public:
+    bool operator()  (const Column* a, const Column*  b) {
+      return (a->getName().compare(b->getName()) < 0);
+    }
+  };
 
   /** 
    * rdbModel representation of a(n SQL-like) table description
    */
   class Table {
   public:
-    Table() {};
+    Table() : m_sorted(false), m_nEndUser(0) {m_sortedCols.clear();}
     ~Table();
+
 
     const std::string& getName() const { return m_name;}
     Column* getColumnByName(const std::string& name) const;
@@ -36,18 +45,26 @@ namespace rdbModel {
     //    int  insertRow(const std::vector<std::string>& colNames,
     //                   const std::vector<std::string>& colValues);
 
-    
+    //    Column* getQuick(const std::string& colName) const;
+
     Visitor::VisitorState accept(Visitor* v);
     //     Visitor::VisitorState acceptNotRec(Visitor* v);
 
+    void  sortColumns();
+    /*
+    bool evaluateAssertion(Assertion* pA, std::vector<FieldValPair>* toBe,
+                           std::vector<FieldValPair>* old=0);
+    */
   private:
     friend class rdbModel::XercesBuilder; // needs access to add.. methods
 
     std::vector<Column* > m_cols;
+    std::vector<Column* > m_sortedCols;
     std::vector<Assertion* > m_asserts;
     std::vector<Index* > m_indices;
 
-    void addColumn(Column* c) {m_cols.push_back(c);}
+    void addColumn(Column* c);
+
     void addAssert(Assertion* a) {m_asserts.push_back(a);}
     void addIndex(Index* i) {m_indices.push_back(i); }
 
@@ -55,6 +72,8 @@ namespace rdbModel {
     std::string m_version;
     std::string m_comment;
 
+    bool m_sorted;  // set to true once columns have been sorted by name
+    unsigned m_nEndUser;  // #columns whose value must be supplied by user
 
   };
 

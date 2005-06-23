@@ -1,17 +1,18 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.13 2005/04/11 07:10:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.14 2005/06/19 20:39:19 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
 #include <string>
+#include <utility>
 #include "rdbModel/Management/Visitor.h"
-#include "rdbModel/Tables/Table.h"
+// #include "rdbModel/Tables/Table.h"
 
 namespace rdbModel {
 
-  class Table;
+  //  class Table;
   class Datatype;
   class Enum;
-
+  class Table;
   class XercesBuilder;
 
 
@@ -56,7 +57,7 @@ namespace rdbModel {
 
     const std::string& getDefault() const {return m_default;}
 
-    const std::string& getTableName() const {return m_myTable->getName();}
+    const std::string& getTableName() const;
 
     Datatype* getDatatype() const {return m_type;};
 
@@ -112,5 +113,41 @@ namespace rdbModel {
 
   };
 
+  // Do we want Column* for first component or just the column name?
+  class FieldVal {
+    //    Column* m_pCol;
+  public:
+    std::string m_colname;
+    std::string m_val;
+    bool        m_null; // true if field val is NULL; then will ignore m_val
+  };
+
+  /// Function object used to sort FieldValPar objects by column name
+  class FieldValCompare {
+  public:
+    //    bool operator()  (const Column* a, const Column*  b) {
+    bool operator()  (const FieldVal& a, const FieldVal&  b) {
+      return ((a.m_colname).compare(b.m_colname) < 0);
+      //      return (a.first->getName().compare(b.first->getName()) < 0);
+    }
+  };
+
+  /**
+          @class Row
+     A collection of column names and values. 
+   */
+  class Row {
+  public:
+    Row() : m_sorted(false) {m_fields.clear();}
+    Row(std::vector<FieldVal>& fields) : m_fields(fields), m_sorted(false) {}
+
+    ~Row() { m_fields.clear(); }
+    void rowSort();
+
+    FieldVal* find(std::string colname);
+  private:
+    std::vector<FieldVal> m_fields;
+    bool     m_sorted;
+  };
 }
 #endif
