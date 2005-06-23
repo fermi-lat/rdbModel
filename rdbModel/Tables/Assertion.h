@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.11 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.12 2005/06/23 01:20:01 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -119,6 +119,9 @@ namespace rdbModel{
       /// Evaluate operator on argument Rows 
       bool verify(Row& old, Row& toBe, Table* t);
 
+
+
+    private:
       /// Handling specific to 2-arg compare operators
       bool verifyCompare(Row& old, Row& toBe, Table* t);
 
@@ -134,8 +137,6 @@ namespace rdbModel{
       /// Handling specific to string data
       bool compareString(const std::string* vals, OPTYPE type);
 
-
-    private:
       OPTYPE m_opType;
 
       /** Following two lines apply only to compare operators (includes
