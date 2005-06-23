@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.14 2005/06/19 20:39:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.15 2005/06/23 01:20:01 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -23,6 +23,8 @@ int doUpdate(rdbModel::Connection*, int serial);
 void tryQuick(rdbModel::Table* t, const std::string& colname);
 
 int main(int, char**) {
+  using rdbModel::FieldVal;
+
   std::string infile("$(RDBMODELROOT)/xml/calib_test_S.xml");
   //  std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
 
@@ -47,6 +49,36 @@ int main(int, char**) {
   tryQuick(t, "notes");
   tryQuick(t, "prod_start");
   tryQuick(t, "vstart");
+
+  rdbModel::Assertion* a = t->getAssertionByName("maySupersede");
+  std::vector<FieldVal> oldFields;
+  oldFields.reserve(10);
+  oldFields.push_back(FieldVal("proc_level", "PROD", false));
+  oldFields.push_back(FieldVal("calib_type", "CAL_Ped", false));
+  oldFields.push_back(FieldVal("ser_no", "17", false));
+  oldFields.push_back(FieldVal("completion", "OK", false));
+  oldFields.push_back(FieldVal("prod_start","", true));
+
+  rdbModel::Row oldRow1(oldFields);
+  rdbModel::Row toBeRow;
+
+  bool checkOld = a->verify(oldRow1, toBeRow);
+  
+  std::cout << "Result of verifying 'maySupersede' against oldRow1: " 
+            << checkOld << std::endl << std::endl;
+
+  oldFields.clear();
+  oldFields.push_back(FieldVal("proc_level", "DEV", false));
+  oldFields.push_back(FieldVal("calib_type", "CAL_Ped", false));
+  oldFields.push_back(FieldVal("ser_no", "17", false));
+  oldFields.push_back(FieldVal("completion", "OK", false));
+  
+  rdbModel::Row oldRow2(oldFields);
+
+  checkOld = a->verify(oldRow2, toBeRow);
+  
+  std::cout << "Result of verifying 'maySupersede' against oldRow2: " 
+            << checkOld << std::endl << std::endl;
 
   std::string colMin;
   std::string colMax;

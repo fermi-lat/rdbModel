@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.7 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.8 2005/06/23 01:20:01 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -15,6 +15,9 @@ namespace rdbModel {
   class XercesBuilder;
   class Connection;
 
+  class InsertNew;
+  class Supersede;
+
   /// Function object used to sort columns by column name
   class ColCompare {
   public:
@@ -28,7 +31,8 @@ namespace rdbModel {
    */
   class Table {
   public:
-    Table() : m_sorted(false), m_nEndUser(0) {m_sortedCols.clear();}
+    Table() : m_sorted(false), m_nEndUser(0), m_iNew(0), m_sup(0)
+    {m_sortedCols.clear();}
     ~Table();
 
 
@@ -36,6 +40,10 @@ namespace rdbModel {
     Column* getColumnByName(const std::string& name) const;
     Index* getIndexByName(const std::string& name) const;
     Assertion* getAssertionByName(const std::string& name) const;
+
+    InsertNew* getInsertNew() const {return m_iNew;}
+    Supersede* getSupersede() const {return m_sup;}
+
     /// Verify that the input can be used to form an appropriate INSERT 
     /// statement for this row; if so and if we have a connection,
     /// ask the connection to do the insert and return status (an int,
@@ -75,6 +83,8 @@ namespace rdbModel {
     bool m_sorted;  // set to true once columns have been sorted by name
     unsigned m_nEndUser;  // #columns whose value must be supplied by user
 
+    InsertNew* m_iNew;
+    Supersede* m_sup;
   };
 
 }

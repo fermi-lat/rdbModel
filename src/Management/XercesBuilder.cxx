@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.22 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.23 2005/06/23 01:20:01 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -155,6 +155,16 @@ namespace rdbModel {
         newTable->addAssert(newAssert);
       }
     }
+
+    DOMElement* iNewElt = Dom::findFirstChildByName(tableElt, "insertNew");
+    if (iNewElt) {
+      newTable->m_iNew = buildInsertNew(iNewElt, newTable);
+    }
+    DOMElement* supElt = Dom::findFirstChildByName(tableElt, "supersede");
+    if (supElt) {
+      newTable->m_sup = buildSupersede(supElt, newTable);
+    }
+
     return newTable;
   }  
 
