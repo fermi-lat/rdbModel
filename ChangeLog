@@ -1,4 +1,19 @@
 ------------------------------------------------------------
+User: jrb  Thu Jun 23 11:57:45 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Column.h Table.h 
+Log Message:
+Assertion.h : make helper routines private
+Column.h    : add constructor for FieldVal class
+Table.h     : keep track of <insertNew> and <supersede> children
+Query.cxx   : bug fix
+XercesBuilder.cxx : consume everything in xml file
+test_build.cxx : test more stuff
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jun 22 18:20:01 PDT 2005
 rdbModel/src/test
 
