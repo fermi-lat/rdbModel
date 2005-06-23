@@ -1,14 +1,16 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.13 2004/08/09 17:32:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.14 2005/06/19 20:39:20 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include "rdbModel/Rdb.h"
 #include "rdbModel/RdbException.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Db/MysqlConnection.h"
 #include "rdbModel/Db/MysqlResults.h"
+#include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/Tables/Assertion.h"
@@ -18,6 +20,8 @@
 
 int doInsert(rdbModel::Connection* con);
 int doUpdate(rdbModel::Connection*, int serial);
+void tryQuick(rdbModel::Table* t, const std::string& colname);
+
 int main(int, char**) {
   std::string infile("$(RDBMODELROOT)/xml/calib_test_S.xml");
   //  std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
@@ -35,6 +39,14 @@ int main(int, char**) {
     return errcode;
   }
   rdbModel::Rdb* rdb = man->getRdb();
+
+  rdbModel::Table* t = rdb->getTable("metadata_v2r1");
+
+  tryQuick(t, "ser_no");
+  tryQuick(t, "calib_type");
+  tryQuick(t, "notes");
+  tryQuick(t, "prod_start");
+  tryQuick(t, "vstart");
 
   std::string colMin;
   std::string colMax;
@@ -312,5 +324,26 @@ int doUpdate(rdbModel::Connection* con, int serial) {
   nChange += con->update(table, colNames, values, whereSer, &nullCols);
 
   return nChange;
+}
+
+void tryQuick(rdbModel::Table* t, const std::string& colname) {
+  //  rdbModel::Column* cQuick = t->getQuick(colname);
+  rdbModel::Column* col = t->getColumnByName(colname);
+
+  if (!col) {
+    std::cerr << colname << " not found by getQuick" << std::endl;
+    return;
+  }
+
+  std::string name = col->getName();
+  if (colname.compare(name) != 0) {
+    std::cerr << "Instead of " << colname << ", getColumnByName found " 
+    << name << std::endl;
+  }
+
+  else {
+    std::cout << "getColumnByName found correct column with name " << colname 
+              << std::endl;
+  }
 }
 

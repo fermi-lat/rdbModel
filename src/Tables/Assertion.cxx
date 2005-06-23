@@ -1,10 +1,12 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.11 2005/02/15 22:43:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.12 2005/06/19 20:39:19 jrb Exp $
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
+#include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/RdbException.h"
-
+#include "facilities/Util.h"
+#include "facilities/Timestamp.h"
 namespace rdbModel {
 
   Assertion::Operator::~Operator() {
@@ -129,7 +131,7 @@ namespace rdbModel {
 
   /// Throw exception if Operator is not a comparison operator
   //  const bool* Assertion::Operator::getLiteralness() const {
-  const FIELDTYPE* Assertion::Operator::getCompareType() const {
+  const FIELDTYPE* Assertion::Operator::getCompareArgTypes() const {
     if (!isCompareOp()) 
       throw RdbException("Assertion::Operator::getLiteralness: wrong type");
     return &m_compareType[0];
@@ -138,10 +140,121 @@ namespace rdbModel {
   /// Throw exception if Operator is not EXISTS
   const std::string& Assertion::Operator::getTableName() const {
     if (m_opType != OPTYPEexists) 
-      throw RdbException("Assertion::Operator::getTableNmae: wrong type");
+      throw RdbException("Assertion::Operator::getTableName: wrong type");
     return m_tableName;
   }
 
+
+  bool Assertion::Operator::verify(Row& old, Row& toBe, Table* t) {
+    switch(m_opType) {
+    case OPTYPEor: {
+      unsigned nChild = m_operands.size();
+      for (unsigned i = 0; i < nChild; i++) {
+        if (m_operands[i]->verify(old, toBe, t)) return true;
+      }
+      return false;
+    }
+
+    case OPTYPEand: {
+      unsigned nChild = m_operands.size();
+      for (unsigned i = 0; i < nChild; i++) {
+        if (!(m_operands[i]->verify(old, toBe, t))) return false;
+      }
+      return true;
+    }
+    case OPTYPEnot:
+      return (!(m_operands[0]->verify(old, toBe, t)));
+
+    case OPTYPEisNull: {
+      Row* r = 0;
+      if ( (m_compareType[0] == FIELDTYPEtoBe) || 
+           (m_compareType[0] == FIELDTYPEtoBeDef) ) r = &toBe;
+      else r = &old;
+
+      FieldVal* f = r->find(m_compareArgs[0]);
+      if (f) return f->m_null;
+      else {  // improper input.  Field should have been found
+        throw RdbException("Assertion::Operator::verify missing isNull field");
+      }
+    }
+      // handle all 2-argument compare operators together
+    case OPTYPEequal:
+    case OPTYPEnotEqual:
+    case OPTYPElessThan:
+    case OPTYPEgreaterThan:
+    case OPTYPElessOrEqual:
+    case OPTYPEgreaterOrEqual:
+      return verifyCompare(old, toBe, t);
+
+    default:
+      return false;
+    }
+    return false;
+  }
+
+  bool Assertion::Operator::verifyCompare(Row& old, Row& toBe, Table* t) {
+    // Assume we already know the comparison is sensible; that is, that
+    // the two args are of compatible types.  This check should be
+    // done when the operator is constructed (by XercesBuilder)
+    std::string values[2];
+    std::string colname;
+    colname.clear();   // used to determine type (string, int,..) of compare
+
+    for (unsigned i = 0; i < 2; i++) {
+      switch (m_compareType[i]) {
+      case FIELDTYPElit:
+      case FIELDTYPElitDef:
+        values[i] = m_compareArgs[i];
+        break;
+      case FIELDTYPEold:
+      case FIELDTYPEoldDef: {
+        FieldVal* f = old.find(m_compareArgs[i]);
+        if (!f) {
+          throw
+            RdbException("Assertion::Operator::verifyCompare missing field");
+        }
+        values[i] = f->m_val;
+        colname = f->m_colname;
+        break;
+      }
+      case FIELDTYPEtoBe:
+      case FIELDTYPEtoBeDef: {
+        FieldVal* f = toBe.find(m_compareArgs[i]);
+        if (!f) {
+          throw
+            RdbException("Assertion::Operator::verifyCompare missing field");
+        }
+        values[i] = f->m_val;
+        colname = f->m_colname;
+        break;
+      }
+      default:
+        throw
+          RdbException("Assertion::Operator::verifyCompare bad arg type");
+      }
+    }
+    if (colname.size() > 0) {// determine type to convert to
+      Column* c = t->getColumnByName(colname);
+      Datatype* d = c->getDatatype();
+      
+      switch (d->getType()) {
+      case Datatype::TYPEtimestamp:
+      case Datatype::TYPEdatetime:
+        return compareTs(&values[0], m_opType);
+      case Datatype::TYPEint:
+      case Datatype::TYPEmediumint:
+      case Datatype::TYPEsmallint:
+        return compareInt(&values[0], m_opType);
+      case Datatype::TYPEreal:
+      case Datatype::TYPEdouble:
+        return compareFloat(&values[0], m_opType);
+      default:  // do nothing
+        ;
+      }
+    }
+    // Otherwise they're strings.
+    return compareString(&values[0], m_opType);
+  }
   /// Throw exception if Operator is a comparison operator
   const std::vector<Assertion::Operator* >& 
   Assertion::Operator::getChildren() const {
@@ -154,6 +267,112 @@ namespace rdbModel {
     Visitor::VisitorState state = v->visitAssertion(this);
     if (state == Visitor::VBRANCHDONE) return Visitor::VCONTINUE;
     return state;
+  }
+
+  bool Assertion::verify(Row& old, Row& toBe) {
+
+    if (getOld() ) { // will actually use old vector, so sort
+      old.rowSort();
+    }
+    if (getToBe() ) { // will actually use toBe vector, so sort
+      toBe.rowSort();
+    }
+    return m_op->verify(old, toBe, m_myTable);
+  }
+
+  bool Assertion::Operator::compareTs(const std::string* vals, OPTYPE type) {
+    using facilities::Timestamp;
+    Timestamp left, right;
+    try {
+      left = Timestamp(*vals);
+      right = Timestamp(*(vals + 1));
+    }
+    catch(facilities::BadTimeInput ex) {
+      throw
+        RdbException("Assertion::Operator::CompareTs illegal input");
+    }
+
+    switch (type) {
+    case OPTYPEequal:
+      return left == right;
+    case OPTYPEnotEqual:
+      return left != right;
+    case OPTYPElessThan:
+      return left < right;
+    case OPTYPEgreaterThan:
+      return left > right;
+    case OPTYPElessOrEqual:
+      return left <= right;
+    case OPTYPEgreaterOrEqual:
+      return right >= right;
+    default:
+      throw RdbException("Assertion::Operator::compareTs bad OPTYPE");
+    }
+    return false;
+
+    
+  }
+
+  bool Assertion::Operator::compareInt(const std::string* vals, OPTYPE type) {
+    using facilities::Util;
+
+    try {
+      int i= Util::stringToInt(*vals);
+      i = Util::stringToInt(*(vals + 1));
+    }
+    catch (facilities::WrongType ex) {
+      throw
+        RdbException("Assertion::Operator::compareInt illegal input");
+    }
+    return compareFloat(vals, type);
+  }
+
+  /// Handling specific to floating point data
+  bool Assertion::Operator::compareFloat(const std::string* vals, 
+                                         OPTYPE type)               {
+    using facilities::Util;
+    double left, right;
+    try {
+      left = Util::stringToDouble(*vals);
+      right = Util::stringToDouble(*(vals + 1));
+    }
+    catch (facilities::WrongType ex) {
+      throw
+        RdbException("Assertion::Operator::compareFloat illegal input");
+    }
+    switch (type) {
+    case OPTYPEequal:
+      return left == right;
+    case OPTYPEnotEqual:
+      return left != right;
+    case OPTYPElessThan:
+      return left < right;
+    case OPTYPEgreaterThan:
+      return left > right;
+    case OPTYPElessOrEqual:
+      return left <= right;
+    case OPTYPEgreaterOrEqual:
+      return right >= right;
+    default:
+      throw RdbException("Assertion::Operator::compareFloat bad OPTYPE");
+    }
+    return false;
+  }
+
+  /// Handling specific to string data.  Only supported operators for
+  /// strings are == and !=
+  bool Assertion::Operator::compareString(const std::string* vals, 
+                                          OPTYPE type) {
+    switch (type) {
+    case OPTYPEequal: 
+      return ( (*vals).compare(*(vals+1)) == 0 );
+    case OPTYPEnotEqual:
+      return ( (*vals).compare(*(vals+1)) != 0 );
+    default:
+      throw 
+        RdbException("Assertion::Operator::compareString Unsupported OPTYPE");
+    }
+    return false;
   }
 
 }
