@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Jun 24 11:03:33 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Column.cxx Table.cxx 
+Log Message:
+Add more of the machinery needed for smart insert
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Jun 24 11:03:32 PDT 2005
 rdbModel/src/Db
 
