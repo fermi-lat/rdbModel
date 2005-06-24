@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: jrb  Fri Jun 24 11:03:32 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Column.h Table.h 
+Log Message:
+Add more of the machinery needed for smart insert
+
+    *
+------------------------------------------------------------
+User: jrb  Fri Jun 24 11:03:32 PDT 2005
 rdbModel/rdbModel/Db
 
 Modified Files:
