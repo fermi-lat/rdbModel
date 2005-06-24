@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.15 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.16 2005/06/23 18:57:45 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -25,8 +25,8 @@ void tryQuick(rdbModel::Table* t, const std::string& colname);
 int main(int, char**) {
   using rdbModel::FieldVal;
 
-  std::string infile("$(RDBMODELROOT)/xml/calib_test_S.xml");
-  //  std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
+  //  std::string infile("$(RDBMODELROOT)/xml/calib_test_S.xml");
+  std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
 
   rdbModel::Manager* man = rdbModel::Manager::getManager();
 

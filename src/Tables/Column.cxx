@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.6 2004/04/27 00:08:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.7 2005/06/23 01:20:01 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -74,8 +74,24 @@ namespace rdbModel {
       cmp = colname.compare(m_fields[guess].m_colname);
     }
     return &m_fields[guess];
-
-
   }
 
+   void  Row::regroup(std::vector<std::string>& colNames, 
+                      std::vector<std::string>& colVals, 
+                      std::vector<std::string>& nullCols) const {
+     unsigned nFields = m_fields.size();
+     colNames.reserve(nFields);
+     colVals.reserve(nFields);
+
+     for (unsigned i = 0; nFields; i++) {
+       if (m_fields[i].m_null) {
+         nullCols.push_back(m_fields[i].m_colname);
+       }
+       else {
+         colNames.push_back(m_fields[i].m_colname);
+         colVals.push_back(m_fields[i].m_val);
+       }
+     }
+   }
+ 
 }

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.15 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.16 2005/06/23 18:57:45 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -42,6 +42,7 @@ namespace rdbModel {
       CONTENTSusername    = 2,
       CONTENTSinsertTime   = 3,
       CONTENTSupdateTime = 4
+
     };
 
     Column(Table* myTable=0) : m_myTable(myTable), m_type(0), 
@@ -145,8 +146,14 @@ namespace rdbModel {
 
     ~Row() { m_fields.clear(); }
     void rowSort();
+    void addField(FieldVal& f) {m_fields.push_back(f); m_sorted = false;}
 
     FieldVal* find(std::string colname);
+
+    /// Reorder information suitable for Connection::insert
+    void  regroup(std::vector<std::string>& colNames, 
+                  std::vector<std::string>& colVals, 
+                  std::vector<std::string>& nullCols) const;
   private:
     std::vector<FieldVal> m_fields;
     bool     m_sorted;
