@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.8 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.9 2005/06/23 18:57:45 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -31,8 +31,8 @@ namespace rdbModel {
    */
   class Table {
   public:
-    Table() : m_sorted(false), m_nEndUser(0), m_iNew(0), m_sup(0)
-    {m_sortedCols.clear();}
+    Table() : m_sorted(false), m_nEndUser(0), m_iNew(0), m_sup(0), m_connect(0)
+    {m_sortedCols.clear(); m_programCols.clear(); m_userCols.clear();}
     ~Table();
 
 
@@ -41,19 +41,24 @@ namespace rdbModel {
     Index* getIndexByName(const std::string& name) const;
     Assertion* getAssertionByName(const std::string& name) const;
 
+    /**
+       smartInsert is smart in the following respects:
+          o Makes some checks to see if row is self-consistent
+          o Fills in all fields which are to be supplied by "service"
+          o If row satisfies conditions for being "official"
+            - queries table to see if any pre-existing rows need 
+              adjustment; if so, they are adjusted
+          o Finally inserts the row 
+
+       If @a test is true, just output description of what would be
+       done without actually doing it.
+       Note @a row may be modified by the function.
+    */
+    int smartInsert(Row& row, bool test=false);
+
+    // Do we need these for anything?  
     InsertNew* getInsertNew() const {return m_iNew;}
     Supersede* getSupersede() const {return m_sup;}
-
-    /// Verify that the input can be used to form an appropriate INSERT 
-    /// statement for this row; if so and if we have a connection,
-    /// ask the connection to do the insert and return status (an int,
-    /// meaning to be determined.  Should include values for illegal
-    /// input, missing connection, etc. )
-    //  hasn't been implemented
-    //    int  insertRow(const std::vector<std::string>& colNames,
-    //                   const std::vector<std::string>& colValues);
-
-    //    Column* getQuick(const std::string& colName) const;
 
     Visitor::VisitorState accept(Visitor* v);
     //     Visitor::VisitorState acceptNotRec(Visitor* v);
@@ -65,16 +70,24 @@ namespace rdbModel {
     */
   private:
     friend class rdbModel::XercesBuilder; // needs access to add.. methods
-
+    friend class rdbModel::Rdb;           // to set connection
     std::vector<Column* > m_cols;
     std::vector<Column* > m_sortedCols;
     std::vector<Assertion* > m_asserts;
     std::vector<Index* > m_indices;
 
+    /// Subset of columns which are responsibility of Program (us) to fill
+    std::vector<Column* > m_programCols;
+
+    /// Subset of columns which user *must* supply
+    std::vector<Column* > m_userCols;
+
     void addColumn(Column* c);
 
     void addAssert(Assertion* a) {m_asserts.push_back(a);}
     void addIndex(Index* i) {m_indices.push_back(i); }
+
+    bool fillProgramCol(Column* col, Row& row, bool newRow);
 
     std::string m_name;
     std::string m_version;
@@ -85,6 +98,8 @@ namespace rdbModel {
 
     InsertNew* m_iNew;
     Supersede* m_sup;
+
+    Connection* m_connect;
   };
 
 }

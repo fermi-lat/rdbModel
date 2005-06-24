@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.12 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.13 2005/06/23 01:20:01 jrb Exp $
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
@@ -145,7 +145,7 @@ namespace rdbModel {
   }
 
 
-  bool Assertion::Operator::verify(Row& old, Row& toBe, Table* t) {
+  bool Assertion::Operator::verify(Row& old, Row& toBe, Table* t)  const {
     switch(m_opType) {
     case OPTYPEor: {
       unsigned nChild = m_operands.size();
@@ -192,7 +192,8 @@ namespace rdbModel {
     return false;
   }
 
-  bool Assertion::Operator::verifyCompare(Row& old, Row& toBe, Table* t) {
+  bool Assertion::Operator::verifyCompare(Row& old, Row& toBe, Table* t) const 
+  {
     // Assume we already know the comparison is sensible; that is, that
     // the two args are of compatible types.  This check should be
     // done when the operator is constructed (by XercesBuilder)
@@ -269,7 +270,7 @@ namespace rdbModel {
     return state;
   }
 
-  bool Assertion::verify(Row& old, Row& toBe) {
+  bool Assertion::verify(Row& old, Row& toBe)  const {
 
     if (getOld() ) { // will actually use old vector, so sort
       old.rowSort();
@@ -280,7 +281,8 @@ namespace rdbModel {
     return m_op->verify(old, toBe, m_myTable);
   }
 
-  bool Assertion::Operator::compareTs(const std::string* vals, OPTYPE type) {
+  bool Assertion::Operator::compareTs(const std::string* vals, 
+                                      OPTYPE type)     const {
     using facilities::Timestamp;
     Timestamp left, right;
     try {
@@ -313,7 +315,8 @@ namespace rdbModel {
     
   }
 
-  bool Assertion::Operator::compareInt(const std::string* vals, OPTYPE type) {
+  bool Assertion::Operator::compareInt(const std::string* vals, 
+                                       OPTYPE type)   const   {
     using facilities::Util;
 
     try {
@@ -329,7 +332,7 @@ namespace rdbModel {
 
   /// Handling specific to floating point data
   bool Assertion::Operator::compareFloat(const std::string* vals, 
-                                         OPTYPE type)               {
+                                         OPTYPE type) const       {
     using facilities::Util;
     double left, right;
     try {
@@ -362,7 +365,7 @@ namespace rdbModel {
   /// Handling specific to string data.  Only supported operators for
   /// strings are == and !=
   bool Assertion::Operator::compareString(const std::string* vals, 
-                                          OPTYPE type) {
+                                          OPTYPE type) const       {
     switch (type) {
     case OPTYPEequal: 
       return ( (*vals).compare(*(vals+1)) == 0 );

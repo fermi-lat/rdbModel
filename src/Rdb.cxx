@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.2 2004/03/06 01:13:29 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.3 2004/04/07 23:06:49 jrb Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 
@@ -37,6 +37,15 @@ namespace rdbModel {
 
     return table->getIndexByName(indexName);
 
+  }
+
+  void Rdb::setConnection(Connection* connection) {
+    m_connection = connection;
+
+    // propagate to all our tables as well
+    for (unsigned i = 0; i < m_tables.size(); i++) {
+      m_tables[i]->m_connect = connection;
+    }
   }
 
   unsigned int Rdb::accept(Visitor* v) {

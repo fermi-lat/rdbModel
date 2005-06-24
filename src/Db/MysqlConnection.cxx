@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.26 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.27 2005/06/23 01:20:01 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -223,9 +223,11 @@ namespace rdbModel {
       ins += ", " + colNames[iCol] + "='" + values[iCol] + "' ";
     }
     if (nullCols) {
-      unsigned nNull = nullCols->size();
-      for (unsigned iNull = 0; iNull < nNull; iNull++) {
-        ins += ", " + (*nullCols)[iNull] + "= NULL ";
+      if (nullCols->size() > 0) {
+        unsigned nNull = nullCols->size();
+        for (unsigned iNull = 0; iNull < nNull; iNull++) {
+          ins += ", " + (*nullCols)[iNull] + "= NULL ";
+        }
       }
     }
 
@@ -545,6 +547,9 @@ namespace rdbModel {
       return Visitor::VDONE;
     }
     else if (nRemote > nLocal) m_matchReturn = MATCHcompatible;
+
+    // Tell Rdb about this 
+    rdb->setConnection(this);
 
     return Visitor::VCONTINUE;
   }

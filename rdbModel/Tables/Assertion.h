@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.12 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.13 2005/06/23 18:57:45 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -117,25 +117,25 @@ namespace rdbModel{
       bool getOld() const {return m_old;}
 
       /// Evaluate operator on argument Rows 
-      bool verify(Row& old, Row& toBe, Table* t);
+      bool verify(Row& old, Row& toBe, Table* t) const;
 
 
 
     private:
       /// Handling specific to 2-arg compare operators
-      bool verifyCompare(Row& old, Row& toBe, Table* t);
+      bool verifyCompare(Row& old, Row& toBe, Table* t) const;
 
       /// Handling specific to timestamp data
-      bool compareTs(const std::string* vals, OPTYPE type);
+      bool compareTs(const std::string* vals, OPTYPE type) const;
 
       /// Handling specific to integer data
-      bool compareInt(const std::string* vals, OPTYPE type);
+      bool compareInt(const std::string* vals, OPTYPE type) const;
 
       /// Handling specific to floating point data
-      bool compareFloat(const std::string* vals, OPTYPE type);
+      bool compareFloat(const std::string* vals, OPTYPE type) const;
 
       /// Handling specific to string data
-      bool compareString(const std::string* vals, OPTYPE type);
+      bool compareString(const std::string* vals, OPTYPE type) const;
 
       OPTYPE m_opType;
 
@@ -191,23 +191,29 @@ namespace rdbModel{
     /// (in which case can't call MySql::compileAssertion)
     bool getToBe() const {return m_op->getToBe();}
 
-    /// True if associated operator or descendant refers to existing row
+    /// Returns true if associated operator or descendant refers to 
+    /// existing row
     bool getOld() const {return m_op->getOld();}
 
     const std::string& getName() const {return m_name;}
     void setName(const std::string& name) {m_name = name;}
 
-    /// Does assertion (which may refer to one or both of an old row and
-    /// a proposed row) hold for these arguments?  
-    /// Caller is responsible for fetching old row fields out of dbs if
-    /// necessary
-    bool verify(Row& old, Row& toBe);
+    /** @a verify checks if assertion (which may refer to one or both of 
+        an old row and a proposed row) holds for these arguments.  
+        Caller is responsible for fetching old row fields out of dbs if
+        necessary
+        May throw RdbException
+    */
+    bool verify(Row& old, Row& toBe) const;
 
   private:
-    //    WHEN m_when;
+    /// The heart of an Assertion is an Operator
     Operator* m_op;
     Table* m_myTable;
+    /// m_keepOp indicates whether or not we're responsible for cleaning
+    /// up resources
     bool   m_keepOp;
+    /// Assertions have names so that they can be referenced elsewhere
     std::string m_name;
 
     /// Let's hope that, independent of connection type, std::string is
