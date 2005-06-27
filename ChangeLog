@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 27 15:59:30 PDT 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+flush output (regular and error)
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 27 13:46:20 PDT 2005
 rdbModel/src/test
 
