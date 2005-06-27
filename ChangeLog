@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: jrb  Mon Jun 27 13:46:20 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Table.cxx 
+Log Message:
+Last bits needed for smartInsert
+
+    *
+------------------------------------------------------------
+User: jrb  Mon Jun 27 13:46:20 PDT 2005
 rdbModel/rdbModel/Tables
 
 Modified Files:
