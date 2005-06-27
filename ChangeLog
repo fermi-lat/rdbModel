@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: jrb  Mon Jun 27 13:46:20 PDT 2005
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Last bits needed for smartInsert
+
+    *
+------------------------------------------------------------
+User: jrb  Mon Jun 27 13:46:20 PDT 2005
 rdbModel/src/Tables
 
 Modified Files:
