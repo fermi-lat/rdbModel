@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 27 00:45:58 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Column.h Table.h 
+Log Message:
+Bug fixes, enhancements for smart insert
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jun 27 00:45:57 PDT 2005
 rdbModel/rdbModel/Db
 
