@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.23 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.24 2005/06/23 18:57:45 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -395,9 +395,14 @@ namespace rdbModel {
     std::string opName = Dom::getTagName(e);
     OPTYPE opType;
     if (opName == "isNull") {
+      DOMElement* child = Dom::getFirstChildElement(e);
       FIELDTYPE valType;
+      std::string which = Dom::getAttribute(child, "which");
+      valType =  (which == std::string("old")) ? FIELDTYPEold 
+        : FIELDTYPEtoBe;
+
       return new Assertion::Operator(OPTYPEisNull, 
-                                     Dom::getAttribute(e, "col"),
+                                     Dom::getAttribute(child, "col"),
                                      std::string(""), 
                                      valType, valType);
                                      

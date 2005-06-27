@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.13 2005/06/23 18:57:45 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.14 2005/06/24 18:03:32 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -85,6 +85,9 @@ namespace rdbModel{
       Operator(OPTYPE type, const std::vector<Operator*>& children,
                bool keepChildren = false);
 
+      /// Copy an operator, substituting from toBe row as appropriate
+      Operator(Operator* op, Row* toBe);
+
       /// Add another child to a conjunction-style operator
       bool appendChild(Operator* child);
 
@@ -153,6 +156,7 @@ namespace rdbModel{
 
       /// Following used only for EXISTS
       std::string m_tableName;
+
       bool        m_keepChildren;
 
       /// Following is used only for non-compare operators
@@ -172,12 +176,16 @@ namespace rdbModel{
          when the assertion itself is deleted, but this won't happen if
          keepOp is set to true.
      */
-    //    Assertion(WHEN when = WHENundefined, Operator* op = 0, 
-    //              Table* myTable=0, bool keepOp=false) : 
-    //      m_when(when), m_op(op), m_myTable(myTable), m_keepOp(keepOp)
     Assertion(Operator* op = 0, Table* myTable=0, bool keepOp=false) : 
       m_op(op), m_myTable(myTable), m_keepOp(keepOp)
     { m_compiled.clear(); m_name.clear();};
+
+    /**
+       Copy original assertion, but, wherever a colRef is a "toBe",
+       substitute with value from toBe row.  toBe is not const because
+       we may need to sort it.
+     */
+    Assertion(const Assertion* orig, Row* toBe);
 
     ~Assertion();
     //    WHEN getWhen() const {return m_when;}

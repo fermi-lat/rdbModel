@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.13 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.14 2005/06/24 18:03:32 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -74,6 +74,9 @@ namespace rdbModel{
     /// Return true iff open has been done with no matching close
     virtual bool isConnected() = 0;
 
+    virtual std::ostream* getOut() const = 0;
+    virtual std::ostream* getErrOut() const = 0;
+
     /**
        Check to what degree local schema definition is compatible with
        remote db accessed via this connection.  By default check db names
@@ -140,6 +143,12 @@ namespace rdbModel{
                                  const Assertion* where=0,
                                  int   rowLimit=0,
                                  int   rowOffset=0)=0;
+
+    /**
+      Turn select and update into no-ops: output SQL string for
+      debugging but don't change db 
+    */
+    virtual void disableModify(bool disable)=0;
 
     /** 
       Transmit raw request of any form to database.  If it is a request
