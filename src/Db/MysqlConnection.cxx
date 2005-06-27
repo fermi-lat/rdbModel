@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.28 2005/06/24 18:03:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.29 2005/06/27 07:45:58 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -100,6 +100,7 @@ namespace rdbModel {
       (*m_err) << 
         "rdbModel::MysqlConnection::open : null db name not allowed!" <<
         std::endl;
+      m_err->flush();
       return false;
     } 
 
@@ -124,6 +125,7 @@ namespace rdbModel {
       catch (facilities::WrongType ex) {
         (*m_err) << "From MysqlConnection::connect.  Bad port: "
                  << ex.getMsg() << std::endl;
+        m_err->flush();
         return false;
       }
 
@@ -137,12 +139,14 @@ namespace rdbModel {
     if (connected != 0) {  // Everything is fine.  Put out an info message
       (*m_out) << "Successfully connected to MySQL host " << 
         host << ", database " << dbName << std::endl;
+      m_out->flush();
       m_connected = true;
       m_dbName = dbName;
     }
     else {
       (*m_err) <<  "Failed to connect to MySQL host " << host <<
         "with error " << mysql_error(m_mysql) << std::endl;
+      m_err->flush();
       m_connected = false;
     }
     return m_connected;
@@ -155,6 +159,7 @@ namespace rdbModel {
     DOMDocument* doc = parser.parse(parms.c_str(), "mysqlConnection");
     if (doc == 0) {
       (*m_err) << "parse of connection parameters failed" << std::endl;
+      m_err->flush();
       return false;
     }
     DOMElement*  conn = doc->getDocumentElement();
@@ -166,6 +171,7 @@ namespace rdbModel {
 
     if (password.size() == 0 ) { // prompt for password?
       (*m_out) << "interactive login NYI " << std::endl;
+      m_out->flush();
       return false;
     }
 
@@ -212,6 +218,7 @@ namespace rdbModel {
     if (!nCol || (nCol != values.size()  ) ) {
       (*m_err) << " MysqlConnection::insertRow: vector lengths incompatible"
                 << std::endl;
+      m_err->flush();
       return false;
     }
 
@@ -234,10 +241,12 @@ namespace rdbModel {
 
     (*m_out) << std::endl << "# INSERT string is:" << std::endl;
     (*m_out) << ins << std::endl;
+    m_out->flush();
 
     if (m_writeDisabled) {
       (*m_out) << "write to Db previously disabled; INSERT not sent"
                << std::endl;
+      m_out->flush();
       return true;
     }
 
@@ -245,6 +254,7 @@ namespace rdbModel {
 
     if (mysqlRet) {
       (*m_err) << "MySQL error during INSERT, code " << mysqlRet << std::endl;
+      m_err->flush();
       return false;
     }
     if (auto_value) {
@@ -264,6 +274,7 @@ namespace rdbModel {
     if (nCol != values.size()) {
       (*m_err) << "rdbModel::mysqlConnection::update: ";
       (*m_err) << "Incompatible vector arguments " << std::endl;
+      m_err->flush();
       return 0;
     }
     std::string sqlString = "UPDATE " + tableName + " SET ";
@@ -285,9 +296,11 @@ namespace rdbModel {
     }
     (*m_out) << std::endl << "#  UPDATE to be issued:" << std::endl;
     (*m_out) << sqlString << std::endl;
+    m_out->flush();
     if (m_writeDisabled) {
       (*m_out) << "write to Db previously disabled; UPDATE not sent"
                << std::endl;
+      m_out->flush();
       return 0;
     }
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
@@ -295,6 +308,7 @@ namespace rdbModel {
     if (mysqlRet) {
       (*m_err) << "rdbModel::MysqlConnection::update: ";
       (*m_err) << "MySQL error during UPDATE, code " << mysqlRet << std::endl;
+      m_err->flush();
       return 0;
     }
     my_ulonglong nModLong = mysql_affected_rows(m_mysql);
@@ -349,6 +363,7 @@ namespace rdbModel {
     }
     (*m_out) << std::endl << "# About to issue SELECT:" << std::endl;
     (*m_out) << sqlString << std::endl;
+    m_out->flush();
 
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
     if (mysqlRet) {
@@ -370,6 +385,7 @@ namespace rdbModel {
 
     (*m_out) << std::endl << "# About to issue SQL request:" << std::endl;
     (*m_out) << request << std::endl;
+    m_out->flush();
     
     int mysqlRet = mysql_query(m_mysql, request.c_str());
     if (mysqlRet) {
@@ -581,6 +597,7 @@ namespace rdbModel {
     (*m_out) << std::endl << "# About to issue SHOW COLUMNS request :" 
              << std::endl;
     (*m_out) << query << std::endl;
+    m_out->flush();
     
     int ret = mysql_query(m_mysql, query.c_str());
     if (ret) {
