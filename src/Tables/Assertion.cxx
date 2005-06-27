@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.14 2005/06/24 18:03:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.15 2005/06/27 07:45:58 jrb Exp $
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
@@ -114,8 +114,9 @@ namespace rdbModel {
     case OPTYPEnot: 
     case OPTYPEexists:
       {
-        for (unsigned iChild = 0; iChild < m_operands.size(); iChild++) {
-          Operator* child = new Operator(m_operands[iChild], toBe);
+        unsigned nChild = op->m_operands.size();
+        for (unsigned iChild = 0; iChild < nChild; iChild++) {
+          Operator* child = new Operator((op->m_operands)[iChild], toBe);
           appendChild(child);
         }
         break;

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.7 2005/06/24 18:03:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.8 2005/06/27 07:45:58 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -162,9 +162,7 @@ namespace rdbModel {
     row.rowSort();
 
     // Fill in columns in m_programCols list
-    for (unsigned i = 0; i < m_programCols.size(); i++) {
-      fillProgramCol(m_programCols[i], row, true);
-    }
+    fillProgramCols(row, true);
 
     // Check that all required columns are there and not null
     for (unsigned i = 0; i < m_userCols.size(); i++) {
@@ -177,21 +175,7 @@ namespace rdbModel {
       }
     }
     // Fill in defaults
-    for (unsigned i = 0; i < m_mayDefault.size(); i++) {
-      Column* hasDef = m_mayDefault[i];
-      FieldVal* f = row.find(hasDef->getName());
-      if (f) continue;  
-      // otherwise add it it
-      if ((hasDef->getDefault()).size() > 0) {
-        FieldVal g(hasDef->getName(), hasDef->getDefault());
-        row.addField(g);
-      }
-      else {   // null
-        FieldVal g(hasDef->getName(), "", true);
-        row.addField(g);
-      }
-      row.rowSort();
-    }
+    fillDefaults(row);
 
     // Check against consistency conditions specified by <insertNew>
     const Assertion* cond = m_iNew->getInternal();
@@ -237,8 +221,6 @@ namespace rdbModel {
       // values for all "toBe" entries
       subsAssert = new Assertion(q->getAssertion(), &row);
 
-      // Then call Connection::select(tableName, toSelect, orderCols,
-      //                              subsAssert);
       std::vector<std::string> orderCols;
       orderCols.clear();
       ResultHandle* r = m_connect->select(m_name, toSelect, orderCols, 
@@ -259,36 +241,10 @@ namespace rdbModel {
       }
       //    else modify conflicting rows as specified in <interRow>.
       //    (i.e., do an update with where clause = subsAssert
-      
-      //  Source in <set>
-      // should either be FIELDTYPElit or FIELDTYPEtoBe.   In latter
-      // case, substitute from row argument.
+
       std::vector<Set> sets = inter[iInter]->getSets();
-      unsigned nSets = sets.size();
-      std::vector<std::string> updateCols; updateCols.reserve(nSets);
-      std::vector<std::string> updateVals; updateVals.reserve(nSets);
 
-      for (unsigned iSet = 0; iSet < sets.size(); iSet++) {
-        updateCols.push_back(sets[iSet].getDestColName());
-        FIELDTYPE srcType = sets[iSet].getSrcType();
-        if ((srcType == FIELDTYPElit) || (srcType == FIELDTYPElitDef)) {
-          updateVals.push_back(sets[iSet].getSrcValue());
-        }
-        else {   // must be toBe
-          std::string toBeCol = sets[iSet].getSrcValue();
-          FieldVal* f = row.find(toBeCol);
-          if (f == 0) {
-            delete subsAssert;
-            throw RdbException
-              ("Table::InsertNew Row argument missing needed field");
-          }
-          updateVals.push_back(f->m_val);
-        }
-      }
-      m_connect->update(m_name, updateCols, updateVals, subsAssert);
-
-      // Make specified changes (update)
-      delete subsAssert;
+      doInterUpdate(sets, subsAssert, row);
     }
     // Insert and exit
     bool ok = m_connect->insertRow(m_name, colNames, colValues,
@@ -296,49 +252,117 @@ namespace rdbModel {
     return (ok) ?  0 : -1;
   }
 
-  bool Table::fillProgramCol(Column* col, Row& row, bool newRow) {
+  bool Table::fillProgramCols(Row& row, bool newRow) {
     std::string val;
 
-    switch (col->getContentsType() ) {
-    case Column::CONTENTSserviceName: 
-      val="rdbModel";
-      break;
-    case Column::CONTENTSusername: {
+    for (unsigned i = 0; i < m_programCols.size(); i++) {
+      Column* col = m_programCols[i];
+      switch (col->getContentsType() ) {
+      case Column::CONTENTSserviceName: 
+        val="rdbModel";
+        break;
+      case Column::CONTENTSusername: {
 #ifdef    __GNUG__ 
-      val = std::string("$(USER)");
+        val = std::string("$(USER)");
 #else
-      val = std::string("$(USERNAME)");
+        val = std::string("$(USERNAME)");
 #endif
 
-      int nsub = facilities::Util::expandEnvVar(&val);
-      if (nsub != 1) {
-        val="no username";
+        int nsub = facilities::Util::expandEnvVar(&val);
+        if (nsub != 1) {
+          val="no username";
+        }
+        break;
       }
-      break;
-    }
 
-    case Column::CONTENTSinsertTime:
-      if (!newRow) return false;   // otherwise, same as updateTime case
-    case Column::CONTENTSupdateTime: {
-      facilities::Timestamp curTime;
-      val = curTime.getString();
-      break;
-    }
-    default:
-      return false;    // unrecognized type
-    }
-    // look for this field in Row input. If there, overwrite value
-    FieldVal* f = row.find(col->getName());
-    if (f) {
-      f->m_val = val;
-      f->m_null = false;
-    } 
-    else {
-      FieldVal g(col->getName(), val, false);
-      row.addField(g);
-      row.rowSort();
+      case Column::CONTENTSinsertTime:
+        if (!newRow) return false;   // otherwise, same as updateTime case
+      case Column::CONTENTSupdateTime: {
+        facilities::Timestamp curTime;
+        val = curTime.getString();
+        break;
+      }
+      default:
+        return false;    // unrecognized type
+      }
+      // look for this field in Row input. If there, overwrite value
+      FieldVal* f = row.find(col->getName());
+      if (f) {
+        f->m_val = val;
+        f->m_null = false;
+      } 
+      else {
+        FieldVal g(col->getName(), val, false);
+        row.addField(g);
+        row.rowSort();
+      }
     }
     return true;
   }
 
+  void Table::fillDefaults(Row& row) const {
+    for (unsigned i = 0; i < m_mayDefault.size(); i++) {
+      Column* hasDef = m_mayDefault[i];
+      FieldVal* f = row.find(hasDef->getName());
+      if (f) continue;  
+      // otherwise add it it
+      if ((hasDef->getDefault()).size() > 0) {
+        FieldVal g(hasDef->getName(), hasDef->getDefault());
+        row.addField(g);
+      }
+      else {   // null
+        FieldVal g(hasDef->getName(), "", true);
+        row.addField(g);
+      }
+      row.rowSort();
+    }
+  }
+
+      
+  //  Source in <set>
+  // should either be FIELDTYPElit or FIELDTYPEtoBe.   In latter
+  // case, substitute from row argument.
+  void Table::doInterUpdate(const std::vector<Set>& sets, 
+                            Assertion* subsAssert, Row& toBe)       {
+    unsigned nSets = sets.size();
+    std::vector<FieldVal> fields;
+    fields.reserve(nSets);
+
+    for (unsigned iSet = 0; iSet < sets.size(); iSet++) {
+      std::string col = sets[iSet].getDestColName();
+      std::string src;
+      //      updateCols.push_back(sets[iSet].getDestColName());
+      FIELDTYPE srcType = sets[iSet].getSrcType();
+      if ((srcType == FIELDTYPElit) || (srcType == FIELDTYPElitDef)) {
+        src = sets[iSet].getSrcValue();
+      }
+      else {   // must be toBe
+        std::string toBeCol = sets[iSet].getSrcValue();
+        FieldVal* f = toBe.find(toBeCol);
+        if (f == 0) {
+          delete subsAssert;
+          throw RdbException
+            ("Table::InsertNew Row argument missing needed field");
+        }
+        src = f->m_val;
+        //        updateVals.push_back(f->m_val);
+      }
+      FieldVal g(col, src);
+      fields.push_back(g);
+    }
+    Row row(fields);
+
+    fillProgramCols(row, false);
+
+    std::vector<std::string> updateCols;
+    std::vector<std::string> updateVals;
+    std::vector<std::string> nullCols;
+
+    row.regroup(updateCols, updateVals, nullCols);
+
+    // Make specified changes (update)
+    m_connect->update(m_name, updateCols, updateVals, subsAssert);
+    
+    delete subsAssert;
+  }
 }
