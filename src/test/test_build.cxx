@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.17 2005/06/24 18:03:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.18 2005/06/27 07:45:58 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -343,13 +343,13 @@ int doSmartInsert(rdbModel::Rdb* rdb) {
 
   fields.push_back(FieldVal("instrument", "LAT"));
   fields.push_back(FieldVal("calib_type", "CAL_Ped"));
-  fields.push_back(FieldVal("flavor", "ideal"));
-  fields.push_back(FieldVal("proc_level", "prod"));
+  fields.push_back(FieldVal("flavor", "vanilla"));
+  fields.push_back(FieldVal("proc_level", "PROD"));
   fields.push_back(FieldVal("completion", "OK"));
   fields.push_back(FieldVal("data_fmt", "XML"));
   fields.push_back(FieldVal("fmt_version", "1.1"));
   fields.push_back(FieldVal("data_ident", "nofile.xml"));
-  fields.push_back(FieldVal("vstart", "2004-01-01"));
+  fields.push_back(FieldVal("vstart", "2004-01-04"));
   fields.push_back(FieldVal("vend", "2030-01-01"));
   fields.push_back(FieldVal("locale", "Oz"));
   fields.push_back(FieldVal("input_desc", "none"));

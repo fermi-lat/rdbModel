@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.10 2005/06/24 18:03:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.11 2005/06/27 07:45:58 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -91,8 +91,12 @@ namespace rdbModel {
     void addAssert(Assertion* a) {m_asserts.push_back(a);}
     void addIndex(Index* i) {m_indices.push_back(i); }
 
-    bool fillProgramCol(Column* col, Row& row, bool newRow);
+    bool fillProgramCols(Row& row, bool newRow);
 
+    void fillDefaults(Row& row) const;
+
+    void doInterUpdate(const std::vector<Set>& sets, Assertion* subsAssert,
+                       Row& toBe);
     std::string m_name;
     std::string m_version;
     std::string m_comment;
