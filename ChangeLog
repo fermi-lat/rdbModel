@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: jrb  Mon Jun 27 00:45:58 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Assertion.cxx Column.cxx Table.cxx 
+Log Message:
+Bug fixes, enhancements for smart insert
+
+    *
+------------------------------------------------------------
+User: jrb  Mon Jun 27 00:45:58 PDT 2005
 rdbModel/src/Management
 
 Modified Files:
