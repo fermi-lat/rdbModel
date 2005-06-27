@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.7 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.8 2005/06/24 18:03:33 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -83,7 +83,7 @@ namespace rdbModel {
      colNames.reserve(nFields);
      colVals.reserve(nFields);
 
-     for (unsigned i = 0; nFields; i++) {
+     for (unsigned i = 0; i < nFields; i++) {
        if (m_fields[i].m_null) {
          nullCols.push_back(m_fields[i].m_colname);
        }

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.14 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.15 2005/06/24 18:03:32 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -53,6 +53,8 @@ namespace rdbModel{
     /// Return true iff open has been done with no matching close
     virtual bool isConnected() {return m_connected;}
 
+    std::ostream* getOut() const {return m_out;}
+    std::ostream* getErrOut() const {return m_err;}
     /**
        Check to what degree local schema definition is compatible with
        remote db accessed via this connection.  By default check db names
@@ -128,6 +130,12 @@ namespace rdbModel{
     virtual bool 
     compileAssertion(const Assertion* a, std::string& sqlString) const;
 
+    /**
+      Turn select and update into no-ops: output SQL string for
+      debugging but don't change db 
+    */
+    virtual void disableModify(bool disable) {m_writeDisabled=disable;}
+
     // Needed to satisfy Visitor interface:
     virtual Visitor::VisitorState visitRdb(Rdb*);
     virtual Visitor::VisitorState visitTable(Table*);
@@ -183,6 +191,7 @@ namespace rdbModel{
     std::string m_primColName;
 
     static bool   m_compileInit;
+    bool          m_writeDisabled;
 
     static void compileInit();
     static bool compileComparison(Assertion::Operator* op, 

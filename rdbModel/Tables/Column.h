@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.16 2005/06/23 18:57:45 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.17 2005/06/24 18:03:32 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -118,7 +118,7 @@ namespace rdbModel {
   class FieldVal {
     //    Column* m_pCol;
   public:
-    FieldVal(std::string colname, std::string val, bool isNull) :
+    FieldVal(std::string colname, std::string val, bool isNull=false) :
       m_colname(colname), m_val(val), m_null(isNull) { }
     std::string m_colname;
     std::string m_val;

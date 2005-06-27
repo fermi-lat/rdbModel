@@ -1,8 +1,9 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.9 2005/06/23 18:57:45 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.10 2005/06/24 18:03:32 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
 #include <string>
+#include <iostream>
 #include "rdbModel/Management/Visitor.h"
 #include "rdbModel/Tables/Column.h"
 
@@ -31,10 +32,10 @@ namespace rdbModel {
    */
   class Table {
   public:
-    Table() : m_sorted(false), m_nEndUser(0), m_iNew(0), m_sup(0), m_connect(0)
-    {m_sortedCols.clear(); m_programCols.clear(); m_userCols.clear();}
+    Table();
     ~Table();
 
+    void setConnection(Connection* connect);
 
     const std::string& getName() const { return m_name;}
     Column* getColumnByName(const std::string& name) const;
@@ -54,7 +55,7 @@ namespace rdbModel {
        done without actually doing it.
        Note @a row may be modified by the function.
     */
-    int smartInsert(Row& row, bool test=false);
+    int smartInsert(Row& row, int* serial=0);
 
     // Do we need these for anything?  
     InsertNew* getInsertNew() const {return m_iNew;}
@@ -82,6 +83,9 @@ namespace rdbModel {
     /// Subset of columns which user *must* supply
     std::vector<Column* > m_userCols;
 
+    /// Subset of columns with defaults (includes those defaulting to null)
+    std::vector<Column*> m_mayDefault;
+
     void addColumn(Column* c);
 
     void addAssert(Assertion* a) {m_asserts.push_back(a);}
@@ -100,6 +104,8 @@ namespace rdbModel {
     Supersede* m_sup;
 
     Connection* m_connect;
+    std::ostream* m_out;
+    std::ostream* m_err;
   };
 
 }

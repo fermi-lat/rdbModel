@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.13 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.14 2005/06/24 18:03:33 jrb Exp $
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
@@ -19,13 +19,22 @@ namespace rdbModel {
     }
   }
 
+  // Substitute values from toBe row as needed.
+  Assertion::Assertion(const Assertion* orig, Row* toBe) 
+    : m_op(0), m_myTable(orig->m_myTable), m_keepOp(false), m_name(""),
+      m_compiled("") {
+    toBe->rowSort();
+    m_op = new Assertion::Operator(orig->m_op, toBe);
+
+  }
+
   Assertion::~Assertion() {
     if (!m_keepOp) delete m_op;
   }
 
   // Constructor for comparisons
-  // It's also used for isNull, but in that case rightArg (and rightLiteral)
-  // are ignored.  They get stuffed into object, then never used.
+  // It's also used for isNull, but in that case rightArg and rightLiteral
+  // are ignored.  Internally they get set to "" and FIELDTYPElit, resp.
   Assertion::Operator::Operator(OPTYPE type, const std::string& leftArg, 
                                 const std::string& rightArg, 
                                 FIELDTYPE leftLiteral, 
@@ -43,6 +52,10 @@ namespace rdbModel {
     m_compareArgs[1] = rightArg;
     m_compareType[0] = leftLiteral;
     m_compareType[1] = rightLiteral;
+    if (type == OPTYPEisNull) {
+      m_compareType[1] = FIELDTYPElit;
+      m_compareArgs[1] = "";
+    }
     m_toBe = ((leftLiteral == FIELDTYPEtoBe) || 
               (rightLiteral == FIELDTYPEtoBe));
     m_old = ((leftLiteral == FIELDTYPEold) || 
@@ -85,6 +98,57 @@ namespace rdbModel {
       }
     }
     else m_opType = OPTYPEundefined;
+  }
+
+
+  /// Copy an operator, substituting from toBe row as appropriate
+  Assertion::Operator::Operator(Operator* op, Row* toBe) 
+    : m_opType(op->m_opType), m_tableName(op->m_tableName), 
+      m_keepChildren(false), m_toBe(false), m_old(op->m_old) {
+    m_operands.clear();
+
+    switch (m_opType) {
+      // OPTYPEor, and, not and exists all have child operators
+    case OPTYPEor:
+    case OPTYPEand: 
+    case OPTYPEnot: 
+    case OPTYPEexists:
+      {
+        for (unsigned iChild = 0; iChild < m_operands.size(); iChild++) {
+          Operator* child = new Operator(m_operands[iChild], toBe);
+          appendChild(child);
+        }
+        break;
+      }
+    case OPTYPEequal:
+    case OPTYPEnotEqual:
+    case OPTYPElessThan:
+    case OPTYPEgreaterThan:
+    case OPTYPElessOrEqual:
+    case OPTYPEgreaterOrEqual:
+    case OPTYPEisNull: {
+      for (unsigned i = 0; i < 2; i++) {
+        if ((op->m_compareType[i] == FIELDTYPEtoBe) || 
+            (op->m_compareType[i] == FIELDTYPEtoBeDef) ) { 
+          // have to supply value from row
+          FieldVal* f = toBe->find(op->m_compareArgs[i]);
+          if (!f) {
+            throw RdbException
+              ("Assertion::Operator constructor can't resolve field");
+          }
+          m_compareArgs[i] = f->m_val;
+          m_compareType[i] = FIELDTYPElit;
+        }
+        else {   // just copy what's there
+          m_compareArgs[i] = op->m_compareArgs[i];
+          m_compareType[i] =op->m_compareType[i];
+        }
+      }
+      break;
+    }
+    default:
+      throw RdbException("Assertion::Operator constructor - Unknown OP type");
+    }
   }
 
   // This only makes sense for conjunction-style operators AND, OR
@@ -211,8 +275,11 @@ namespace rdbModel {
       case FIELDTYPEoldDef: {
         FieldVal* f = old.find(m_compareArgs[i]);
         if (!f) {
+          std::string msg = 
+            std::string("Assertion::Operator::verifyCompare missing field ")
+            + m_compareArgs[i];
           throw
-            RdbException("Assertion::Operator::verifyCompare missing field");
+            RdbException(msg);
         }
         values[i] = f->m_val;
         colname = f->m_colname;

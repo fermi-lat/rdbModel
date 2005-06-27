@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.7 2005/06/19 20:39:18 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.8 2005/06/24 18:03:31 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -15,6 +15,7 @@ namespace rdbModel {
   //  class Assertion;
   class XercesBuilder;
   class Connection;
+  class Row;
 
     // Values for database fields may be specified in various ways
   enum FIELDTYPE {
@@ -68,6 +69,11 @@ namespace rdbModel {
 
     // Do we want an unset as well?  Or just call this with arg == 0 ?
     void setConnection(Connection* connection);
+
+    int smartInsert(Table* t, Row& row, int* serial=0);
+
+    int smartInsert(const std::string& tName, Row& row, int* serial=0);
+
 
     /// This is the recursive accept for the visitor pattern
     unsigned int  accept(Visitor* v);

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.16 2005/06/23 18:57:45 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.17 2005/06/24 18:03:33 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -16,9 +16,10 @@
 #include "rdbModel/Tables/Assertion.h"
 #include "facilities/Util.h"
 
-// #define TEST_INSERT
+#define TEST_INSERT
 
 int doInsert(rdbModel::Connection* con);
+int doSmartInsert(rdbModel::Rdb* rdb);
 int doUpdate(rdbModel::Connection*, int serial);
 void tryQuick(rdbModel::Table* t, const std::string& colname);
 
@@ -191,33 +192,47 @@ int main(int, char**) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
   }
+  match = con->matchSchema(rdb);
 
-    // Following will do an insert.  To keep from cluttering up the
-    // database, mostly don't execute
-    //  
+  // Following will do an insert.  To keep from cluttering up the
+  // database, mostly don't execute
+  //  
 #ifdef TEST_INSERT
-    int serial = doInsert(con);
-    if (serial) {
-      std::cout << "Hallelujah!  Inserted new row, serial# " 
-                << serial  << std::endl;
+  bool disable = true;
+  con->disableModify(disable);     // so don't really change db
+  int serial = doInsert(con);
+  if (serial) {
+    std::cout << "Hallelujah!  Inserted new row, serial# " 
+              << serial  << std::endl;
+  } else if (disable) {  // pick random serial# to check out disabled update
+    serial = 17;
+  }
+  if (serial) {
+    // Now try update
+    int nUpdates = doUpdate(con, serial);
 
-      // Now try update
-      int nUpdates = doUpdate(con, serial);
+    if (nUpdates) {
+      std::cout << "Did " << nUpdates << " on row " << serial
+                << std::endl;
+    }
+    else std::cout << "Failed to update row " << serial << std::endl;
+  }
+  else {
+    std::cout << "Bah, humbug.  Insert failed. " << std::endl;
+  }
 
-      if (nUpdates) {
-        std::cout << "Did " << nUpdates << " on row " << serial
-                  << std::endl;
-      }
-      else std::cout << "Failed to update row " << serial << std::endl;
-    }
-    else {
-      std::cout << "Bah, humbug.  Insert failed. " << std::endl;
-    }
+  serial = doSmartInsert(rdb);
+  if (serial) {
+    std::cout << "Did smartInsert, inserted new row with ser_no = " 
+              << serial << std::endl;
+  }
+  else if (!disable) {
+    std::cout << "Bah, humbug.  smartInsert failed. " << std::endl;
+  }
 #else
 
 
   // Check that we can really do something with this connection
-  match = con->matchSchema(rdb);
 
   switch (match) {
   case rdbModel::MATCHequivalent:
@@ -316,7 +331,43 @@ int doInsert(rdbModel::Connection* con) {
     int  serial = 0;
   
     con->insertRow("metadata_v2r1", cols, vals, &serial, &nullCols);
+    
     return serial;
+}
+/*            start here */
+int doSmartInsert(rdbModel::Rdb* rdb) {
+  using rdbModel::FieldVal;
+
+  std::vector<FieldVal> fields;
+  fields.reserve(15);
+
+  fields.push_back(FieldVal("instrument", "LAT"));
+  fields.push_back(FieldVal("calib_type", "CAL_Ped"));
+  fields.push_back(FieldVal("flavor", "ideal"));
+  fields.push_back(FieldVal("proc_level", "prod"));
+  fields.push_back(FieldVal("completion", "OK"));
+  fields.push_back(FieldVal("data_fmt", "XML"));
+  fields.push_back(FieldVal("fmt_version", "1.1"));
+  fields.push_back(FieldVal("data_ident", "nofile.xml"));
+  fields.push_back(FieldVal("vstart", "2004-01-01"));
+  fields.push_back(FieldVal("vend", "2030-01-01"));
+  fields.push_back(FieldVal("locale", "Oz"));
+  fields.push_back(FieldVal("input_desc", "none"));
+  fields.push_back(FieldVal("notes", "trying out smartInsert"));
+  fields.push_back(FieldVal("prod_end","",true));
+  fields.push_back(FieldVal("input_start","",true));
+  fields.push_back(FieldVal("input_end","",true));
+
+  rdbModel::Row row(fields);
+
+  int  serial = 0;
+  try {
+    rdb->smartInsert("metadata_v2r1", row, &serial);
+  }
+  catch (rdbModel::RdbException ex) {
+    std::cerr << "smartInsert failed with message" << ex.getMsg();
+  }
+  return serial;
 }
 
 int doUpdate(rdbModel::Connection* con, int serial) {

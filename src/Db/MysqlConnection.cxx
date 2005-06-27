@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.27 2005/06/23 01:20:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.28 2005/06/24 18:03:32 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -68,7 +68,8 @@ namespace rdbModel {
   MysqlConnection::MysqlConnection(std::ostream* out,
                                    std::ostream* errOut) :
     m_mysql(0), m_connected(0), m_out(out), m_err(errOut),
-    m_visitorType(VISITORundefined), m_rdb(0), m_tempRes(0) {
+    m_visitorType(VISITORundefined), m_rdb(0), m_tempRes(0),
+    m_writeDisabled(false)                                   {
     if (m_out == 0) m_out = &std::cout;
     if (m_err == 0) m_err = &std::cerr;
   }
@@ -231,8 +232,14 @@ namespace rdbModel {
       }
     }
 
-    (*m_out) << std::endl << "# About to issue  INSERT:" << std::endl;
+    (*m_out) << std::endl << "# INSERT string is:" << std::endl;
     (*m_out) << ins << std::endl;
+
+    if (m_writeDisabled) {
+      (*m_out) << "write to Db previously disabled; INSERT not sent"
+               << std::endl;
+      return true;
+    }
 
     int mysqlRet = mysql_query(m_mysql, ins.c_str());
 
@@ -276,8 +283,13 @@ namespace rdbModel {
       bool ret = compileAssertion(where, sqlString);
       if (!ret) return 0;
     }
-    (*m_out) << std::endl << "# About to issue UPDATE:" << std::endl;
+    (*m_out) << std::endl << "#  UPDATE to be issued:" << std::endl;
     (*m_out) << sqlString << std::endl;
+    if (m_writeDisabled) {
+      (*m_out) << "write to Db previously disabled; UPDATE not sent"
+               << std::endl;
+      return 0;
+    }
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
