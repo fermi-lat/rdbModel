@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.8 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.9 2005/06/27 20:46:20 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -252,7 +252,39 @@ namespace rdbModel {
     return (ok) ?  0 : -1;
   }
 
-  bool Table::fillProgramCols(Row& row, bool newRow) {
+  int Table::insertRow(Row& row, int* serial) const {
+
+    if (!m_connect) {
+      throw RdbException("Table::smartInsert Need matching connection");
+    }
+    row.rowSort();
+
+    // Fill in columns in m_programCols list
+    fillProgramCols(row, true);
+
+    // Check that all required columns are there and not null
+    for (unsigned i = 0; i < m_userCols.size(); i++) {
+      FieldVal* f = row.find(m_userCols[i]->getName());
+      if ((!f) || (f->m_null)) {
+        std::string 
+          msg("Table::insertRow Row to be inserted missing req'd field ");
+        msg = msg + m_userCols[i]->getName();
+        throw RdbException(msg);
+      }
+    }
+    // Insert and exit
+    std::vector<std::string> colNames;
+    std::vector<std::string> colValues;
+    std::vector<std::string> nullCols;
+
+    row.regroup(colNames, colValues, nullCols);
+    bool ok = m_connect->insertRow(m_name, colNames, colValues,
+                                   serial, &nullCols);
+    return (ok) ?  0 : -1;
+  }    
+
+
+  bool Table::fillProgramCols(Row& row, bool newRow) const {
     std::string val;
 
     for (unsigned i = 0; i < m_programCols.size(); i++) {
@@ -276,7 +308,7 @@ namespace rdbModel {
       }
 
       case Column::CONTENTSinsertTime:
-        if (!newRow) return false;   // otherwise, same as updateTime case
+        if (!newRow) continue;   // otherwise, same as updateTime case
       case Column::CONTENTSupdateTime: {
         facilities::Timestamp curTime;
         val = curTime.getString();
