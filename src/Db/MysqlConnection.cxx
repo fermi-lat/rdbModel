@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.29 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.30 2005/06/27 22:59:30 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -253,8 +253,8 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, ins.c_str());
 
     if (mysqlRet) {
-      (*m_err) << "MySQL error during INSERT, code " << mysqlRet << std::endl;
-      m_err->flush();
+      (*m_out) << "MySQL error during INSERT, code " << mysqlRet << std::endl;
+      m_out->flush();
       return false;
     }
     if (auto_value) {
@@ -306,9 +306,9 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
-      (*m_err) << "rdbModel::MysqlConnection::update: ";
-      (*m_err) << "MySQL error during UPDATE, code " << mysqlRet << std::endl;
-      m_err->flush();
+      (*m_out) << "rdbModel::MysqlConnection::update: ";
+      (*m_out) << "MySQL error during UPDATE, code " << mysqlRet << std::endl;
+      m_out->flush();
       return 0;
     }
     my_ulonglong nModLong = mysql_affected_rows(m_mysql);

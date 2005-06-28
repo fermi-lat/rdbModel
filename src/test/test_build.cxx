@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.18 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.19 2005/06/27 20:46:20 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -18,7 +18,7 @@
 
 #define TEST_INSERT
 
-int doInsert(rdbModel::Connection* con);
+int doInsert(rdbModel::Rdb* con);
 int doSmartInsert(rdbModel::Rdb* rdb);
 int doUpdate(rdbModel::Connection*, int serial);
 void tryQuick(rdbModel::Table* t, const std::string& colname);
@@ -200,7 +200,8 @@ int main(int, char**) {
 #ifdef TEST_INSERT
   bool disable = true;
   con->disableModify(disable);     // so don't really change db
-  int serial = doInsert(con);
+  //  int serial = doInsert(con);
+  int serial = doInsert(rdb);
   if (serial) {
     std::cout << "Hallelujah!  Inserted new row, serial# " 
               << serial  << std::endl;
@@ -277,62 +278,35 @@ int main(int, char**) {
   return 0;
 }
 
-int doInsert(rdbModel::Connection* con) {
+// int doInsert(rdbModel::Connection* con) {
+int doInsert(rdbModel::Rdb* rdb) {
   
-    std::vector<std::string> cols;
-    std::vector<std::string> vals;
-    std::vector<std::string> nullCols;
-    cols.push_back("instrument");
-    vals.push_back("LAT");
+  using rdbModel::FieldVal;
+  using rdbModel::Row;
 
-    cols.push_back("calib_type");
-    vals.push_back("Test_Gen");
+  std::vector<FieldVal> fields;
+  fields.reserve(15);
 
-    cols.push_back("flavor");
-    vals.push_back("zin");
+  fields.push_back(FieldVal("instrument", "LAT"));
+  fields.push_back(FieldVal("calib_type","Test_Gen"));
+  fields.push_back(FieldVal("flavor","berry"));
+  fields.push_back(FieldVal("data_fmt","nonsense"));
+  fields.push_back(FieldVal("vstart","2003-02-01"));
+  fields.push_back(FieldVal("data_size","0"));
+  fields.push_back(FieldVal("locale","phobos"));
+  fields.push_back(FieldVal("completion","ABORT"));
+  fields.push_back(FieldVal("data_ident","$(mycalibs)/test/moreJunk.xml"));
+  fields.push_back(FieldVal("notes", 
+                            "Absurd test item, setting input_desc to NULL"));
+  fields.push_back(FieldVal("input_desc","", true));
 
-    cols.push_back("data_fmt");
-    vals.push_back("nonsense");
-
-    cols.push_back("vstart");
-    vals.push_back("2003-02-01");
-
-    cols.push_back("vend");
-    vals.push_back("2020-02-01");
-
-    cols.push_back("data_size");
-    vals.push_back("0");
-
-    cols.push_back("locale");
-    vals.push_back("phobos");
-
-    cols.push_back("completion");
-    vals.push_back("ABORT");
-
-    cols.push_back("creator");
-    vals.push_back("test_build");
-
-    cols.push_back("uid");
-    vals.push_back("jrb");
-
-    cols.push_back("data_ident");
-    vals.push_back("$(mycalibs)/test/moreJunk.xml");
-
-    // null this one out
-    //    cols.push_back("input_desc");
-    // vals.push_back("imagination");
-
-    cols.push_back("notes");
-    vals.push_back("Absurd test item, setting input_desc to NULL");
-
-    nullCols.push_back("input_desc");
-    //    nullCols.push_back("vend");
-
-    int  serial = 0;
+  int  serial = 0;
   
-    con->insertRow("metadata_v2r1", cols, vals, &serial, &nullCols);
+  Row row(fields);
+
+  rdb->insertRow("metadata_v2r1", row, &serial);
     
-    return serial;
+  return serial;
 }
 /*            start here */
 int doSmartInsert(rdbModel::Rdb* rdb) {
