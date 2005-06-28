@@ -1,5 +1,22 @@
 ------------------------------------------------------------
 User: jrb  Tue Jun 28 15:48:30 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Table.cxx 
+Log Message:
+1. Add methods Rdb::insertRow, Table::insertRow, now preferred to 
+Connection::insertRow when compatible schema is available, however
+they don't do all the checking nor updates to other rows that
+smartInsert does.
+2. Modify test_build to check out new insertRow function
+3. MysqlConnection now uses standard output rather than error output in
+certain cases to avoid messages getting out of order
+
+
+    *
+------------------------------------------------------------
+User: jrb  Tue Jun 28 15:48:30 PDT 2005
 rdbModel/src/Db
 
 Modified Files:
