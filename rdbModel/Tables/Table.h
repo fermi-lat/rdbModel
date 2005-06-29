@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.12 2005/06/27 20:46:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.13 2005/06/28 22:48:30 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -66,6 +66,11 @@ namespace rdbModel {
        checks.
      */
     int insertRow(Row& row, int* serial=0) const;
+
+    /**
+       Silently fills in "service" fields as well as requested updates
+     */
+    int updateRows(Row &row, Assertion* where) const;
 
     // Do we need these for anything?  
     InsertNew* getInsertNew() const {return m_iNew;}

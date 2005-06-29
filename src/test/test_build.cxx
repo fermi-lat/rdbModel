@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.19 2005/06/27 20:46:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.20 2005/06/28 22:48:30 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -20,7 +20,8 @@
 
 int doInsert(rdbModel::Rdb* con);
 int doSmartInsert(rdbModel::Rdb* rdb);
-int doUpdate(rdbModel::Connection*, int serial);
+// int doUpdate(rdbModel::Connection*, int serial);
+int doUpdate(rdbModel::Rdb*, int serial);
 void tryQuick(rdbModel::Table* t, const std::string& colname);
 
 int main(int, char**) {
@@ -210,7 +211,8 @@ int main(int, char**) {
   }
   if (serial) {
     // Now try update
-    int nUpdates = doUpdate(con, serial);
+    /*    int nUpdates = doUpdate(con, serial);  */
+    int nUpdates = doUpdate(rdb, serial);
 
     if (nUpdates) {
       std::cout << "Did " << nUpdates << " on row " << serial
@@ -344,10 +346,13 @@ int doSmartInsert(rdbModel::Rdb* rdb) {
   return serial;
 }
 
-int doUpdate(rdbModel::Connection* con, int serial) {
+// int doUpdate(rdbModel::Connection* con, int serial) {
+int doUpdate(rdbModel::Rdb* rdb, int serial) {
   using rdbModel::Assertion;
   using rdbModel::Column;
   using facilities::Util;
+  using rdbModel::FieldVal;
+  using rdbModel::Row;
 
   // Set up WHERE clause, always the same
   std::string serialStr;
@@ -362,24 +367,40 @@ int doUpdate(rdbModel::Connection* con, int serial) {
 
   // First call an update without any null columns; change notes field
   // and set data_size to something.
-  std::vector<std::string> colNames, values, nullCols;
+  /*  std::vector<std::string> colNames, values, nullCols; */
+  std::vector<FieldVal> fields;
+  
+  fields.push_back(FieldVal("notes", "1st update: set data_size to non-zero value"));
+  fields.push_back(FieldVal("data_size", "883"));
+  
+  Row row(fields);
+  /*
   colNames.push_back(std::string("notes"));
   colNames.push_back(std::string("data_size"));
 
   values.push_back(std::string("1st update: set data_size to non-zero value"));
   values.push_back(std::string("883"));
 
+  */
   std::string table("metadata_v2r1");
-  unsigned nChange = con->update(table, colNames, values, whereSer);
+  //  unsigned nChange = con->update(table, colNames, values, whereSer);
+  unsigned nChange = rdb->updateRows(table, row, whereSer);
 
   // Now null out data_size
+  fields.clear();
+  fields.push_back(FieldVal("data_size", "", true));
+  fields.push_back(FieldVal("notes", "2nd update: data_size set to NULL"));
+  Row row2(fields);
+
+  nChange += rdb->updateRows(table, row2, whereSer);
+  /*
   nullCols.push_back("data_size");
   colNames.clear();
   colNames.push_back(std::string("notes"));
   values.clear();
   values.push_back(std::string("2nd update: data_size set to NULL"));
   nChange += con->update(table, colNames, values, whereSer, &nullCols);
-
+*/
   return nChange;
 }
 
