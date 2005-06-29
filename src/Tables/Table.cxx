@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.10 2005/06/28 22:48:30 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.11 2005/06/29 17:53:10 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -283,6 +283,24 @@ namespace rdbModel {
     return (ok) ?  0 : -1;
   }    
 
+  int Table::updateRows(Row &row, Assertion* where) const {
+
+    if (!m_connect) {
+      throw RdbException("Table::smartInsert Need matching connection");
+    }
+    row.rowSort();
+
+    // Fill in columns in m_programCols list
+    fillProgramCols(row, false);
+
+    std::vector<std::string> colNames;
+    std::vector<std::string> colValues;
+    std::vector<std::string> nullCols;
+
+    row.regroup(colNames, colValues, nullCols);
+
+    return m_connect->update(m_name, colNames, colValues, where, &nullCols);
+  }
 
   bool Table::fillProgramCols(Row& row, bool newRow) const {
     std::string val;

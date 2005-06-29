@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.9 2005/06/27 07:45:57 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.10 2005/06/28 22:48:30 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -86,6 +86,10 @@ namespace rdbModel {
     int smartInsert(Table* t, Row& row, int* serial=0);
     int smartInsert(const std::string& tName, Row& row, int* serial=0);
 
+    /**
+       Fills in service fields, then invokes Connection::update
+     */
+    int updateRows(const std::string& tName, Row& row, Assertion* where) const;
 
 
     /// This is the recursive accept for the visitor pattern
