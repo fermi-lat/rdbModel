@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.9 2005/06/27 20:46:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.10 2005/06/28 22:48:30 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -132,7 +132,7 @@ namespace rdbModel {
 
     // Keep around original set so that rdbGUI will display them in
     // this order
-    sort (m_sortedCols.begin(), m_sortedCols.end(), cmpObject); 
+    std::sort (m_sortedCols.begin(), m_sortedCols.end(), cmpObject); 
     m_sorted = true;
 
   }
