@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: jrb  Wed Jun 29 13:10:37 PDT 2005
+rdbModel/src/test
+
+Modified Files:
+	test_build.cxx 
+Log Message:
+Add Rdb::updateRows, Table::updateRows functions which fill in fields
+which are to be handled by "service"
+
+    *
+------------------------------------------------------------
+User: jrb  Wed Jun 29 13:10:37 PDT 2005
 rdbModel/src/Tables
 
 Modified Files:
