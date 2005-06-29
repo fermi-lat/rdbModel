@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun 29 10:53:10 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Column.cxx Table.cxx 
+Log Message:
+Hope insertion of 'std::' before 'sort' will fix Windows compile problem
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r0, operation: add
 Package: rdbModel
