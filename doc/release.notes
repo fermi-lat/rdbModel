@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r0   29-Jun-2005  jrb    Implement smartInsert; lay groundwork for supersede.
+                              Involves some incompatible changes to interface
    v1r7   11-Apr-2005  jrb    Add some machinery for multi-insert.  Also
                               eliminate some obsolete files in xml directory
    v1r6p4  1-Mar-2005  jrb    Little bug fixes; clean-up
