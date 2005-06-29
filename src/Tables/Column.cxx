@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.8 2005/06/24 18:03:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.9 2005/06/27 07:45:58 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -47,7 +47,7 @@ namespace rdbModel {
     if (m_sorted) return;
 
     FieldValCompare cmp;
-    sort(m_fields.begin(), m_fields.end(), cmp);
+    std::sort(m_fields.begin(), m_fields.end(), cmp);
     m_sorted = true;
   }
 
