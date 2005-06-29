@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed Jun 29 13:10:36 PDT 2005
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Add Rdb::updateRows, Table::updateRows functions which fill in fields
+which are to be handled by "service"
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r0p1, operation: add
 Package: rdbModel
