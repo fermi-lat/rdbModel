@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Jul  7 15:06:18 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Table.cxx 
+Log Message:
+Add #include <algorithm> so std::sort can be found
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jun 29 13:10:37 PDT 2005
 rdbModel/src/test
 
