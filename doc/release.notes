@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r1   7-Jul-2005   jrb    Fix Window compile; also add more
+                              machinery for insert latest function
    v2r0p1 29-Jun-2005  jrb    Attempt to fix Windows compile problem
    v2r0   29-Jun-2005  jrb    Implement smartInsert; lay groundwork for supersede.
                               Involves some incompatible changes to interface
