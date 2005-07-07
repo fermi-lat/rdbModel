@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.11 2005/06/29 17:53:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.12 2005/06/29 20:10:37 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -13,6 +13,7 @@
 #include "rdbModel/Tables/Set.h"
 #include "facilities/Util.h"
 #include "facilities/Timestamp.h"
+#include <algorithm>
 
 namespace rdbModel {
   Table::Table() : m_sorted(false), m_nEndUser(0), m_iNew(0), m_sup(0), 
