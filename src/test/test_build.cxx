@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.20 2005/06/28 22:48:30 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.21 2005/06/29 20:10:37 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -20,14 +20,14 @@
 
 int doInsert(rdbModel::Rdb* con);
 int doSmartInsert(rdbModel::Rdb* rdb);
-// int doUpdate(rdbModel::Connection*, int serial);
 int doUpdate(rdbModel::Rdb*, int serial);
 void tryQuick(rdbModel::Table* t, const std::string& colname);
-
+int   doSupersedes(rdbModel::Rdb* rdb, int serial, int* newSerial);
+int   doSupersede(rdbModel::Rdb* rdb, rdbModel::Row& row, 
+                  int serial, int* newSerial);
 int main(int, char**) {
   using rdbModel::FieldVal;
 
-  //  std::string infile("$(RDBMODELROOT)/xml/calib_test_S.xml");
   std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
 
   rdbModel::Manager* man = rdbModel::Manager::getManager();
@@ -201,11 +201,22 @@ int main(int, char**) {
 #ifdef TEST_INSERT
   bool disable = true;
   con->disableModify(disable);     // so don't really change db
-  //  int serial = doInsert(con);
   int serial = doInsert(rdb);
   if (serial) {
     std::cout << "Hallelujah!  Inserted new row, serial# " 
               << serial  << std::endl;
+    // Try to supersede.  Should fail since flavor != "vanilla"
+    /*
+    int newSerial;
+    bool didSup = doSupersedes(rdb, serial, &newSerial);
+    if (didSup) {
+      std::cout << "Supersede of " << serial << " successful." << std::endl;
+      std::cout << "New row is " << newSerial << std::endl;
+    }
+    else {
+      std::cout << "Supersede of " << serial << " failed" << std::endl;
+    }
+    */
   } else if (disable) {  // pick random serial# to check out disabled update
     serial = 17;
   }
@@ -226,11 +237,22 @@ int main(int, char**) {
 
   serial = doSmartInsert(rdb);
   if (serial) {
-    std::cout << "Did smartInsert, inserted new row with ser_no = " 
+    std::cout << "Did insertLatest, inserted new row with ser_no = " 
               << serial << std::endl;
+    // Try to supersede.  Should fail since flavor != "vanilla"
+    int newSerial;
+    bool didSup = doSupersedes(rdb, serial, &newSerial);
+    if (didSup) {
+      std::cout << "Supersede of " << serial << " successful." << std::endl;
+      std::cout << "New row is " << newSerial << std::endl;
+    }
+    else {
+      std::cout << "Supersede of " << serial << " failed" << std::endl;
+    }
+
   }
   else if (!disable) {
-    std::cout << "Bah, humbug.  smartInsert failed. " << std::endl;
+    std::cout << "Bah, humbug.  insertLatest failed. " << std::endl;
   }
 #else
 
@@ -329,7 +351,7 @@ int doSmartInsert(rdbModel::Rdb* rdb) {
   fields.push_back(FieldVal("vend", "2030-01-01"));
   fields.push_back(FieldVal("locale", "Oz"));
   fields.push_back(FieldVal("input_desc", "none"));
-  fields.push_back(FieldVal("notes", "trying out smartInsert"));
+  fields.push_back(FieldVal("notes", "trying out insertLatest"));
   fields.push_back(FieldVal("prod_end","",true));
   fields.push_back(FieldVal("input_start","",true));
   fields.push_back(FieldVal("input_end","",true));
@@ -338,10 +360,10 @@ int doSmartInsert(rdbModel::Rdb* rdb) {
 
   int  serial = 0;
   try {
-    rdb->smartInsert("metadata_v2r1", row, &serial);
+    rdb->insertLatest("metadata_v2r1", row, &serial);
   }
   catch (rdbModel::RdbException ex) {
-    std::cerr << "smartInsert failed with message" << ex.getMsg();
+    std::cerr << "insertLatest failed with message" << ex.getMsg();
   }
   return serial;
 }
@@ -374,16 +396,9 @@ int doUpdate(rdbModel::Rdb* rdb, int serial) {
   fields.push_back(FieldVal("data_size", "883"));
   
   Row row(fields);
-  /*
-  colNames.push_back(std::string("notes"));
-  colNames.push_back(std::string("data_size"));
 
-  values.push_back(std::string("1st update: set data_size to non-zero value"));
-  values.push_back(std::string("883"));
-
-  */
   std::string table("metadata_v2r1");
-  //  unsigned nChange = con->update(table, colNames, values, whereSer);
+
   unsigned nChange = rdb->updateRows(table, row, whereSer);
 
   // Now null out data_size
@@ -393,14 +408,6 @@ int doUpdate(rdbModel::Rdb* rdb, int serial) {
   Row row2(fields);
 
   nChange += rdb->updateRows(table, row2, whereSer);
-  /*
-  nullCols.push_back("data_size");
-  colNames.clear();
-  colNames.push_back(std::string("notes"));
-  values.clear();
-  values.push_back(std::string("2nd update: data_size set to NULL"));
-  nChange += con->update(table, colNames, values, whereSer, &nullCols);
-*/
   return nChange;
 }
 
@@ -425,3 +432,62 @@ void tryQuick(rdbModel::Table* t, const std::string& colname) {
   }
 }
 
+int  doSupersedes(rdbModel::Rdb* rdb, int serial, int* newSerial) {
+  using rdbModel::Row;
+  using rdbModel::FieldVal;
+
+  int retVal;
+  int nSuccess = 0;
+  Row row;
+
+  // First put something in row that doesn't belong there
+  row.addField(FieldVal("data_ident","supFile.xml"));
+  row.addField(FieldVal("notes", "this supersede is not supposed to work"));
+  row.addField(FieldVal("instrument", "cello"));
+
+  retVal = doSupersede(rdb, row, serial, newSerial);
+  if (!retVal) nSuccess++;
+
+
+  // Now leave out something necessary
+  row.clear();
+  row.addField(FieldVal("data_ident", "supFile.xml"));
+
+  retVal = doSupersede(rdb, row, serial, newSerial);
+  if (!retVal) nSuccess++;
+
+  // Now try to do it right!
+  row.clear();
+  row.addField(FieldVal("data_ident", "supFile.xml"));
+  row.addField(FieldVal("notes", "Try supersede with good row input"));
+  retVal = doSupersede(rdb, row, serial, newSerial);
+  if (!retVal) nSuccess++;
+
+  std::cout << "Attempted 3 supersedes; # success = " << nSuccess
+            << std::endl;
+  return nSuccess;
+}
+
+int  doSupersede(rdbModel::Rdb* rdb, rdbModel::Row& row, int serial, 
+                  int* newSerial) {
+
+  std::string table("metadata_v2r1");
+  int retVal = -1;
+
+  try {
+    retVal = rdb->supersedeRow(table, row, serial, newSerial);
+    if (retVal) {
+      std::cout << "supersede of row " << serial << " failed with code " 
+                << retVal << std::endl;
+    }
+    else {
+      std::cout << "supsersede of row " << serial << " succeeded" << std::endl;
+    }
+  }
+  catch (rdbModel::RdbException ex) {
+    std::cout << "supersede of row " << serial << " failed with exception " 
+              << std::endl;
+    std::cout << ex.getMsg() << std::endl;
+  }
+  return retVal;
+}

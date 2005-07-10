@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.12 2005/06/29 20:10:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.13 2005/07/07 22:06:18 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -11,13 +11,14 @@
 #include "rdbModel/Tables/InterRow.h"
 #include "rdbModel/Tables/Query.h"
 #include "rdbModel/Tables/Set.h"
+#include "rdbModel/Tables/Supersede.h"
 #include "facilities/Util.h"
 #include "facilities/Timestamp.h"
 #include <algorithm>
 
 namespace rdbModel {
-  Table::Table() : m_sorted(false), m_nEndUser(0), m_iNew(0), m_sup(0), 
-                   m_connect(0)    {
+  Table::Table() : m_primaryKeyCol(""), m_sorted(false), m_nEndUser(0), 
+                   m_validRow(0), m_iNew(0), m_sup(0), m_connect(0)    {
     m_sortedCols.clear(); m_programCols.clear(); 
     m_userCols.clear(); m_mayDefault.clear();
     m_out = &std::cout;    m_err = &std::cerr;
@@ -150,15 +151,18 @@ namespace rdbModel {
         m_mayDefault.push_back(c);
       }
     }
+    else if (c->getSourceType() == Column::FROMdefault) {
+      m_mayDefault.push_back(c);
+    }
     else if (c->getSourceType() == Column::FROMprogram) {
       m_programCols.push_back(c);
     }
   }
 
-  int Table::smartInsert(Row& row, int* serial) {
+  int Table::insertLatest(Row& row, int* serial) const {
 
     if (!m_connect) {
-      throw RdbException("Table::smartInsert Need matching connection");
+      throw RdbException("Table::insertLatest Need matching connection");
     }
     row.rowSort();
 
@@ -170,7 +174,7 @@ namespace rdbModel {
       FieldVal* f = row.find(m_userCols[i]->getName());
       if ((!f) || (f->m_null)) {
         std::string 
-          msg("Table::smartInsert Row to be inserted missing req'd field ");
+          msg("Table::insertLatest Row to be inserted missing req'd field ");
         msg = msg + m_userCols[i]->getName();
         throw RdbException(msg);
       }
@@ -186,7 +190,7 @@ namespace rdbModel {
       satisfied = cond->verify(row, row);
     }
     catch (RdbException ex) {
-      (*m_err) << ex.getMsg() << std::endl;
+      (*m_out) << ex.getMsg() << std::endl;
       return -1;
     }
 
@@ -236,8 +240,8 @@ namespace rdbModel {
       //    if quit  go ahead and quit
       if (inter[iInter]->getQuit()) {
         delete subsAssert;
-        (*m_out) << "Smart insert not done because of irreconcilable conflict" 
-                 << std::endl << "with existing rows" << std::endl;
+        (*m_out) << "insert latest not done because of irreconcilable " 
+                 << std::endl << "conflict with existing rows" << std::endl;
         return -1;
       }
       //    else modify conflicting rows as specified in <interRow>.
@@ -245,7 +249,8 @@ namespace rdbModel {
 
       std::vector<Set> sets = inter[iInter]->getSets();
 
-      doInterUpdate(sets, subsAssert, row);
+      bool iu = doInterUpdate(sets, subsAssert, row);
+      if (!iu) return -1;
     }
     // Insert and exit
     bool ok = m_connect->insertRow(m_name, colNames, colValues,
@@ -256,12 +261,13 @@ namespace rdbModel {
   int Table::insertRow(Row& row, int* serial) const {
 
     if (!m_connect) {
-      throw RdbException("Table::smartInsert Need matching connection");
+      throw RdbException("Table::insertRow Need matching connection");
     }
     row.rowSort();
 
     // Fill in columns in m_programCols list
     fillProgramCols(row, true);
+
 
     // Check that all required columns are there and not null
     for (unsigned i = 0; i < m_userCols.size(); i++) {
@@ -271,6 +277,28 @@ namespace rdbModel {
           msg("Table::insertRow Row to be inserted missing req'd field ");
         msg = msg + m_userCols[i]->getName();
         throw RdbException(msg);
+      }
+    }
+
+    // Fill in defaults
+    fillDefaults(row);
+
+    // Check standard valid row condition if there is one
+    if (m_validRow) {
+      bool satisfied;
+      try {
+        satisfied = m_validRow->verify(row, row);
+      }
+      catch (RdbException ex) {
+        (*m_out) << ex.getMsg() << std::endl;
+        return -1;
+      }
+      if (!satisfied) {
+        // throw RdbException("Table::insertRow Row to be inserted is not valid");
+        (*m_out) << "Table::insertRow Row to be inserted is not valid " 
+                  << std::endl;
+        m_out->flush();
+        return -1;
       }
     }
     // Insert and exit
@@ -284,10 +312,125 @@ namespace rdbModel {
     return (ok) ?  0 : -1;
   }    
 
+  int Table::supersedeRow(Row& row, int oldKey, int* serial) const {
+    std::string oldKeyStr;
+    facilities::Util::itoa(oldKey, oldKeyStr);
+
+    if (m_primaryKeyCol.size() == 0) {
+      throw RdbException("Table::supersedeRow No primary key column!");
+    }
+
+    // Confirm that row does not contain any of the fixed or oldForced columns
+    row.rowSort();
+    const std::vector<std::string>& forced = m_sup->getForced();
+    for (unsigned i = 0; i < forced.size(); i++) {
+      if (row.find(forced[i])) {
+        //        throw RdbException
+        //          (std::string("Table::supersedeRow bad column in input row ") +
+        // forced[i]);
+        (*m_out) << "Table::supersedeRow bad column in input row "
+                  << forced[i] << std::endl;
+        m_out->flush();
+        return -1;
+      }
+    }
+    const std::vector<FieldVal>& fixed = m_sup->getFixed();
+    for (unsigned i = 0; i < fixed.size(); i++) {
+      if (row.find(fixed[i].m_colname)) {
+        //        throw RdbException
+        //          (std::string("Table::supersedeRow bad column in input row ") +
+        //           fixed[i].m_colname);
+        (*m_out) << "Table::supersedeRow bad column in input row " <<
+          fixed[i].m_colname;
+        m_out->flush();
+        return -1;
+      }
+    }
+
+    // Check that old row is supersedable
+    if (!isSupersedable(oldKeyStr)) {
+      *m_out << "Row " << oldKey << " is not supersedable" << std::endl;
+      m_out->flush();
+      return -1;
+    }
+    
+    // Fill in fixed fields
+    const std::vector<std::string>& fixedInterp = m_sup->getFixedInterp();
+    for (unsigned i = 0; i < fixed.size(); i++) {
+
+      FieldVal fv = fixed[i];
+      if (fixedInterp[i].size() > 0) {
+        Column* c = getColumnByName(fixed[i].m_colname);
+        c->interpret(fixedInterp[i], fv.m_val);
+      }
+      row.addField(fv);
+    }
+    row.rowSort();
+
+    // Fetch needed fields from row to be superseded (oldKey)
+    Assertion::Operator* whereOp = 
+      new Assertion::Operator(OPTYPEequal, m_primaryKeyCol,
+                              oldKeyStr, FIELDTYPEold, FIELDTYPElit);
+    Assertion* where = new Assertion(whereOp);
+
+    std::vector<std::string> noCols;
+    const std::vector<std::string>& fromOld = m_sup->getFromOld();
+    noCols.clear();
+    ResultHandle* results = m_connect->select(m_name, fromOld, 
+                                              noCols, where);
+    std::vector<std::string> vals;
+    results->getRow(vals);
+    // Merge as needed into our row.  First bunch may already be in the row
+    unsigned nDef = m_sup->getOldDefaulted().size();
+    for (unsigned i = 0; i < nDef; i++) {
+      if (!(row.find(fromOld[i])) ) {
+        row.addField(FieldVal(fromOld[i], vals[i]));
+        row.rowSort();
+      }
+    }
+    // Remainder definitely have to be merged in
+    for (unsigned i = nDef; i < fromOld.size(); i++) {
+      row.addField(FieldVal(fromOld[i], vals[i]));
+    }
+
+
+    // Insert the row and update old row
+    int insRet;
+    try {
+      insRet = insertRow(row, serial);
+    }
+    catch (RdbException ex) {
+      (*m_out) << ex.getMsg() << std::endl;
+      insRet = -1;
+    }
+
+    if (insRet) { // something went wrong
+      delete where;
+      return insRet;
+    }
+
+    // Do the update of old row
+    const std::vector<Set*>& setOld = m_sup->getSetOld();
+    std::vector<FieldVal> oldFields;
+    oldFields.reserve(setOld.size());
+    for (unsigned i = 0; i < setOld.size(); i++) {
+      oldFields.push_back(FieldVal(setOld[i]->getDestColName(), 
+                                   setOld[i]->getSrcValue()));
+    }
+    Row updateArg(oldFields);
+    try {
+      return updateRows(updateArg, where);
+    }
+    catch (RdbException uEx) {
+      (*m_out) << uEx.getMsg() << std::endl;
+      return -1;
+    }
+  }
+
   int Table::updateRows(Row &row, Assertion* where) const {
 
     if (!m_connect) {
-      throw RdbException("Table::smartInsert Need matching connection");
+      throw RdbException("Table::insertLatest Need matching connection");
     }
     row.rowSort();
 
@@ -373,8 +516,8 @@ namespace rdbModel {
   //  Source in <set>
   // should either be FIELDTYPElit or FIELDTYPEtoBe.   In latter
   // case, substitute from row argument.
-  void Table::doInterUpdate(const std::vector<Set>& sets, 
-                            Assertion* subsAssert, Row& toBe)       {
+  bool Table::doInterUpdate(const std::vector<Set>& sets, 
+                            Assertion* subsAssert, Row& toBe)  const     {
     unsigned nSets = sets.size();
     std::vector<FieldVal> fields;
     fields.reserve(nSets);
@@ -386,14 +529,25 @@ namespace rdbModel {
       FIELDTYPE srcType = sets[iSet].getSrcType();
       if ((srcType == FIELDTYPElit) || (srcType == FIELDTYPElitDef)) {
         src = sets[iSet].getSrcValue();
+        // May require special handling
+        if (sets[iSet].hasInterp()) {
+          Column* c = getColumnByName(col);
+          c->interpret(sets[iSet].getInterp(), src);
+          /*  should know how to substitute, e.g. val="NOW" should
+           be transformed into a timestamp           */
+        }
       }
       else {   // must be toBe
         std::string toBeCol = sets[iSet].getSrcValue();
         FieldVal* f = toBe.find(toBeCol);
         if (f == 0) {
           delete subsAssert;
-          throw RdbException
-            ("Table::InsertNew Row argument missing needed field");
+          (*m_out) << "Table::InsertNew Row argument missing needed field"
+                   << toBeCol << std::endl;
+          m_out->flush();
+          return false;
+          //          throw RdbException
+          //            ("Table::InsertNew Row argument missing needed field");
         }
         src = f->m_val;
         //        updateVals.push_back(f->m_val);
@@ -415,5 +569,46 @@ namespace rdbModel {
     m_connect->update(m_name, updateCols, updateVals, subsAssert);
     
     delete subsAssert;
+    return true;
   }
+
+  const std::string& Table::setPrimaryKeyCol() {
+    static const std::string empty("");
+    if (m_primaryKeyCol.size() > 0) return m_primaryKeyCol;
+
+    for (unsigned iCol = 0; iCol < m_cols.size(); iCol++) {
+      if (m_cols[iCol]->isPrimaryKey()) {
+        m_primaryKeyCol = m_cols[iCol]->getName();
+        return m_primaryKeyCol;
+      }
+    }
+    return empty;
+  }
+
+  bool Table::isSupersedable(std::string oldKeyStr) const {
+    // Make a copy of supersedable condition
+    Row emptyRow;
+    Assertion::Operator* onlyIf = 
+      new Assertion::Operator((m_sup->getOnlyIf())->getOperator(), 
+                              &emptyRow);
+    // Make operator for key == oldKey
+    Assertion::Operator* ser =
+      new Assertion::Operator(OPTYPEequal,  m_primaryKeyCol,
+                              oldKeyStr, FIELDTYPEold, FIELDTYPElit);
+    std::vector<Assertion::Operator*> children;
+    children.push_back(onlyIf);
+    children.push_back(ser);
+    Assertion::Operator* whereOp = 
+      new Assertion::Operator(OPTYPEand, children);
+
+    std::vector<std::string> queryCols;
+    queryCols.push_back(m_primaryKeyCol);
+    Assertion* where = new Assertion(whereOp);
+    ResultHandle* results = m_connect->select(m_name, queryCols, queryCols,
+                                              where);
+    delete where;
+
+    return (results->getNRows() > 0);
+  }
+
 }

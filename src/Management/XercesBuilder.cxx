@@ -1,7 +1,7 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.24 2005/06/23 18:57:45 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.25 2005/06/27 07:45:58 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
-#include "rdbModel/Tables/Table.h"
+#include "rdbModel/Tables/Table.h"n
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -131,6 +131,7 @@ namespace rdbModel {
         newTable->addIndex(newIndex);
       }
     }
+    newTable->setPrimaryKeyCol();
 
     // Handle any other indices
     Dom::getChildrenByTagName(tableElt, "index", children);
@@ -155,6 +156,9 @@ namespace rdbModel {
         newTable->addAssert(newAssert);
       }
     }
+    // If there was a 'validRow' assertion, make that explicit
+    Assertion* v = newTable->getAssertionByName("validRow");
+    newTable->setValidRow(v);
 
     DOMElement* iNewElt = Dom::findFirstChildByName(tableElt, "insertNew");
     if (iNewElt) {
@@ -514,6 +518,7 @@ namespace rdbModel {
     // Now find out what kind of source there is for the <set>
     FIELDTYPE srcType;
     std::string srcValue;
+    std::string interp("");
     DOMElement* srcElt = Dom::findFirstChildByName(e, "*"); 
     std::string tag = Dom::getTagName(srcElt);
     if (tag == std::string("ask")) {
@@ -523,20 +528,21 @@ namespace rdbModel {
     else if (tag == std::string("value") ) {
       srcType = FIELDTYPElit;
       srcValue = Dom::getTextContent(srcElt);
+      interp = Dom::getAttribute(srcElt, "interp");
     }
     else { // it's a setColRef element
       std::string forceStr= Dom::getAttribute(srcElt, "force"); 
       bool force = (forceStr == std::string("true"));
       srcValue = Dom::getAttribute(srcElt, "col");
       std::string which = Dom::getAttribute(srcElt, "which");
-      srcType == (which == std::string("old")) ? FIELDTYPEold 
+      srcType = (which == std::string("old")) ? FIELDTYPEold 
         : FIELDTYPEtoBe;
       if (!force) {
         if  (srcType == FIELDTYPEold) srcType = FIELDTYPEoldDef;
         else srcType = FIELDTYPEtoBeDef;
       }
     }
-    return new Set(t, destCol, destType, srcValue, srcType);
+    return new Set(t, destCol, destType, srcValue, srcType, interp);
   }
 
 
@@ -561,6 +567,7 @@ namespace rdbModel {
       super->addSet(s);
       e = Dom::getSiblingElement(e);
     }
+    super->normalize();
     return super;
   }
 

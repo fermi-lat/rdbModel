@@ -1,4 +1,4 @@
-// $Header:   $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Supersede.cxx,v 1.1 2005/06/19 20:39:20 jrb Exp $
 
 #include "rdbModel/Tables/Set.h"
 #include "rdbModel/Tables/Supersede.h"
@@ -7,9 +7,13 @@
 namespace rdbModel {
 
   Supersede::Supersede(Table* table, Assertion* onlyIf) : 
-    m_myTable(table), m_onlyIf(onlyIf) {
+    m_myTable(table), m_onlyIf(onlyIf), m_normalized(false) {
     m_setOld.clear();
     m_setNew.clear();
+    m_oldDefaults.clear();
+    m_oldForced.clear();
+    m_ask.clear();
+    m_fixed.clear();
   }
 
   void Supersede::addSet(Set* s) {
@@ -25,6 +29,48 @@ namespace rdbModel {
     }
     return;
   }
+
+
+  void Supersede::normalize() {
+    if (m_normalized) return;
+    //    unsigned nOld = m_setOld.size();
+    unsigned nNew = m_setNew.size();
+    // For each object in m_setNew, store information in one of the 
+    // vectors of column names or in m_fixed for easy access later
+    for (unsigned iNew = 0; iNew < nNew; iNew++) {
+      //      FIELDTYPE srcType = m_setOld[iOld]->getSrcType();
+      //      switch (srcType) {
+      switch (m_setNew[iNew]->getSrcType()) {
+      case FIELDTYPEold: 
+        m_oldForced.push_back(m_setNew[iNew]->getDestColName());
+        break;
+      case FIELDTYPEoldDef: 
+        m_oldDefaults.push_back(m_setNew[iNew]->getDestColName());
+        break;
+      case FIELDTYPEask:
+        m_ask.push_back(m_setNew[iNew]->getDestColName());
+        break;
+      case FIELDTYPElit:
+        m_fixed.push_back(FieldVal(m_setNew[iNew]->getDestColName(),
+                                   m_setNew[iNew]->getSrcValue()));
+        m_fixedInterp.push_back(m_setNew[iNew]->getInterp());
+        break;
+      default:
+        throw RdbException("Supersede::normalize Unrecognized <set>");
+      }
+    }
+
+    m_fromOld.reserve(m_oldDefaults.size() + m_oldForced.size());
+    m_fromOld.clear();
+    for (unsigned i = 0; i < m_oldDefaults.size(); i++) {
+      m_fromOld.push_back(m_oldDefaults[i]);
+    }
+    for (unsigned i = 0; i < m_oldForced.size(); i++) {
+      m_fromOld.push_back(m_oldForced[i]);
+    }
+    m_normalized = true;
+  }
+
 
   Supersede::~Supersede() {
     while (m_setOld.size() ) {
@@ -46,4 +92,6 @@ namespace rdbModel {
     if (state == Visitor::VBRANCHDONE) return Visitor::VCONTINUE;
     return state;
   }
+
+  
 }
