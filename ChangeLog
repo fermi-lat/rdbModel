@@ -1,4 +1,19 @@
 ------------------------------------------------------------
+User: jrb  Sun Jul 10 16:56:35 PDT 2005
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+1. Almost done with supersedeRow functionality, primarily involving updates 
+to Table, Supersede, Rdb and XercesBuilder.
+2. Make validRow constraint a global concept, to be checked for all inserts
+and updates
+3. Add 'interp' attribute to <value>, allowing special values (e.g., NOW
+for timestamp-like fields) to be saved and interpreted later
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r1, operation: add
 Package: rdbModel
