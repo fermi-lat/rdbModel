@@ -1,5 +1,20 @@
 ------------------------------------------------------------
 User: jrb  Sun Jul 10 16:56:36 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	calib_test.xml rdbmsDescrip.xsd 
+Log Message:
+1. Almost done with supersedeRow functionality, primarily involving updates 
+to Table, Supersede, Rdb and XercesBuilder.
+2. Make validRow constraint a global concept, to be checked for all inserts
+and updates
+3. Add 'interp' attribute to <value>, allowing special values (e.g., NOW
+for timestamp-like fields) to be saved and interpreted later
+
+    *
+------------------------------------------------------------
+User: jrb  Sun Jul 10 16:56:36 PDT 2005
 rdbModel/src/test
 
 Modified Files:
