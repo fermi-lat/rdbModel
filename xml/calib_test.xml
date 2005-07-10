@@ -4,7 +4,7 @@
        dbs="calib_test"
        SchemaVersion="2.0"
        SchemaExpected="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.4 2005/06/19 20:39:20 jrb Exp $"   >
+       CVSid= "$Id: calib_test.xml,v 1.5 2005/06/27 07:45:58 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
@@ -416,9 +416,6 @@
         </compare>
       </and>
     </assert>
-<!--                    SSSSSSSSSSSSSSSSSS   -->
-
-
 
     <assert name="laterVstart">
       <!-- Look for similar rows with later vstart -->
@@ -448,7 +445,6 @@
     </assert>
 
 
-<!--                      &&&&&&&&&&&&&&&&  -->
     <assert name="insertCheck">
       <!-- Look for possible conflicting rows -->
       <and>
@@ -536,13 +532,21 @@
       <set destCol="proc_level" destRow="old">
         <value>SUPSED</value>
       </set>
-
+ <!-- timestamp value NOW needs special handling-->
       <set destCol="prod_end" destRow="old">
-        <value>NOW</value>  <!-- timestamp value NOW needs special handling-->
+        <value interp="time">NOW</value> 
       </set>
 
       <set destCol="prod_start" destRow="toBe">
-        <value>NOW</value> 
+        <value interp="time">NOW</value> 
+      </set>
+
+      <set destCol="proc_level" destRow="toBe">
+        <value>PROD</value>
+      </set>
+
+      <set destCol="completion" destRow="toBe">
+        <value>OK</value>
       </set>
 
       <set destRow="toBe" destCol="data_ident" >
@@ -577,7 +581,29 @@
       <set destRow="toBe" destCol="data_size" >
         <setColRef which="old" col="data_size" force="false" />
       </set>
-     
+     <!-- this says take value from old row as is (may not override -->
+
+     <set destRow="toBe" destCol="instrument" >
+        <setColRef which="old" col="instrument" />
+     </set>
+
+     <set destRow="toBe" destCol="flavor" >
+        <setColRef which="old" col="flavor" />
+     </set>
+
+     <set destRow="toBe" destCol="calib_type" >
+        <setColRef which="old" col="calib_type" />
+     </set>
+
+     <set destRow="toBe" destCol="vstart" >
+        <setColRef which="old" col="vstart" />
+     </set>
+
+     <set destRow="toBe" destCol="vend" >
+        <setColRef which="old" col="vend" />
+     </set>
+
+
     </supersede>
   </table>
 </rdbms>

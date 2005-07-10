@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.10 2005/06/28 22:48:30 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.11 2005/06/29 20:10:36 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -75,7 +75,7 @@ namespace rdbModel {
        an SQL insert:  it will take care of fields intended to be
        filled by the service (e.g., insert and update timestamps)
      */
-    int insertRow(const std::string& tName, Row& row, int* serial=0);
+    int insertRow(const std::string& tName, Row& row, int* serial=0) const;
 
     /**
        The two forms of smart insert, in addition to filling in the
@@ -83,8 +83,11 @@ namespace rdbModel {
        consistency checking and may even update pre-existing
        rows.  
     */
-    int smartInsert(Table* t, Row& row, int* serial=0);
-    int smartInsert(const std::string& tName, Row& row, int* serial=0);
+    int insertLatest(Table* t, Row& row, int* serial=0) const;
+    int insertLatest(const std::string& tName, Row& row, int* serial=0) const;
+
+    int supersedeRow(const std::string& tName, Row& row, int oldKey, 
+                     int* newKey=0) const;
 
     /**
        Fills in service fields, then invokes Connection::update

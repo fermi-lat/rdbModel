@@ -1,8 +1,10 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.9 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.10 2005/06/29 17:53:10 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/Tables/Table.h"
+#include "facilities/Timestamp.h"
+
 #include <algorithm>
 namespace rdbModel {
 
@@ -34,6 +36,23 @@ namespace rdbModel {
 
   bool Column::isAutoIncrement() const {
     return (m_from == FROMautoIncrement);
+  }
+
+  bool Column::interpret(const std::string& interpType, std::string& val) {
+    // Currently only interpretation is for timestamp-like columns.
+    // Value of interpType must be "time" and val must be "NOW".
+    // In this case, substitute ascii current time
+    if (interpType.compare(std::string("time")) != 0) return false;
+
+    Datatype::TYPES dtype = m_type->getType();
+    if ((dtype != Datatype::TYPEdatetime) && 
+        (dtype != Datatype::TYPEtimestamp)) {
+      return false;
+    }
+    if (val.compare(std::string("NOW")) != 0) return false;
+
+    val = facilities::Timestamp().getString();
+    return true;
   }
 
   Visitor::VisitorState Column::accept(Visitor* v) {

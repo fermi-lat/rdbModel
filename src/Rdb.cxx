@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.6 2005/06/28 22:48:30 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.7 2005/06/29 20:10:37 jrb Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/RdbException.h"
@@ -49,7 +49,7 @@ namespace rdbModel {
     }
   }
 
-  int Rdb::insertRow(const std::string& tName, Row& row, int* serial) {
+  int Rdb::insertRow(const std::string& tName, Row& row, int* serial) const {
     Table* t = getTable(tName);
     if (!t) {
       std::string msg("Rdb::insertRow unknown table ");
@@ -69,18 +69,30 @@ namespace rdbModel {
     return (t->updateRows(row, where));
   }
 
-  int Rdb::smartInsert(Table* t, Row& row, int* serial) {
-    return (t->smartInsert(row, serial));
+  int Rdb::insertLatest(Table* t, Row& row, int* serial) const {
+    return (t->insertLatest(row, serial));
   }
 
-  int Rdb::smartInsert(const std::string& tName, Row& row, int* serial) {
+  int Rdb::insertLatest(const std::string& tName, Row& row, int* serial) 
+    const {
     Table* t = getTable(tName);
     if (!t) {
-      std::string msg("Rdb::smartInsert unknown table ");
+      std::string msg("Rdb::insertLatest unknown table ");
       msg = msg + tName;
       throw RdbException(msg);
     }
-    return (t->smartInsert(row, serial));
+    return (t->insertLatest(row, serial));
+  }
+
+  int Rdb::supersedeRow(const std::string& tName, Row& row, int oldKey, 
+                        int* newKey) const {
+    Table* t = getTable(tName);
+    if (!t) {
+      std::string msg("Rdb::supersedeRow unknown table ");
+      msg = msg + tName;
+      throw RdbException(msg);
+    }
+    return (t->supersedeRow(row, oldKey, newKey));
   }
 
   unsigned int Rdb::accept(Visitor* v) {
@@ -95,6 +107,7 @@ namespace rdbModel {
     }
     return state;
   }
+
 
 }
     

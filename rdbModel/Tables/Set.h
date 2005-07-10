@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.10 2005/02/15 22:43:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Set.h,v 1.1 2005/06/19 20:39:19 jrb Exp $
 #ifndef RDBMODEL_SET_H
 #define RDBMODEL_SET_H
 #include <vector>
@@ -22,9 +22,10 @@ namespace rdbModel{
   public:
     Set(Table* table, const std::string& destColName, 
         FIELDTYPE destType, 
-        const std::string& srcValue, FIELDTYPE srcType) : 
+        const std::string& srcValue, FIELDTYPE srcType, 
+        const std::string& interp = std::string("")) : 
       m_myTable(table), m_destCol(destColName), m_destType(destType),
-      m_srcValue(srcValue), m_srcType(srcType) {}
+      m_srcValue(srcValue), m_srcType(srcType), m_interp(interp) {}
     /**  
          Normally, operator associated with the assertion will be deleted
          when the assertion itself is deleted, but this won't happen if
@@ -39,6 +40,9 @@ namespace rdbModel{
 
     const std::string& getSrcValue() const {return m_srcValue;}
     FIELDTYPE getSrcType() const {return m_srcType;}
+    const std::string& getInterp() const {return m_interp;}
+
+    bool hasInterp() const {return (m_interp.size() > 0);}
 
   private:
     Table*      m_myTable;
@@ -49,6 +53,7 @@ namespace rdbModel{
     std::string m_srcValue;   
     /// Describes how to interpret m_srcValue
     FIELDTYPE   m_srcType;
+    std::string m_interp;
   };
 }
 #endif

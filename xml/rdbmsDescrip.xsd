@@ -322,7 +322,23 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="value" type="xs:NMTOKEN" />
+<!--  <xs:element name="value" type="xs:NMTOKEN" />  -->
+
+<!-- add attribute 'interp' to allow for special interpretation of a
+     literal value.  Could make type of this attribute an enum, but don't
+     yet know very well how it will be used.  Defaults to "" (no 
+     special interpretation).  Only other case so far is "time", meant
+     to cover keyword value "NOW".  
+ -->
+  <xs:element name="value">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NMTOKEN">
+          <xs:attribute name="interp" type="xs:token" default="" />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
 
   <xs:element name='quit'>
     <xs:complexType/>
