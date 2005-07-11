@@ -1,7 +1,7 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.25 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.26 2005/07/10 23:56:35 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
-#include "rdbModel/Tables/Table.h"n
+#include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -397,15 +397,16 @@ namespace rdbModel {
     using xmlBase::Dom;
 
     std::string opName = Dom::getTagName(e);
-    OPTYPE opType;
-    if (opName == "isNull") {
+    OPTYPE opType = OPTYPEisNull;
+    if ((opName == "isNull") || (opName == "isEmpty")) {
+      if (opName == "isEmpty") opType = OPTYPEisEmpty;
       DOMElement* child = Dom::getFirstChildElement(e);
       FIELDTYPE valType;
       std::string which = Dom::getAttribute(child, "which");
       valType =  (which == std::string("old")) ? FIELDTYPEold 
         : FIELDTYPEtoBe;
 
-      return new Assertion::Operator(OPTYPEisNull, 
+      return new Assertion::Operator(opType,
                                      Dom::getAttribute(child, "col"),
                                      std::string(""), 
                                      valType, valType);

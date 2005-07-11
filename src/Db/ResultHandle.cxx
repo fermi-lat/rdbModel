@@ -1,4 +1,4 @@
-// $ Header: $
+// $Header: $
 
 #include "rdbModel/Db/ResultHandle.h"
 
