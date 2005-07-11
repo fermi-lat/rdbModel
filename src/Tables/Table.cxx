@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.13 2005/07/07 22:06:18 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.14 2005/07/10 23:56:35 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -328,8 +328,8 @@ namespace rdbModel {
         //        throw RdbException
         //          (std::string("Table::supersedeRow bad column in input row ") +
         // forced[i]);
-        (*m_out) << "Table::supersedeRow bad column in input row "
-                  << forced[i] << std::endl;
+        (*m_out) << "Table::supersedeRow bad column in input row '"
+                 << forced[i] << "'" << std::endl;
         m_out->flush();
         return -1;
       }
@@ -378,22 +378,34 @@ namespace rdbModel {
     noCols.clear();
     ResultHandle* results = m_connect->select(m_name, fromOld, 
                                               noCols, where);
-    std::vector<std::string> vals;
-    results->getRow(vals);
+    //    std::vector<std::string> vals;
+    //    results->getRow(vals);
+    std::vector<std::string*> vals;
+    results->getRowPtrs(vals);
     // Merge as needed into our row.  First bunch may already be in the row
     unsigned nDef = m_sup->getOldDefaulted().size();
     for (unsigned i = 0; i < nDef; i++) {
       if (!(row.find(fromOld[i])) ) {
-        row.addField(FieldVal(fromOld[i], vals[i]));
+        if (vals[i] == 0) {
+          row.addField(FieldVal(fromOld[i], "", true));
+        }
+        else {
+          row.addField(FieldVal(fromOld[i], *vals[i]));
+        }
         row.rowSort();
       }
     }
     // Remainder definitely have to be merged in
     for (unsigned i = nDef; i < fromOld.size(); i++) {
-      row.addField(FieldVal(fromOld[i], vals[i]));
+      if (vals[i] == 0) {
+        row.addField(FieldVal(fromOld[i], "", true));
+      }
+      else {
+        row.addField(FieldVal(fromOld[i], *vals[i]));
+      }
     }
-
-
+    results->cleanFieldPtrs(vals);
+    
     // Insert the row and update old row
     int insRet;
     try {
@@ -414,12 +426,19 @@ namespace rdbModel {
     std::vector<FieldVal> oldFields;
     oldFields.reserve(setOld.size());
     for (unsigned i = 0; i < setOld.size(); i++) {
-      oldFields.push_back(FieldVal(setOld[i]->getDestColName(), 
-                                   setOld[i]->getSrcValue()));
+      std::string src = setOld[i]->getSrcValue();
+      std::string col = setOld[i]->getDestColName();
+      if (setOld[i]->hasInterp() ) {
+        Column* c = getColumnByName(col);
+        c->interpret(setOld[i]->getInterp(), src);
+      }
+      oldFields.push_back(FieldVal(col, src));
     }
     Row updateArg(oldFields);
     try {
-      return updateRows(updateArg, where);
+      int iUpdated = updateRows(updateArg, where);
+      if (iUpdated == 1) return 0;
+      return -1;
     }
     catch (RdbException uEx) {
       (*m_out) << uEx.getMsg() << std::endl;

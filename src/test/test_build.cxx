@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.21 2005/06/29 20:10:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.22 2005/07/10 23:56:35 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -451,7 +451,7 @@ int  doSupersedes(rdbModel::Rdb* rdb, int serial, int* newSerial) {
 
   // Now leave out something necessary
   row.clear();
-  row.addField(FieldVal("data_ident", "supFile.xml"));
+  row.addField(FieldVal("notes", "oops!  left out data_ident"));
 
   retVal = doSupersede(rdb, row, serial, newSerial);
   if (!retVal) nSuccess++;
