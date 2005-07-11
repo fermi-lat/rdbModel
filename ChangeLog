@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Mon Jul 11 13:22:50 PDT 2005
+rdbModel/rdbModel/Db
+
+Modified Files:
+	MysqlResults.h ResultHandle.h 
+Log Message:
+1. Add ResultHandle,MysqlResults routine getRowPtrs so application can 
+   distinguish between empty string value in db and NULL
+2. Add static routine cleanFieldPtrs to handle clean-up of row ptrs returned
+3. Various other little things to get supersedeRow to work correctly
+
+    *
+------------------------------------------------------------
 User: jrb  Sun Jul 10 16:56:36 PDT 2005
 rdbModel/xml
 
