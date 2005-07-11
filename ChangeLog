@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Mon Jul 11 16:49:40 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h 
+Log Message:
+1. Add new operation type (isEmpty - compare field value to  empty string) 
+   which may be a component of an Assertion. Affects schema, xml file, and
+   XercesBuilder and Assertion classes
+2. Minor clean-up in MysqlResults.cxx 
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jul 11 13:22:51 PDT 2005
 rdbModel/src/test
 
