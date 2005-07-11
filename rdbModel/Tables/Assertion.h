@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.14 2005/06/24 18:03:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.15 2005/06/27 07:45:58 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -18,6 +18,7 @@ namespace rdbModel{
       OPTYPEnot,
       OPTYPEexists,
       OPTYPEisNull,
+      OPTYPEisEmpty,
       OPTYPEequal,           // first of 2-operand compare ops
       OPTYPEnotEqual,
       OPTYPElessThan,
@@ -72,8 +73,8 @@ namespace rdbModel{
       Operator() : m_opType(OPTYPEundefined) {};
       ~Operator();
 
-      /// Constructor for comparison.  If the operator is OPTTYPEisNull,
-      /// rightArg and rightLiteral are ignored.
+      /// Constructor for comparison.  If the operator is OPTTYPEisNull
+      /// or OPTYPEisEmpty rightArg and rightLiteral are ignored.
       Operator(OPTYPE type, const std::string& leftArg, 
                const std::string& rightArg, 
                FIELDTYPE leftType, FIELDTYPE rightType);
@@ -95,7 +96,7 @@ namespace rdbModel{
       /// have compatible types
       bool validCompareOp(Table* table) const;
 
-      /// True if operator is "isNull" or any of the usual arithmetic
+      /// True if operator is isNull, isEmpty or any of the usual arithmetic
       /// comparisons
       bool isCompareOp() const {return (m_opType >= OPTYPEisNull);}
 
@@ -143,7 +144,7 @@ namespace rdbModel{
       OPTYPE m_opType;
 
       /** Following two lines apply only to compare operators (includes
-          isNull)
+          isNull, isEmpty)
 
           In order to format properly in an SQL query, need to
           keep track of whether compare arg is literal, column name

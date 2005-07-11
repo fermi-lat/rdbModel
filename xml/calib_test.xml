@@ -4,7 +4,7 @@
        dbs="calib_test"
        SchemaVersion="2.0"
        SchemaExpected="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.5 2005/06/27 07:45:58 jrb Exp $"   >
+       CVSid= "$Id: calib_test.xml,v 1.6 2005/07/10 23:56:36 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
@@ -363,6 +363,12 @@
           <isNull>
             <colRef col="prod_end" which="toBe"/>
           </isNull>
+          <isEmpty>
+            <colRef col="prod_start" which="toBe"/>
+          </isEmpty>
+          <isEmpty>
+            <colRef col="prod_end" which="toBe"/>
+          </isEmpty>
           <compare relation="lessThan">
             <colRef col="prod_start" which="toBe" />
             <colRef col="prod_end" which="toBe" />
@@ -375,6 +381,12 @@
           <isNull>
             <colRef col="input_end" which="toBe"/>
           </isNull>
+          <isEmpty>
+            <colRef col="input_start" which="toBe"/>
+          </isEmpty>
+          <isEmpty>
+            <colRef col="input_end" which="toBe"/>
+          </isEmpty>
           <compare relation="lessThan">
             <colRef col="input_start" which="toBe" />
             <colRef col="input_end" which="toBe"/>

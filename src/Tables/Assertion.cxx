@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.15 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.16 2005/06/27 20:46:20 jrb Exp $
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
@@ -33,8 +33,9 @@ namespace rdbModel {
   }
 
   // Constructor for comparisons
-  // It's also used for isNull, but in that case rightArg and rightLiteral
-  // are ignored.  Internally they get set to "" and FIELDTYPElit, resp.
+  // It's also used for isNull and isEmpty, but in those cases rightArg 
+  // and rightLiteral are ignored.
+  // Internally they get set to "" and FIELDTYPElit, resp.
   Assertion::Operator::Operator(OPTYPE type, const std::string& leftArg, 
                                 const std::string& rightArg, 
                                 FIELDTYPE leftLiteral, 
@@ -52,7 +53,7 @@ namespace rdbModel {
     m_compareArgs[1] = rightArg;
     m_compareType[0] = leftLiteral;
     m_compareType[1] = rightLiteral;
-    if (type == OPTYPEisNull) {
+    if ((type == OPTYPEisNull) || (type ==OPTYPEisEmpty)) {
       m_compareType[1] = FIELDTYPElit;
       m_compareArgs[1] = "";
     }
@@ -127,6 +128,7 @@ namespace rdbModel {
     case OPTYPEgreaterThan:
     case OPTYPElessOrEqual:
     case OPTYPEgreaterOrEqual:
+    case OPTYPEisEmpty:
     case OPTYPEisNull: {
       for (unsigned i = 0; i < 2; i++) {
         if ((op->m_compareType[i] == FIELDTYPEtoBe) || 
@@ -230,14 +232,21 @@ namespace rdbModel {
     case OPTYPEnot:
       return (!(m_operands[0]->verify(old, toBe, t)));
 
-    case OPTYPEisNull: {
+      
+    case OPTYPEisNull: 
+    case OPTYPEisEmpty: 
+      // These two are almost the same
+      {
       Row* r = 0;
       if ( (m_compareType[0] == FIELDTYPEtoBe) || 
            (m_compareType[0] == FIELDTYPEtoBeDef) ) r = &toBe;
       else r = &old;
 
       FieldVal* f = r->find(m_compareArgs[0]);
-      if (f) return f->m_null;
+      if (f) {
+        if (m_opType == OPTYPEisNull) return f->m_null;
+        return ((f->m_val).size() == 0);
+      }
       else {  // improper input.  Field should have been found
         throw RdbException("Assertion::Operator::verify missing isNull field");
       }

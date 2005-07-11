@@ -226,7 +226,7 @@
 <!-- This definition serves somewhat the same function as a parameter
      entity describing a content model (in the case of the "operands"
      group defined below, the content model would look like  
-                 (or | and | not | isNull)
+                 (or | and | not | isNull | isEmpty)
   -->
   <xs:group name="operands" >
     <xs:choice>
@@ -234,13 +234,8 @@
       <xs:element name="and" type="operandsType" />
 <!--      <xs:element name="exists" type="existsType" /> -->
       <xs:element name="not" type="operandType" />
-      <xs:element name="isNull" >
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element  ref="colRef"  />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="isNull" type="oneFieldType" />
+      <xs:element name="isEmpty" type="oneFieldType" />
       <xs:element name="compare" type="compareType" />
     </xs:choice>
   </xs:group>
@@ -258,6 +253,14 @@
       <xs:group ref="operands" />
     </xs:sequence>
   </xs:complexType>
+
+<!-- for operations taking a single field name as argument -->
+  <xs:complexType name="oneFieldType">
+     <xs:sequence>
+        <xs:element  ref="colRef"  />
+     </xs:sequence>
+  </xs:complexType>
+
 
 
   <xs:complexType name="compareType">
