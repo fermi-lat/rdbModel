@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/ResultHandle.h,v 1.1 2004/03/24 02:01:31 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/ResultHandle.h,v 1.2 2004/03/28 08:22:51 jrb Exp $
 #ifndef RDBMODEL_RESULTHANDLE_H
 #define RDBMODEL_RESULTHANDLE_H
 #include <vector>
@@ -26,6 +26,18 @@ namespace rdbModel{
     virtual bool getRow(std::vector<std::string>& fields, unsigned int i = 0,
                         bool clear = true) =0;
 
+    
+    /**  
+         Get array of field values for ith row of result set.  If a field 
+         value is NULL, return a zero ptr for that element of the array
+
+         --> It is the responsibility of the caller to delete the strings
+             containing the field values.  See service cleanFieldPtrs.
+    */
+    virtual bool getRowPtrs(std::vector<std::string*>& fields, 
+                            unsigned int i = 0, bool clear=true) = 0;
+
+    static void cleanFieldPtrs(std::vector<std::string*>& fields);
     /*
     // Return specified row in results as a string
     virtual bool getRowString(std::string& row, unsigned int iRow=0) const = 0;
