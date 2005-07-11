@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r2   11-Jul-2005  jrb    Finish off supersedeRow function
    v2r1   7-Jul-2005   jrb    Fix Window compile; also add more
                               machinery for insert latest function
    v2r0p1 29-Jun-2005  jrb    Attempt to fix Windows compile problem
