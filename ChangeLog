@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jul 11 17:56:35 PDT 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Fix compile warnings
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r2p1, operation: add
 Package: rdbModel
