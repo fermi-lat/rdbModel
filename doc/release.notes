@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r2p1 11-Jul-2005  jrb    Bring files calib.xml, calib_user.xml into the
+                              new XML schema era
    v2r2   11-Jul-2005  jrb    Finish off supersedeRow function
    v2r1   7-Jul-2005   jrb    Fix Window compile; also add more
                               machinery for insert latest function
