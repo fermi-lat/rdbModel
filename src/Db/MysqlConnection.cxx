@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.30 2005/06/27 22:59:30 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.31 2005/06/28 22:48:30 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -708,7 +708,7 @@ namespace rdbModel {
       base = "char";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return Visitor::VERRORABORT;
+        return false;
       }
       //  For char datatype unspecified size is equivalent to size=1
       if (!sqlSize) sqlSize = 1;
@@ -760,7 +760,7 @@ namespace rdbModel {
     }     // end switch
     if (sqlType.find(base) != 0) {
       m_matchReturn = MATCHfail;
-      return Visitor::VERRORABORT;
+      return false;
     }
     // Now check size.  It's only for display, so mismatch is not failure
     if (sqlSize != dtype->getOutputSize()) {
