@@ -4,7 +4,7 @@
        dbs="calib_user"
        SchemaVersion="2.0"
        SchemaExpected="2.0"
-       CVSid= "$Id: calib_test_S.xml,v 1.1 2005/06/12 07:06:05 jrb Exp $"   >
+       CVSid= "$Id: calib_test.xml,v 1.7 2005/07/11 23:49:41 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
@@ -353,31 +353,43 @@
     <assert name="validRow">
       <and>
         <compare relation="lessThan">
-          <colRef col="vstart" />
-          <colRef col="vend" />
+          <colRef col="vstart" which="toBe"/>
+          <colRef col="vend" which="toBe" />
         </compare>
         <or>
           <isNull>
-            <colRef col="prod_start" />
+            <colRef col="prod_start" which="toBe"/>
           </isNull>
           <isNull>
-            <colRef col="prod_end" />
+            <colRef col="prod_end" which="toBe"/>
           </isNull>
+          <isEmpty>
+            <colRef col="prod_start" which="toBe"/>
+          </isEmpty>
+          <isEmpty>
+            <colRef col="prod_end" which="toBe"/>
+          </isEmpty>
           <compare relation="lessThan">
-            <colRef col="prod_start" />
-            <colRef col="prod_end" />
+            <colRef col="prod_start" which="toBe" />
+            <colRef col="prod_end" which="toBe" />
           </compare>
         </or>
         <or>
           <isNull>
-            <colRef col="input_start" />
+            <colRef col="input_start" which="toBe"/>
           </isNull>
           <isNull>
-            <colRef col="input_end" />
+            <colRef col="input_end" which="toBe"/>
           </isNull>
+          <isEmpty>
+            <colRef col="input_start" which="toBe"/>
+          </isEmpty>
+          <isEmpty>
+            <colRef col="input_end" which="toBe"/>
+          </isEmpty>
           <compare relation="lessThan">
-            <colRef col="input_start" />
-            <colRef col="input_end" />
+            <colRef col="input_start" which="toBe" />
+            <colRef col="input_end" which="toBe"/>
           </compare>
         </or>
       </and>
@@ -417,6 +429,34 @@
       </and>
     </assert>
 
+    <assert name="laterVstart">
+      <!-- Look for similar rows with later vstart -->
+      <and>
+        <compare relation="equal">
+          <colRef col="flavor" />
+          <colRef col="flavor" which="toBe" />
+        </compare>
+        <compare relation="equal">
+          <colRef col="instrument" />
+          <colRef col="instrument" which="toBe" />
+        </compare>
+        <compare relation="equal">
+          <colRef col="calib_type" />
+          <colRef col="calib_type" which="toBe" />
+        </compare>
+        <compare relation="equal">
+          <colRef col="proc_level" />
+          <colRef col="proc_level" which="toBe" />
+        </compare>
+
+        <compare relation="greaterThan">
+          <colRef col="vstart" />
+          <colRef col="vstart" which="toBe" />
+        </compare>
+      </and>
+    </assert>
+
+
     <assert name="insertCheck">
       <!-- Look for possible conflicting rows -->
       <and>
@@ -452,12 +492,19 @@
          (assertion validRow).  If the row also is "official" - meets
          certain criteria such that we care about it for production
          or near-production use - continue checking:
-         Make a query, saving primary key
-         for all rows satisfying it.  If no rows found, done (do insert).
-         Otherwise, modify fields in found rows as needed or, depending
-         on what we find or success of operations, may have to give up.
+            If there is another similar row (same calib_type, flavor, etc.)
+            with a later vstart time, quit.
+            If there are other similar rows with vend > new row's vstart,
+            adjust them.
+            Then do insert
      -->
     <insertNew internalCond="validRow"  official="checkQuality">
+      <interRow>
+        <query assertRef="laterVstart" >
+          <select>ser_no</select>
+        </query>
+        <quit />
+      </interRow>
       <interRow>
         <query  assertRef="insertCheck" >
           <select>ser_no</select>
@@ -497,13 +544,21 @@
       <set destCol="proc_level" destRow="old">
         <value>SUPSED</value>
       </set>
-
+ <!-- timestamp value NOW needs special handling-->
       <set destCol="prod_end" destRow="old">
-        <value>NOW</value>  <!-- timestamp value NOW needs special handling-->
+        <value interp="time">NOW</value> 
       </set>
 
       <set destCol="prod_start" destRow="toBe">
-        <value>NOW</value> 
+        <value interp="time">NOW</value> 
+      </set>
+
+      <set destCol="proc_level" destRow="toBe">
+        <value>PROD</value>
+      </set>
+
+      <set destCol="completion" destRow="toBe">
+        <value>OK</value>
       </set>
 
       <set destRow="toBe" destCol="data_ident" >
@@ -538,7 +593,29 @@
       <set destRow="toBe" destCol="data_size" >
         <setColRef which="old" col="data_size" force="false" />
       </set>
-     
+     <!-- this says take value from old row as is (may not override -->
+
+     <set destRow="toBe" destCol="instrument" >
+        <setColRef which="old" col="instrument" />
+     </set>
+
+     <set destRow="toBe" destCol="flavor" >
+        <setColRef which="old" col="flavor" />
+     </set>
+
+     <set destRow="toBe" destCol="calib_type" >
+        <setColRef which="old" col="calib_type" />
+     </set>
+
+     <set destRow="toBe" destCol="vstart" >
+        <setColRef which="old" col="vstart" />
+     </set>
+
+     <set destRow="toBe" destCol="vend" >
+        <setColRef which="old" col="vend" />
+     </set>
+
+
     </supersede>
   </table>
 </rdbms>
