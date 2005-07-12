@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Jul 11 17:13:53 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_user.xml 
+Log Message:
+update production and user xml description to match the one for test.
+(database tables are unchanged)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r2, operation: add
 Package: rdbModel
