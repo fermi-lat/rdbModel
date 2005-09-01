@@ -1,5 +1,18 @@
 ------------------------------------------------------------
 User: jrb  Thu Sep  1 16:46:29 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Changes to aid use of rdbGUI for MOOD dbs
+MysqlConnection.cxx:  Add some debug output in case of schema mismatch
+Datatype.cxx: Allow interval for TIMESTAMP datatype (why was it ever excluded?)
+rdbmsDescrip.xsd: Add new gui_readonly attribute to <table>, default='false'
+
+    *
+------------------------------------------------------------
+User: jrb  Thu Sep  1 16:46:29 PDT 2005
 rdbModel/src/Db
 
 Modified Files:
