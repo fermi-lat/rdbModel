@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.8 2004/04/27 00:08:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.9 2005/03/01 20:01:25 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -88,10 +88,11 @@ namespace rdbModel {
     return m_type;
   }
 
-  // Makes sense only for numeric types or for datetime
+  // Makes sense only for numeric types or for datetime [or timestamp]
   bool Datatype::setInterval(const std::string& min, const std::string& max) {
     bool ret = false;
-    if ((m_type == TYPEtimestamp) || (m_type == TYPEenum) || 
+    //    if ((m_type == TYPEtimestamp) || (m_type == TYPEenum) || 
+    if ( (m_type == TYPEenum) || 
         (m_type == TYPEchar) || (m_type == TYPEvarchar)) {
       std::cerr << "From rdbModel::Datatype::setInterval " << std::endl;
       std::cerr << "Cannot set interval restriction for type " <<

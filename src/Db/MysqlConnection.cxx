@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.31 2005/06/28 22:48:30 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.32 2005/07/12 00:56:35 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -639,6 +639,7 @@ namespace rdbModel {
     Datatype* dtype = col->getDatatype();
     if (!checkDType(dtype, sqlDtype)) {
       m_matchReturn = MATCHfail;
+      (*m_out) << "Failed dtype match of col " << myName << std::endl;
       return Visitor::VERRORABORT;
     }
     
@@ -646,6 +647,7 @@ namespace rdbModel {
     bool nullable = (std::string(colDescrip[2]) == std::string("YES"));
     if (nullable != col->nullAllowed()) {
       m_matchReturn = MATCHfail;
+      (*m_out) << "Failed null/not null match of col " << myName << std::endl;
       return Visitor::VERRORABORT;
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
@@ -660,6 +662,7 @@ namespace rdbModel {
       (std::string(colDescrip[5]) == std::string("auto_increment"));
     if (autoInc != col->isAutoIncrement()) {
       m_matchReturn = MATCHfail;
+      (*m_out) << "Failed isAutoIncrement match of col " << myName << std::endl;
       return Visitor::VERRORABORT;
     }
     return Visitor::VCONTINUE;
