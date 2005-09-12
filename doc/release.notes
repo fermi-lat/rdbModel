@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r2p3 12-Sep-2005  jrb    Output message before throwing exception
    v2r2p2 11-Jul-2005  jrb    Fix compile warnings
    v2r2p1 11-Jul-2005  jrb    Bring files calib.xml, calib_user.xml into the
                               new XML schema era
