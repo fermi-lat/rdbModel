@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Sep 12 10:31:01 PDT 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Output message rather than just throwing exception
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Sep  1 16:46:29 PDT 2005
 rdbModel/xml
 
