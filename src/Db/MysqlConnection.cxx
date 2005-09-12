@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.32 2005/07/12 00:56:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.33 2005/09/01 23:46:29 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -372,6 +372,8 @@ namespace rdbModel {
       std::string codeString;
       facilities::Util::itoa(mysqlRet, codeString);
       msg += codeString;
+      (*m_out) << std::endl << msg << std::endl;
+      m_out->flush();
       throw RdbException(msg, mysqlRet);
       return 0;
     }
@@ -394,6 +396,9 @@ namespace rdbModel {
       std::string codeString;
       facilities::Util::itoa(mysqlRet, codeString);
       msg += codeString;
+      (*m_out) << std::endl << msg << std::endl;
+      m_out->flush();
+
       throw RdbException(msg, mysqlRet);
       return 0;
     }
@@ -407,6 +412,8 @@ namespace rdbModel {
       else {
         std::string msg =
           "rdbModel::MysqlConnection::dbRequest: expected data; none returned";
+        (*m_out) << std::endl << msg << std::endl;
+        m_out->flush();
         throw RdbException(msg);
         return 0;
       }
@@ -420,7 +427,14 @@ namespace rdbModel {
       compileInit();
       m_compileInit = true;
     }
-    return compileOperator(a->getOperator(), sqlString);
+    try {
+      return compileOperator(a->getOperator(), sqlString);
+    }
+    catch (RdbException ex) {
+      (*m_out) << std::endl << ex.getMsg() << std::endl;
+      m_out->flush();
+      return false;
+    }
   }
 
   std::string opSymbols[OPTYPElast];
