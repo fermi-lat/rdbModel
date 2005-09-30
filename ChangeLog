@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Sep 30 15:44:39 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Datatype.h 
+Log Message:
+Add support for unsigned integer types (int, mediumint and smallint varieties)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r2p3, operation: add
 Package: rdbModel
