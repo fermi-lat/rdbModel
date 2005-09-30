@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.9 2004/04/23 00:35:02 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.10 2004/04/27 00:05:32 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -39,7 +39,10 @@ namespace rdbModel{
       TYPEreal,
       TYPEdouble,
       TYPEvarchar,
-      TYPEchar
+      TYPEchar,
+      TYPEintUnsigned,
+      TYPEmediumintUnsigned,
+      TYPEsmallintUnsigned
     };
     enum RESTRICT {
       RESTRICTnone = 0,
@@ -50,12 +53,14 @@ namespace rdbModel{
       RESTRICTfile      // value must have valid file path syntax
     };
 
-    Datatype() : m_restrict(RESTRICTnone), m_enum(0), m_isInt(false)  {}
+    Datatype() : m_restrict(RESTRICTnone), m_enum(0), m_isInt(false),
+          m_isUnsigned(false)  {}
     ~Datatype() {if (m_enum) delete m_enum;}
     /// Check that supplied string has proper syntax for our type and
     /// is in accord with restriction, if any
     bool okValue(const std::string& val) const;
     bool isCompatible(const Datatype* other) const;
+    bool isUnsigned() {return m_isUnsigned;}
     TYPES getType() const {return m_type;}
     int   getOutputSize() const {return m_outputSize;}
 
@@ -76,7 +81,7 @@ namespace rdbModel{
 
     // Bring all internal data specific to type up to date.  
     // Return type discovered, or -1 if unrecognized
-    int setType(std::string name);
+    int setType(std::string name, bool isUnsigned=false);
 
     // In case restriction type is RESTRICTinterval, bring internal data
     // up to date.  Return true if strings represent valid min and
@@ -95,8 +100,11 @@ namespace rdbModel{
     std::string m_min;   // form of these depends on value of m_type
     std::string m_max;   
     bool m_isInt;
-    int m_minInt;         // applies only to integer types
+    bool m_isUnsigned;
+    int m_minInt;         // applies only to integer signed types
     int m_maxInt; 
+    unsigned int m_minIntUnsigned;  // applies only to integer unsigned
+    unsigned int m_maxIntUnsigned;
 
   };
 

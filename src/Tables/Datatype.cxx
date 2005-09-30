@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.9 2005/03/01 20:01:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.10 2005/09/01 23:46:29 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -26,10 +26,20 @@ namespace {
       initDone = true;
     }
   }
-  int findType(std::string aType) {
+  int findType(std::string aType, bool isUnsigned=false) {
     if (!initDone) init();
     for (unsigned int i = 0; i < N_SUPPORTED_TYPES; i++) {
-      if (aType == typenames[i]) return i;
+      if (aType == typenames[i]) {
+        if (!isUnsigned) return i;
+        if (i == Datatype::TYPEint) i = Datatype::TYPEintUnsigned;
+        else if (i == Datatype::TYPEmediumint) {
+          i = Datatype::TYPEmediumintUnsigned;
+        }
+        else if (i == Datatype::TYPEsmallint) {
+          i = Datatype::TYPEsmallintUnsigned;
+        }
+        return i;
+      }
     }
     return (int) Datatype::TYPEnotFound;
   }
@@ -54,7 +64,7 @@ namespace {
 
 namespace rdbModel {
 
-  int Datatype::setType(std::string name) {
+  int Datatype::setType(std::string name, bool isUnsigned) {
     m_type = (TYPES) findType(name);
     if (m_type >=0 ) {
       m_typename = name;
@@ -65,20 +75,44 @@ namespace rdbModel {
     // http://www.mysql.com/documentation/mysql/bychapter/manual_Column_types.html#Numeric_types
     switch (m_type) {
       case TYPEint: {
-        m_maxInt = 2147483647;
-        m_minInt = -2147483647;
+        if (isUnsigned) {
+          m_maxIntUnsigned = 4294967295;
+          m_minInt = 0;
+          m_isUnsigned = true;
+          m_type = TYPEintUnsigned;
+        }
+        else {
+          m_maxInt = 2147483647;
+          m_minInt = -2147483647;
+        }
         m_isInt = true;
         break;
       }
       case TYPEmediumint: {
-        m_maxInt = 8388607;
-        m_minInt = -8388608;
+        if (isUnsigned) {
+          m_maxIntUnsigned = 16777215;
+          m_minInt = 0;
+          m_isUnsigned = true;
+          m_type = TYPEmediumintUnsigned;
+        }
+        else {
+          m_maxInt = 8388607;
+          m_minInt = -8388608;
+        }
         m_isInt = true;
         break;
       }
       case TYPEsmallint: {
-        m_maxInt = 32767;
-        m_minInt = -32768;
+        if (isUnsigned) {
+          m_maxIntUnsigned = 65535;
+          m_minInt = 0;
+          m_isUnsigned = true;
+          m_type = TYPEsmallintUnsigned;
+        }
+        else {
+          m_maxInt = 32767;
+          m_minInt = -32768;
+        }
         m_isInt = true;
         break;
       }

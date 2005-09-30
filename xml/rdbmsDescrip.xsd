@@ -215,6 +215,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="unsigned" type="xs:boolean" default="false" />
   </xs:complexType>             <!-- end of typeType definition -->
 
 <!-- stub assertType definition for now -->

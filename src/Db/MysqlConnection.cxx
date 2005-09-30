@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.33 2005/09/01 23:46:29 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.34 2005/09/12 17:31:01 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -747,20 +747,22 @@ namespace rdbModel {
       return true;
     }
 
-
     case Datatype::TYPEtimestamp: {
       base = "timestamp";
       break;
     }
-    case Datatype::TYPEint: {
+    case Datatype::TYPEint: 
+    case Datatype::TYPEintUnsigned:      {
       base = "int";
       break;
     }
-    case Datatype::TYPEmediumint: {
+    case Datatype::TYPEmediumint: 
+    case Datatype::TYPEmediumintUnsigned:  {
       base = "mediumint";
       break;
     }
-    case Datatype::TYPEsmallint: {
+    case Datatype::TYPEsmallint: 
+    case Datatype::TYPEsmallintUnsigned:   {
       base = "smallint";
       break;
     }
@@ -779,10 +781,24 @@ namespace rdbModel {
       m_matchReturn = MATCHfail;
       return false;
     }
+    // Also need to check for unsigned here
+    unsigned loc = sqlType.find("unsigned");
+    if ((loc < sqlType.size()) != (dtype->isUnsigned())) {
+      m_matchReturn = MATCHfail;
+      return false;
+    }
+
+    //    if (dtype->isUnsigned()) {
+    //      if (sqlType.find("unsigned") >= sqlType.size() ) {
+    //        m_matchReturn = MATCHfail;
+    //        return false;
+    //      }
+    //    }
     // Now check size.  It's only for display, so mismatch is not failure
     if (sqlSize != dtype->getOutputSize()) {
       m_matchReturn = MATCHcompatible;
     }
+
 
     return true;
   }

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.26 2005/07/10 23:56:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.27 2005/07/11 23:49:41 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -233,7 +233,11 @@ namespace rdbModel {
     using xmlBase::Dom;
 
     Datatype* newType = new Datatype;
-    newType->setType(Dom::getAttribute(e, "typename"));
+    bool isUnsigned = false;
+    if (Dom::hasAttribute(e, "unsigned")) {
+      isUnsigned = (Dom::getAttribute(e, "unsigned") == "true");
+    }
+    newType->setType(Dom::getAttribute(e, "typename"), isUnsigned);
 
     if (Dom::hasAttribute(e, "size")) {
       try {
