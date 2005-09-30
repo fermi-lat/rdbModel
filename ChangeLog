@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Sep 30 15:44:40 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Add support for unsigned integer types (int, mediumint and smallint varieties)
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Sep 30 15:44:39 PDT 2005
 rdbModel/src/Management
 
