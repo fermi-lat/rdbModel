@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Tue Oct  4 09:47:14 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h 
+Log Message:
+Allow for interpretation of default values.  Only example so far is "NOW"
+for timestamp or datetime types
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Sep 30 15:44:40 PDT 2005
 rdbModel/xml
 
