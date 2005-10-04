@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r3    4-Oct-2005  jrb    Add support for unsigned dbs columns; allow
+                              interpretation of default values
    v2r2p3 12-Sep-2005  jrb    Output message before throwing exception
    v2r2p2 11-Jul-2005  jrb    Fix compile warnings
    v2r2p1 11-Jul-2005  jrb    Bring files calib.xml, calib_user.xml into the
