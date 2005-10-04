@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.10 2005/06/29 17:53:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.11 2005/07/10 23:56:35 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -16,6 +16,17 @@ namespace rdbModel {
 
   const std::string& Column::getTableName() const {
     return m_myTable->getName();
+  }
+
+  const std::string& Column::getDefault(std::string* pInt) const {
+    if (!pInt) return m_default;
+    *pInt = m_default;
+    // Special handling if interp is time
+    if (m_defaultInterp.size() > 0  ) {
+      Datatype::TYPES dtype = m_type->getType();
+      interpret(m_defaultInterp, *pInt);
+    }
+    return m_default;
   }
 
   bool Column::okValue(const std::string& val, bool set) const {
@@ -38,7 +49,7 @@ namespace rdbModel {
     return (m_from == FROMautoIncrement);
   }
 
-  bool Column::interpret(const std::string& interpType, std::string& val) {
+  bool Column::interpret(const std::string& interpType, std::string& val) const {
     // Currently only interpretation is for timestamp-like columns.
     // Value of interpType must be "time" and val must be "NOW".
     // In this case, substitute ascii current time

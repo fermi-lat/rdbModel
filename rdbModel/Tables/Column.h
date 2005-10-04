@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.18 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.19 2005/07/10 23:56:35 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -48,7 +48,8 @@ namespace rdbModel {
     Column(Table* myTable=0) : m_myTable(myTable), m_type(0), 
                                m_isPrimaryKey(false) {
       m_contents = CONTENTSunspecified;
-      m_default = std::string("");};
+      m_default = std::string("");
+      m_defaultInterp = std::string("");};
     // Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
     ~Column();
 
@@ -56,7 +57,8 @@ namespace rdbModel {
     const std::string& getName() const {return m_name; };
     const std::string& getComment() const {return m_comment;};
 
-    const std::string& getDefault() const {return m_default;}
+    //    const std::string& getDefault() const {return m_default;}
+    const std::string& getDefault(std::string* pInterpreted=0) const;
 
     const std::string& getTableName() const;
 
@@ -94,7 +96,7 @@ namespace rdbModel {
       timestamp-like columns may substitute for "NOW"
       Return true if any substitution was done
      */
-    bool interpret(const std::string& interpType, std::string&val);
+    bool interpret(const std::string& interpType, std::string&val) const;
                                
     Visitor::VisitorState accept(Visitor* v);
 
@@ -119,6 +121,10 @@ namespace rdbModel {
     
     /// Is this column a primary key?
     bool m_isPrimaryKey;
+
+    /// Normally empty string.  If non-empty, default value
+    /// requires interpretation
+    std::string  m_defaultInterp;
 
   };
 

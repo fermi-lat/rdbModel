@@ -112,6 +112,13 @@
   </xs:complexType>       <!-- end tableType definition -->
 
 
+<!-- add attribute 'interp' to <default> to allow for special interpretation 
+     of a literal value.  Could make type of this attribute an enum, but don't
+     yet know very well how it will be used.  Defaults to "" (no 
+     special interpretation).  Only other case so far is "time", meant
+     to cover keyword value "NOW".  
+ -->
+
   <xs:complexType name="columnType">
     <xs:sequence>
       <xs:element name="src" >
@@ -120,6 +127,7 @@
             <xs:element name="default">
               <xs:complexType>
                 <xs:attribute name="value" type="xs:NMTOKEN" use="required" />
+                <xs:attribute name="interp" type="xs:token" default="" />
               </xs:complexType>
             </xs:element>
             <xs:element name="from" >
