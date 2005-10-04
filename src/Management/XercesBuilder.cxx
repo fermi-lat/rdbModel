@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.27 2005/07/11 23:49:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.28 2005/09/30 22:44:39 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -191,6 +191,7 @@ namespace rdbModel {
     if (Dom::checkTagName(child, "default")) {
       newCol->m_from = Column::FROMdefault;
       newCol->m_default = Dom::getAttribute(child, "value");
+      newCol->m_defaultInterp = Dom::getAttribute(child, "interp");
     }
     else if (Dom::checkTagName(child, "from")) {
       std::string agent = Dom::getAttribute(child, "agent");
