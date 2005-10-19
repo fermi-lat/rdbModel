@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r3p1 18-Oct-2005  jrb    1. Add alternate form of Connection::select
+                              2. interpret timestamp column value of "EOT"
    v2r3    4-Oct-2005  jrb    Add support for unsigned dbs columns; allow
                               interpretation of default values
    v2r2p3 12-Sep-2005  jrb    Output message before throwing exception
