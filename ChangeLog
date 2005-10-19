@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Oct 19 15:52:07 PDT 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+More error reporting when checking for match of data types
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Oct 19 15:50:41 PDT 2005
 rdbModel/rdbModel
 
