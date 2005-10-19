@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.14 2005/06/24 18:03:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.15 2005/06/27 07:45:57 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -143,6 +143,17 @@ namespace rdbModel{
                                  const Assertion* where=0,
                                  int   rowLimit=0,
                                  int   rowOffset=0)=0;
+
+    /**
+      Alternate form of select, where condition is just a string
+    */
+    virtual ResultHandle* select(const std::string& tableName,
+                                 const StringVector& getCols,
+                                 const StringVector& orderCols,
+                                 const std::string& where,
+                                 int   rowLimit=0,
+                                 int   rowOffset=0)=0;
+
 
     /**
       Turn select and update into no-ops: output SQL string for

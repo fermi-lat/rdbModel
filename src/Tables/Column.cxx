@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.11 2005/07/10 23:56:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.12 2005/10/04 16:47:15 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -51,8 +51,8 @@ namespace rdbModel {
 
   bool Column::interpret(const std::string& interpType, std::string& val) const {
     // Currently only interpretation is for timestamp-like columns.
-    // Value of interpType must be "time" and val must be "NOW".
-    // In this case, substitute ascii current time
+    // Value of interpType must be "time" and val must be "NOW" 
+    // (substitute ascii current time) or "EOT" (substitute Dec. 31, 2037)
     if (interpType.compare(std::string("time")) != 0) return false;
 
     Datatype::TYPES dtype = m_type->getType();
@@ -60,10 +60,15 @@ namespace rdbModel {
         (dtype != Datatype::TYPEtimestamp)) {
       return false;
     }
-    if (val.compare(std::string("NOW")) != 0) return false;
-
-    val = facilities::Timestamp().getString();
-    return true;
+    if (val.compare(std::string("NOW")) == 0) {
+      val = facilities::Timestamp().getString();
+      return true;
+    }
+    else if (val.compare(std::string("EOT")) == 0) {
+      val = "2037-12-31";
+      return true;
+    }
+    else return false;
   }
 
   Visitor::VisitorState Column::accept(Visitor* v) {
