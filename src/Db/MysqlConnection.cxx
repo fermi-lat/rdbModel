@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.34 2005/09/12 17:31:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.35 2005/09/30 22:44:39 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -319,10 +319,35 @@ namespace rdbModel {
 
   }
 
+  // This should now just do the compileAssertion on the 'where'
+  // argument and call the other version.
   ResultHandle* MysqlConnection::select(const std::string& tableName,
                                         const StringVector& getCols,
                                         const StringVector& orderCols,
                                         const Assertion* where,
+                                        int   rowLimit,
+                                        int   rowOffset) {
+    std::string sqlWhere;
+
+    if (where != 0) {
+      sqlWhere = std::string(" WHERE ");
+      bool ret = compileAssertion(where, sqlWhere);
+      if (!ret) return 0;
+    }
+    else sqlWhere.clear();
+
+    return select(tableName, getCols, orderCols, sqlWhere, rowLimit,
+                  rowOffset);
+  }
+
+    /**
+      Alternate form of select, where condition is just a string.
+      String should either be empty or should start with WHERE
+    */
+  ResultHandle* MysqlConnection::select(const std::string& tableName,
+                                        const StringVector& getCols,
+                                        const StringVector& orderCols,
+                                        const std::string& where,
                                         int   rowLimit,
                                         int   rowOffset) {
     std::string sqlString = "SELECT ";
@@ -335,10 +360,8 @@ namespace rdbModel {
       sqlString += getCols[iGet];
     }
     sqlString +=  " FROM " + tableName +  " ";
-    if (where != 0) {
-      sqlString += " WHERE ";
-      bool ret = compileAssertion(where, sqlString);
-      if (!ret) return 0;
+    if (where.size() >  0) {
+      sqlString += where + " ";
     }
     if (nOrder > 0 ) {
       sqlString += " ORDER BY " + orderCols[0]; 
@@ -364,7 +387,7 @@ namespace rdbModel {
     (*m_out) << std::endl << "# About to issue SELECT:" << std::endl;
     (*m_out) << sqlString << std::endl;
     m_out->flush();
-
+    
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
     if (mysqlRet) {
       std::string msg = 
@@ -383,7 +406,9 @@ namespace rdbModel {
     return results;
   }
 
-  ResultHandle* MysqlConnection::dbRequest(const std::string& request) {
+
+
+ ResultHandle* MysqlConnection::dbRequest(const std::string& request) {
 
     (*m_out) << std::endl << "# About to issue SQL request:" << std::endl;
     (*m_out) << request << std::endl;

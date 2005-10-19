@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.15 2005/06/24 18:03:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.16 2005/06/27 07:45:57 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -111,6 +111,17 @@ namespace rdbModel{
                                  const Assertion* where=0,
                                  int   rowLimit=0,
                                  int   rowOffset=0);
+
+    /**
+      Alternate form of select, where condition is just a string
+    */
+    virtual ResultHandle* select(const std::string& tableName,
+                                 const StringVector& getCols,
+                                 const StringVector& orderCols,
+                                 const std::string& where,
+                                 int   rowLimit=0,
+                                 int   rowOffset=0);
+
 
     /** 
       Transmit raw request of any form to our other end.  If it is a 
