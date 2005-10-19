@@ -1,5 +1,18 @@
 ------------------------------------------------------------
 User: jrb  Tue Oct 18 18:16:41 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Column.cxx 
+Log Message:
+Column.cxx:  Support interpretation of "EOT" as "end of time" for 
+timestamp values
+Connection and MysqlConnection: Support alternate form of select in which
+'where' argument is of type std::string rather than rdbModel::Assertion
+
+    *
+------------------------------------------------------------
+User: jrb  Tue Oct 18 18:16:41 PDT 2005
 rdbModel/src/Db
 
 Modified Files:
