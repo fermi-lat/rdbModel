@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.35 2005/09/30 22:44:39 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.36 2005/10/19 01:16:41 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -611,6 +611,9 @@ namespace rdbModel {
 
     if (nRemote < nLocal) {
       m_matchReturn = MATCHfail;
+      (*m_out) << std::endl << "Match failed.  Real db missing tables" 
+               << std::endl;
+      m_out->flush();
       return Visitor::VDONE;
     }
     else if (nRemote > nLocal) m_matchReturn = MATCHcompatible;
@@ -679,6 +682,7 @@ namespace rdbModel {
     if (!checkDType(dtype, sqlDtype)) {
       m_matchReturn = MATCHfail;
       (*m_out) << "Failed dtype match of col " << myName << std::endl;
+      m_out->flush();
       return Visitor::VERRORABORT;
     }
     
@@ -687,6 +691,7 @@ namespace rdbModel {
     if (nullable != col->nullAllowed()) {
       m_matchReturn = MATCHfail;
       (*m_out) << "Failed null/not null match of col " << myName << std::endl;
+      m_out->flush();
       return Visitor::VERRORABORT;
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
@@ -702,6 +707,7 @@ namespace rdbModel {
     if (autoInc != col->isAutoIncrement()) {
       m_matchReturn = MATCHfail;
       (*m_out) << "Failed isAutoIncrement match of col " << myName << std::endl;
+      m_out->flush();
       return Visitor::VERRORABORT;
     }
     return Visitor::VCONTINUE;
@@ -723,7 +729,7 @@ namespace rdbModel {
       base = "enum";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return false;
+        break;        //        return false;
       }
       Enum* ourEnum = dtype->getEnum();
       // Finally compare local list of choices to those listed in sqlType
@@ -734,12 +740,12 @@ namespace rdbModel {
       base = "varchar";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return false;
+        break;  //        return false;
       }
       // size in db must be at least as large as size in Col.
       if (sqlSize < dtype->getOutputSize()) {
         m_matchReturn = MATCHfail;
-        return false;
+        break; //        return false;
       }
       else if (sqlSize > dtype->getOutputSize()) {
         m_matchReturn = MATCHcompatible;
@@ -750,14 +756,14 @@ namespace rdbModel {
       base = "char";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
-        return false;
+        break;  //        return false;
       }
       //  For char datatype unspecified size is equivalent to size=1
       if (!sqlSize) sqlSize = 1;
       // size in db must be at least as large as size in Col.
       if (sqlSize < dtype->getOutputSize()) {
         m_matchReturn = MATCHfail;
-        return false;
+        break; // return false;
       }
       else if (sqlSize > dtype->getOutputSize()) {
         m_matchReturn = MATCHcompatible;
@@ -765,9 +771,10 @@ namespace rdbModel {
       return true;
     }
     case Datatype::TYPEdatetime: {
+      base = "datetime";
       if (sqlType != "datetime") {
         m_matchReturn = MATCHfail;
-        return false;
+        break;  // return false;
       }
       return true;
     }
@@ -798,17 +805,27 @@ namespace rdbModel {
     }
     default: {  // Indicates bad xml file input.  Applications
                 //should have exited already
+      base = "unknown";
       m_matchReturn = MATCHfail;
-      return false;
+      break; // return false;
     }
     }     // end switch
+    if (m_matchReturn == MATCHfail) {
+      (*m_out) << std::endl << "Datatype match for base " 
+               << base <<  "failed " << std::endl;
+      return false;
+    }
     if (sqlType.find(base) != 0) {
       m_matchReturn = MATCHfail;
+      (*m_out) << std::endl << "Datatype match failed for base = " 
+               << base << std::endl;
       return false;
     }
     // Also need to check for unsigned here
     unsigned loc = sqlType.find("unsigned");
     if ((loc < sqlType.size()) != (dtype->isUnsigned())) {
+      (*m_out) << std::endl << "Datatype match failed signed/unsigned " 
+               << std::endl;
       m_matchReturn = MATCHfail;
       return false;
     }
