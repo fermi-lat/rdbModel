@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Oct 19 15:50:41 PDT 2005
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Add getConnection() 
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r3p1, operation: add
 Package: rdbModel
