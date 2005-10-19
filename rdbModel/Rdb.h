@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.11 2005/06/29 20:10:36 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.12 2005/07/10 23:56:35 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -69,6 +69,8 @@ namespace rdbModel {
 
     // Do we want an unset as well?  Or just call this with arg == 0 ?
     void setConnection(Connection* connection);
+
+    Connection* getConnection() const {return m_connection;}
 
     /**
        insertRow has only one value-added feature as compared to 
