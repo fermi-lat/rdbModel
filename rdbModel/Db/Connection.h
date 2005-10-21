@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.15 2005/06/27 07:45:57 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.16 2005/10/19 01:16:40 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -145,7 +145,9 @@ namespace rdbModel{
                                  int   rowOffset=0)=0;
 
     /**
-      Alternate form of select, where condition is just a string
+      Alternate form of select, where condition is just a string.
+      String should either be empty or should start with WHERE.
+      If quoting is necessary in the string, use ' rather than " .
     */
     virtual ResultHandle* select(const std::string& tableName,
                                  const StringVector& getCols,
@@ -156,7 +158,7 @@ namespace rdbModel{
 
 
     /**
-      Turn select and update into no-ops: output SQL string for
+      Turn insert and update into no-ops: output SQL string for
       debugging but don't change db 
     */
     virtual void disableModify(bool disable)=0;
