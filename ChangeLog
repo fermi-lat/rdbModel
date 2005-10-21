@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Oct 20 18:30:40 PDT 2005
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h 
+Log Message:
+Connection.h: clean up comments
+Column.h:  Add default constructor for FieldVal class
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Oct 19 15:52:07 PDT 2005
 rdbModel/src/Db
 
