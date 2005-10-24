@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: jrb  Mon Oct 24 16:29:48 PDT 2005
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Table.h 
+Log Message:
+Add optional arguments here and there to support unsigned auto_increment 
+columns
+
+    *
+------------------------------------------------------------
+User: jrb  Mon Oct 24 16:29:48 PDT 2005
 rdbModel/rdbModel/Db
 
 Modified Files:
