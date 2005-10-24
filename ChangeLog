@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Oct 24 16:29:47 PDT 2005
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Add optional arguments here and there to support unsigned auto_increment 
+columns
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r3p2, operation: add
 Package: rdbModel
