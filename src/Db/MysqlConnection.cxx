@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.36 2005/10/19 01:16:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.37 2005/10/19 22:52:07 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -209,7 +209,8 @@ namespace rdbModel {
                                   const StringVector& colNames, 
                                   const StringVector& values,
                                   int* auto_value,
-                                  const StringVector* nullCols) {
+                                  const StringVector* nullCols,
+                                  unsigned int* u_auto_value) {
     std::string ins;
     if (auto_value) *auto_value = 0;
 
@@ -257,8 +258,10 @@ namespace rdbModel {
       m_out->flush();
       return false;
     }
-    if (auto_value) {
-      *auto_value = mysql_insert_id(m_mysql);
+    if ((auto_value) || (u_auto_value)) {
+      my_ulonglong id = mysql_insert_id(m_mysql);
+      if (auto_value) *auto_value = id;
+      if (u_auto_value) *u_auto_value = id;
     }
     return true;
   }

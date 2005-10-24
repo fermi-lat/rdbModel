@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.14 2005/07/10 23:56:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.15 2005/07/11 20:22:50 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -258,7 +258,7 @@ namespace rdbModel {
     return (ok) ?  0 : -1;
   }
 
-  int Table::insertRow(Row& row, int* serial) const {
+  int Table::insertRow(Row& row, int* serial, unsigned int* unserial) const {
 
     if (!m_connect) {
       throw RdbException("Table::insertRow Need matching connection");

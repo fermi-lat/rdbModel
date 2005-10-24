@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.16 2005/06/27 07:45:57 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.17 2005/10/19 01:16:40 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -81,7 +81,9 @@ namespace rdbModel{
                            const StringVector& colNames, 
                            const StringVector& values,
                            int* auto_value=0,
-                           const StringVector* nullCols = 0);
+                           const StringVector* nullCols = 0,
+                           unsigned int* u_auto_value=0);
+
 
     /**
       Generic UPDATE. Return value is number of rows changed.
