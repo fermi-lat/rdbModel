@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.14 2005/06/29 20:10:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.15 2005/07/10 23:56:35 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -66,7 +66,7 @@ namespace rdbModel {
        checks.
        Good return value is 0
      */
-    int insertRow(Row& row, int* serial=0) const;
+    int insertRow(Row& row, int* serial=0, unsigned int* unserial=0) const;
 
     /**
        Given some input values and primary key of an existing row,

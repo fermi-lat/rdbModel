@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.12 2005/07/10 23:56:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.13 2005/10/19 22:50:41 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -77,7 +77,9 @@ namespace rdbModel {
        an SQL insert:  it will take care of fields intended to be
        filled by the service (e.g., insert and update timestamps)
      */
-    int insertRow(const std::string& tName, Row& row, int* serial=0) const;
+    int insertRow(const std::string& tName, Row& row, int* serial=0,
+                  unsigned int* unserial=0) const;
+
 
     /**
        The two forms of smart insert, in addition to filling in the

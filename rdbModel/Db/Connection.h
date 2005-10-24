@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.16 2005/10/19 01:16:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.17 2005/10/21 01:30:40 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -94,7 +94,8 @@ namespace rdbModel{
                            const StringVector& colNames, 
                            const StringVector& values,
                            int* auto_value=0,
-                           const StringVector* nullCols = 0) = 0;
+                           const StringVector* nullCols = 0,
+                           unsigned int* u_auto_value=0) = 0;
 
     /*
        So far anticipated uses of UPDATE would just modify a single row
