@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.15 2005/07/10 23:56:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.16 2005/10/24 23:29:48 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -82,6 +82,8 @@ namespace rdbModel {
        Good return value is 0
      */
     int updateRows(Row &row, Assertion* where) const;
+
+    int updateRows(Row &row, const std::string& where) const;
 
     // Do we need these for anything?  
     InsertNew* getInsertNew() const {return m_iNew;}

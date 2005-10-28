@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.8 2005/07/10 23:56:35 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.9 2005/10/24 23:29:48 jrb Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/RdbException.h"
@@ -58,6 +58,17 @@ namespace rdbModel {
       throw RdbException(msg);
     }
     return (t->insertRow(row, serial, unserial));
+  }
+
+  int Rdb::updateRows(const std::string& tName, Row& row, 
+                      const std::string& where) const {
+    Table* t = getTable(tName);
+    if (!t) {
+      std::string msg("Rdb::insertRow unknown table ");
+      msg = msg + tName;
+      throw RdbException(msg);
+    }
+    return (t->updateRows(row, where));
   }
 
   int Rdb::updateRows(const std::string& tName, Row& row, Assertion* where) const {
