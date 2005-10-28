@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.13 2005/10/19 22:50:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.14 2005/10/24 23:29:47 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -98,6 +98,11 @@ namespace rdbModel {
      */
     int updateRows(const std::string& tName, Row& row, Assertion* where) const;
 
+    /**
+      Fills in service fields, then invokes Connection::update 
+    */
+    int updateRows(const std::string& tName, Row& row, 
+                   const std::string& where) const;
 
     /// This is the recursive accept for the visitor pattern
     unsigned int  accept(Visitor* v);

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.17 2005/10/21 01:30:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.18 2005/10/24 23:29:48 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -123,6 +123,12 @@ namespace rdbModel{
                                 const StringVector& colNames, 
                                 const StringVector& values,
                                 const Assertion* where=0,
+                                const StringVector* nullCols = 0) = 0;
+
+    virtual unsigned int update(const std::string& tableName, 
+                                const StringVector& colNames, 
+                                const StringVector& values,
+                                const std::string& where="",
                                 const StringVector* nullCols = 0) = 0;
 
     /**

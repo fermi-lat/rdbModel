@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.15 2005/07/11 20:22:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.16 2005/10/24 23:29:48 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -447,6 +447,25 @@ namespace rdbModel {
   }
 
   int Table::updateRows(Row &row, Assertion* where) const {
+
+    if (!m_connect) {
+      throw RdbException("Table::insertLatest Need matching connection");
+    }
+    row.rowSort();
+
+    // Fill in columns in m_programCols list
+    fillProgramCols(row, false);
+
+    std::vector<std::string> colNames;
+    std::vector<std::string> colValues;
+    std::vector<std::string> nullCols;
+
+    row.regroup(colNames, colValues, nullCols);
+
+    return m_connect->update(m_name, colNames, colValues, where, &nullCols);
+  }
+
+  int Table::updateRows(Row &row, const std::string& where) const {
 
     if (!m_connect) {
       throw RdbException("Table::insertLatest Need matching connection");
