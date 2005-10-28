@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r3p4 28-Oct-2005  jrb    Add updateRows routines accepting string arg.
+                              for where clause
    v2r3p3 24-Oct-2005  jrb    Support for unsigned auto_increment fields
    v2r3p2 21-Oct-2005  jrb    Clean-up, minor improvements for MOOT
    v2r3p1 18-Oct-2005  jrb    1. Add alternate form of Connection::select
