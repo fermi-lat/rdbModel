@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri Oct 28 00:13:07 PDT 2005
+rdbModel/src
+
+Modified Files:
+	Rdb.cxx 
+Log Message:
+Add alternate form of update functions with where clause specified as 
+std::string
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Oct 28 00:13:06 PDT 2005
 rdbModel/rdbModel/Tables
 
