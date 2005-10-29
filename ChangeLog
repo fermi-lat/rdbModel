@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri Oct 28 23:33:35 PDT 2005
+rdbModel/xml
+
+Modified Files:
+	calib_test.xml 
+Log Message:
+Add callable static utility interpTime in Column class
+Minor clean-up in calib_test.xml
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Oct 28 23:33:34 PDT 2005
 rdbModel/src/Tables
 
