@@ -4,7 +4,7 @@
        dbs="calib"
        SchemaVersion="2.0"
        SchemaExpected="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.7 2005/07/11 23:49:41 jrb Exp $"   >
+       CVSid= "$Id: calib.xml,v 1.6 2005/07/12 00:13:53 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
@@ -234,7 +234,6 @@
     </col>
 
     <col name="enter_time" >
-      <!-- proper handling not yet implemented in code -->
       <src null="true" >
         <from agent="service" contents="insert_time" />         
       </src>
