@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Oct 28 18:09:46 PDT 2005
+rdbModel/src/Tables
+
+Modified Files:
+	Table.cxx 
+Log Message:
+Little bug fix for unsigned auto_increment
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r3p4, operation: add
 Package: rdbModel
