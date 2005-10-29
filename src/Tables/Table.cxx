@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.16 2005/10/24 23:29:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.17 2005/10/28 07:13:07 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -308,7 +308,7 @@ namespace rdbModel {
 
     row.regroup(colNames, colValues, nullCols);
     bool ok = m_connect->insertRow(m_name, colNames, colValues,
-                                   serial, &nullCols);
+                                   serial, &nullCols, unserial);
     return (ok) ?  0 : -1;
   }    
 
