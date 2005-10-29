@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.12 2005/10/04 16:47:15 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.13 2005/10/19 01:16:41 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -60,6 +60,20 @@ namespace rdbModel {
         (dtype != Datatype::TYPEtimestamp)) {
       return false;
     }
+    return interpretTime(val);  /*
+    if (val.compare(std::string("NOW")) == 0) {
+      val = facilities::Timestamp().getString();
+      return true;
+    }
+    else if (val.compare(std::string("EOT")) == 0) {
+      val = "2037-12-31";
+      return true;
+    }
+    else return false;
+                                */
+  }
+
+  bool Column::interpretTime(std::string& val) {
     if (val.compare(std::string("NOW")) == 0) {
       val = facilities::Timestamp().getString();
       return true;

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.20 2005/10/04 16:47:14 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.21 2005/10/21 01:30:40 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -53,6 +53,8 @@ namespace rdbModel {
     // Column(Table* myTable=0) : m_myTable(myTable), m_type(0), m_source(0) {};
     ~Column();
 
+    /// Return true if val was changed.  For now handle "NOW" and "EOT"
+    static bool interpretTime(std::string& val);
 
     const std::string& getName() const {return m_name; };
     const std::string& getComment() const {return m_comment;};
