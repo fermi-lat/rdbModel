@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r3p5 28-Oct-2005  jrb    Little bug fix for unsigned auto_increment
    v2r3p4 28-Oct-2005  jrb    Add updateRows routines accepting string arg.
                               for where clause
    v2r3p3 24-Oct-2005  jrb    Support for unsigned auto_increment fields
