@@ -1,7 +1,7 @@
 package rdbModel
 
-# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.34 2005/10/24 23:36:10 jrb Exp $
-version v2r3p4
+# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.35 2005/10/28 17:51:17 jrb Exp $
+version v2r3p5
 
 author Joanne Bogart <jrb@slac.stanford.edu>
 
