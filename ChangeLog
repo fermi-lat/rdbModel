@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Fri Nov  4 13:45:28 PST 2005
+rdbModel/src
+
+Modified Files:
+	Rdb.cxx 
+Log Message:
+Eliminate need for Manager class (but keep it around for compatibility);
+don't want to be restricted to singleton
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Nov  4 13:45:26 PST 2005
 rdbModel/rdbModel/Management
 
