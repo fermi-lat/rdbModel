@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.1.1.1 2004/03/03 01:57:04 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.2 2004/03/07 08:20:16 jrb Exp $
 
 #ifndef RDBMODEL_BUILDER_H
 #define RDBMODEL_BUILDER_H
@@ -34,7 +34,7 @@ namespace rdbModel{
      *  Return is number of tables built.  If negative, indicates
      *  error.
      */
-    virtual int buildRdb() = 0;
+    virtual int buildRdb(rdbModel::Rdb* rdb=0) = 0;
 
 
     void setRdb(Rdb* pRdb){m_currentRdb = pRdb;}

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.28 2005/09/30 22:44:39 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.29 2005/10/04 16:47:14 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -38,13 +38,18 @@ namespace rdbModel {
     return (m_doc == 0) ? 0xffffffff : 0;
   }
 
-  int XercesBuilder::buildRdb() {
+  int XercesBuilder::buildRdb(Rdb* rdb) {
     using xmlBase::Dom;
 
-    Manager* man = Manager::getManager();
 
     if (m_doc == 0 ) return 0;
-    m_rdb = man->getRdb();
+    if (rdb) {
+      m_rdb = rdb;
+    }
+    else {
+      Manager* man = Manager::getManager();
+      m_rdb = man->getRdb();
+    }
     DOMElement* docElt = m_doc->getDocumentElement();
 
     
