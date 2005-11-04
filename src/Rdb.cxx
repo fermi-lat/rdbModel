@@ -1,7 +1,8 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.9 2005/10/24 23:29:48 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.10 2005/10/28 07:13:07 jrb Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/RdbException.h"
+#include "rdbModel/Management/Builder.h"
 
 namespace rdbModel {
 
@@ -11,6 +12,17 @@ namespace rdbModel {
       m_tables.pop_back();
       delete table;
     }
+  }
+
+  int Rdb::build(const std::string& description, Builder* b) {
+    m_descrip = description;
+    m_builder = b;
+    int errCode = m_builder->parseInput(m_descrip);
+
+    if (!errCode) {
+      return m_builder->buildRdb(this);
+    }
+    else return errCode;
   }
 
   Table* Rdb::getTable(const std::string& name) const {
