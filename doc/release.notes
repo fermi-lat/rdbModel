@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r3p6  4-Nov-2005  jrb    Add callable static utility interpTime in 
+                              Column class; other minor clean-up
    v2r3p5 28-Oct-2005  jrb    Little bug fix for unsigned auto_increment
    v2r3p4 28-Oct-2005  jrb    Add updateRows routines accepting string arg.
                               for where clause
