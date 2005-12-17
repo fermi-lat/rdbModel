@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Dec 16 16:40:59 PST 2005
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Changes to allow use of my.cnf file for configuration of MySQL connection
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r4, operation: add
 Package: rdbModel
