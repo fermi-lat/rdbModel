@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.38 2005/10/24 23:29:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.39 2005/10/28 07:13:07 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -95,8 +95,34 @@ namespace rdbModel {
                              const std::string& user,
                              const std::string& password,
                              const std::string& dbName) {
+    return open(host, user.c_str(), password.c_str(), dbName.c_str());
+  }
+
+
+  bool MysqlConnection::init() {
+    m_mysql = new MYSQL;
+    if (!m_mysql) return false;
+    mysql_init(m_mysql);
+    return true;
+  }
+  
+  bool MysqlConnection::setOption(DBOPTIONS option, const char* value)
+  {
+    if (!m_mysql) return false;
+    mysql_option myOpt;
+    if (option == DBreadDefaultFile) myOpt = MYSQL_READ_DEFAULT_FILE;
+    else if (option == DBreadDefaultGroup) myOpt = MYSQL_READ_DEFAULT_GROUP;
+    else return false;
+    int ret =  mysql_options(m_mysql, myOpt, value);
+    return (ret == 0);
+  }
+
+  bool MysqlConnection::open(const std::string& host, 
+                             const char* user,
+                             const char* password,
+                             const char* dbName) {
                              //     , unsigned int       port) {
-    if (dbName.size() == 0) {
+    if (dbName == 0) {
       (*m_err) << 
         "rdbModel::MysqlConnection::open : null db name not allowed!" <<
         std::endl;
@@ -104,9 +130,10 @@ namespace rdbModel {
       return false;
     } 
 
-    m_mysql = new MYSQL;
-    mysql_init(m_mysql);
-
+    if (!m_mysql) {
+      bool ok = init();
+      if (!ok) return false;
+    }
     // 'host' argument is of the form hostname[:port]
     //  That is, port section is optional.  If not supplied, use
     // default port.
@@ -132,8 +159,8 @@ namespace rdbModel {
     }
     //    mysql_init(m_mysql);
     MYSQL *connected = mysql_real_connect(m_mysql, hostOnly.c_str(), 
-                                          user.c_str(),
-                                          password.c_str(), dbName.c_str(),
+                                          user,
+                                          password, dbName,
                                           port, NULL, 0);
 
     if (connected != 0) {  // Everything is fine.  Put out an info message

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.18 2005/10/24 23:29:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.19 2005/10/28 07:13:06 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -37,9 +37,25 @@ namespace rdbModel{
     */
     MysqlConnection(std::ostream* out=0, std::ostream* errOut=0);
     virtual ~MysqlConnection();
+
+    /**
+       Call init explicitly in order to set options.  Otherwise, open
+       will take care of it
+    */
+    virtual bool init();
+    virtual bool setOption(DBOPTIONS option, const char* value);
+
     virtual bool open(const std::string& host, const std::string& userid,
                       const std::string& password,
                       const std::string& dbName);
+
+    /**
+       Alternate form of open allows NULL arguments, so that
+       values may be taken from my.cnf 
+     */
+    virtual bool open(const std::string& host, const char* userid,
+                      const char* password,
+                      const char* dbName);
                       //                      ,unsigned int       port=0);
 
     /** Parameter is normally path for an xml file descrbing the 
