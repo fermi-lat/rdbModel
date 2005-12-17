@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r5   16-Dec-2005  jrb    Add methods to Connection and MysqlConnection to
+                              allow use of my.cnf to configure MySQL connection
    v2r4    4-Nov-2005  jrb    Add/modify functions in Rdb, XercesBuilder classes
                               so that Manager of singleton is no longer necessary,
                               but keep Manager around for backwards compatibility
