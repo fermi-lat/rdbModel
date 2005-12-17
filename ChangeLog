@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: jrb  Fri Dec 16 16:40:59 PST 2005
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Changes to allow use of my.cnf file for configuration of MySQL connection
+
+    *
+------------------------------------------------------------
+User: jrb  Fri Dec 16 16:40:59 PST 2005
 rdbModel/rdbModel/Db
 
 Modified Files:
