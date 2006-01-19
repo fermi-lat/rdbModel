@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.10 2005/09/01 23:46:29 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.11 2005/09/30 22:44:40 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -19,6 +19,7 @@ namespace {
       typenames[Datatype::TYPEint] = std::string("int");
       typenames[Datatype::TYPEmediumint] = std::string("mediumint");
       typenames[Datatype::TYPEsmallint] = std::string("smallint");
+      typenames[Datatype::TYPEtinyint] = std::string("tinyint");
       typenames[Datatype::TYPEreal] = std::string("real");
       typenames[Datatype::TYPEdouble] = std::string("double");
       typenames[Datatype::TYPEvarchar] = std::string("varchar");
@@ -38,6 +39,9 @@ namespace {
         else if (i == Datatype::TYPEsmallint) {
           i = Datatype::TYPEsmallintUnsigned;
         }
+        else if (i == Datatype::TYPEtinyint) {
+          i = Datatype::TYPEtinyintUnsigned;
+        }
         return i;
       }
     }
@@ -51,7 +55,12 @@ namespace {
   };
   int findTOT(Datatype::TYPES aType) {
     if ((aType == Datatype::TYPEint) || (aType == Datatype::TYPEmediumint) ||
-        (aType == Datatype::TYPEsmallint)) return TOTinteger;
+        (aType == Datatype::TYPEsmallint) || (aType == Datatype::TYPEtinyint) 
+        || (aType == Datatype::TYPEintUnsigned) || 
+        (aType == Datatype::TYPEmediumintUnsigned) ||
+        (aType == Datatype::TYPEsmallintUnsigned)  ||
+        (aType == Datatype::TYPEtinyintUnsigned)    ) 
+      return TOTinteger;
     else if ((aType == Datatype::TYPEreal) || (aType == Datatype::TYPEdouble))
       return TOTreal;
     else if ((aType == Datatype::TYPEdatetime) || 
@@ -112,6 +121,20 @@ namespace rdbModel {
         else {
           m_maxInt = 32767;
           m_minInt = -32768;
+        }
+        m_isInt = true;
+        break;
+      }
+      case TYPEtinyint: {
+        if (isUnsigned) {
+          m_maxIntUnsigned = 255;
+          m_minInt = 0;
+          m_isUnsigned = true;
+          m_type = TYPEtinyintUnsigned;
+        }
+        else {
+          m_maxInt = 127;
+          m_minInt = -128;
         }
         m_isInt = true;
         break;
@@ -221,7 +244,8 @@ namespace rdbModel {
 
     case TYPEint:
     case TYPEmediumint:
-    case TYPEsmallint: {
+    case TYPEsmallint: 
+    case TYPEtinyint: {
       int intVal;
 
       try {

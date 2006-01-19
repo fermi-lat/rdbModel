@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.10 2004/04/27 00:05:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.11 2005/09/30 22:44:39 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -36,13 +36,15 @@ namespace rdbModel{
       TYPEint,
       TYPEmediumint,
       TYPEsmallint,
+      TYPEtinyint,
       TYPEreal,
       TYPEdouble,
       TYPEvarchar,
       TYPEchar,
       TYPEintUnsigned,
       TYPEmediumintUnsigned,
-      TYPEsmallintUnsigned
+      TYPEsmallintUnsigned,
+      TYPEtinyintUnsigned
     };
     enum RESTRICT {
       RESTRICTnone = 0,

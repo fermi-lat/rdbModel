@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.15 2005/06/27 07:45:58 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Assertion.h,v 1.16 2005/07/11 23:49:40 jrb Exp $
 #ifndef RDBMODEL_ASSERTION_H
 #define RDBMODEL_ASSERTION_H
 #include <vector>
@@ -134,6 +134,9 @@ namespace rdbModel{
 
       /// Handling specific to integer data
       bool compareInt(const std::string* vals, OPTYPE type) const;
+
+      /// Handling specific to unsigned integer data
+      bool compareUnsigned(const std::string* vals, OPTYPE type) const;
 
       /// Handling specific to floating point data
       bool compareFloat(const std::string* vals, OPTYPE type) const;
