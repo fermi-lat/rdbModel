@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Jan 19 14:02:19 PST 2006
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Assertion.h Datatype.h 
+Log Message:
+Support tinyint (single byte) column type, both signed and unsigned
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r5, operation: add
 Package: rdbModel
