@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r5p1 19-Jan-2006  jrb    Add support for tinyint (byte) column type
    v2r5   16-Dec-2005  jrb    Add methods to Connection and MysqlConnection to
                               allow use of my.cnf to configure MySQL connection
    v2r4    4-Nov-2005  jrb    Add/modify functions in Rdb, XercesBuilder classes
