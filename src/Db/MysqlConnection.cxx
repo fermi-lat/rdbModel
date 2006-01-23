@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.39 2005/10/28 07:13:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.40 2005/12/17 00:40:59 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -835,6 +835,11 @@ namespace rdbModel {
     case Datatype::TYPEsmallint: 
     case Datatype::TYPEsmallintUnsigned:   {
       base = "smallint";
+      break;
+    }
+    case Datatype::TYPEtinyint: 
+    case Datatype::TYPEtinyintUnsigned:   {
+      base = "tinyint";
       break;
     }
     case Datatype::TYPEreal: 
