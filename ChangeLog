@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jan 23 12:27:15 PST 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Bug fix for handling of tinyint
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r5p1, operation: add
 Package: rdbModel
