@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Jan 24 15:40:37 PST 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add more diagnostic messages for failures
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r5p2, operation: add
 Package: rdbModel
