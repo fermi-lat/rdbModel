@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.40 2005/12/17 00:40:59 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.41 2006/01/23 20:27:14 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -643,6 +643,8 @@ namespace rdbModel {
     MYSQL_RES* res = mysql_list_tables(m_mysql, 0);
     if (!res) {
       m_matchReturn = MATCHfail;
+      (*m_out) << std::endl << "Match failed.  Could not list db tables" 
+               << std::endl;
       return Visitor::VERRORABORT;
     }
     unsigned int nRemote = mysql_num_rows(res);
@@ -683,11 +685,16 @@ namespace rdbModel {
     int ret = mysql_query(m_mysql, query.c_str());
     if (ret) {
       m_matchReturn = MATCHfail;
+      (*m_out) << std::endl << "SHOW COLUMNS request failed " << std::endl;
+      m_out->flush();
       return Visitor::VERRORABORT;
     }
       
     m_tempRes = mysql_store_result(m_mysql);
     if (!m_tempRes) {
+      (*m_out) << std::endl << "Could not access SHOW COLUMNS results" 
+               << std::endl;
+      m_out->flush();
       m_matchReturn = MATCHfail;
       return Visitor::VERRORABORT;
     }
@@ -708,6 +715,9 @@ namespace rdbModel {
   Visitor::VisitorState MysqlConnection::visitColumn(Column* col) {
     std::string myName = col->getName();
     if (m_colIx.find(myName) == m_colIx.end()) {
+      (*m_out) << "Could not find column " << myName << " in MySQL db "
+               << std::endl;
+      m_out->flush();
       m_matchReturn = MATCHfail;
       return Visitor::VERRORABORT;
     }
