@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.11 2005/09/30 22:44:39 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.12 2006/01/19 22:02:18 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -37,7 +37,7 @@ namespace rdbModel{
       TYPEmediumint,
       TYPEsmallint,
       TYPEtinyint,
-      TYPEreal,
+      TYPEfloat,
       TYPEdouble,
       TYPEvarchar,
       TYPEchar,
