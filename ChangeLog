@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Jan 25 16:37:59 PST 2006
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Datatype.h 
+Log Message:
+Fix handling of columns of type float
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r5p3, operation: add
 Package: rdbModel
