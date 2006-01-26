@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.17 2005/07/11 23:49:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Assertion.cxx,v 1.18 2006/01/19 22:02:20 jrb Exp $
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Tables/Table.h"
@@ -324,7 +324,7 @@ namespace rdbModel {
       case Datatype::TYPEsmallint:
       case Datatype::TYPEtinyint:
         return compareInt(&values[0], m_opType);
-      case Datatype::TYPEreal:
+      case Datatype::TYPEfloat:
       case Datatype::TYPEdouble:
         return compareFloat(&values[0], m_opType);
       default:  // do nothing

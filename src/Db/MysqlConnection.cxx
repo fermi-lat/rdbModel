@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.41 2006/01/23 20:27:14 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.42 2006/01/24 23:40:36 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -852,7 +852,11 @@ namespace rdbModel {
       base = "tinyint";
       break;
     }
-    case Datatype::TYPEreal: 
+    case Datatype::TYPEfloat: {
+      base = "float";
+      break;
+    }
+
     case Datatype::TYPEdouble: {
       base = "double";
       break;
