@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Mar 21 14:11:37 PST 2006
+rdbModel/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Use new MYSQLEXT (for MySQL 4.1.18)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r5p4, operation: add
 Package: rdbModel
