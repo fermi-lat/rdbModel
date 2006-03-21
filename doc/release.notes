@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r6   21-Mar-2006  jrb    Update for MySQL upgrade (to MySQL 4.1.18)
    v2r5p4 25-Jan-2006  jrb    Fix handling of db columns of type 'float'
    v2r5p3 24-Jan-2006  jrb    Add diagnostic error message or two
    v2r5p2 23-Jan-2006  jrb    Bug fix for tinyint
