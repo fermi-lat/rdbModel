@@ -1,6 +1,6 @@
 package rdbModel
 
-# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.42 2006/01/25 00:06:45 jrb Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.43 2006/01/26 00:39:21 jrb Exp $
 version v2r5p4
 
 author Joanne Bogart <jrb@slac.stanford.edu>
@@ -8,7 +8,7 @@ author Joanne Bogart <jrb@slac.stanford.edu>
 use GlastPolicy  v*
 use facilities   v2r*
 use xmlBase      v5r*
-use MYSQLEXT v0r* IExternal 
+use MYSQLEXT v4r* IExternal 
 
 apply_pattern shared_library
 
