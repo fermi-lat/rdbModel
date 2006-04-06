@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.19 2005/10/28 07:13:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.20 2005/12/17 00:40:59 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -57,6 +57,11 @@ namespace rdbModel{
                       const char* password,
                       const char* dbName);
                       //                      ,unsigned int       port=0);
+
+    virtual bool open(const char* host, int port, const char* userid,
+                      const char* password,
+                      const char* dbName);
+
 
     /** Parameter is normally path for an xml file descrbing the 
         connection parameters */
