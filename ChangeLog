@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  6 16:20:35 PDT 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add another overloaded version of MysqlConnection::open, Connection::open
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr  6 16:20:17 PDT 2006
 rdbModel/rdbModel/Db
 
