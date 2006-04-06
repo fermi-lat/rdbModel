@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr  6 16:20:17 PDT 2006
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Add another overloaded version of MysqlConnection::open, Connection::open
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r6, operation: add
 Package: rdbModel
