@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.42 2006/01/24 23:40:36 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.43 2006/01/26 00:37:59 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -157,8 +157,18 @@ namespace rdbModel {
       }
 
     }
-    //    mysql_init(m_mysql);
-    MYSQL *connected = mysql_real_connect(m_mysql, hostOnly.c_str(), 
+
+    return open(hostOnly.c_str(), port, user, password, dbName);
+  }
+  
+  bool MysqlConnection::open(const char* host, 
+                             int         port,
+                             const char* user,
+                             const char* password,
+                             const char* dbName) {
+  
+  //    mysql_init(m_mysql);
+    MYSQL *connected = mysql_real_connect(m_mysql, host,
                                           user,
                                           password, dbName,
                                           port, NULL, 0);

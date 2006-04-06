@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.19 2005/10/28 07:13:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.20 2005/12/17 00:40:59 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -79,6 +79,11 @@ namespace rdbModel{
     virtual bool open(const std::string& host, const char* userid,
                       const char* password,
                       const char* dbName) = 0;
+
+    virtual bool open(const char* host, int port, const char* userid,
+                      const char* password,
+                      const char* dbName) = 0;
+
                       //,                      unsigned int       port) = 0;
     /** Close the current open connection , if any.  Return true if there
      was a connection to close and it was closed successfully */
