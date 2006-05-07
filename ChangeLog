@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sat May  6 23:54:34 PDT 2006
+rdbModel/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+Fix package name
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Apr  6 16:20:35 PDT 2006
 rdbModel/src/Db
 
