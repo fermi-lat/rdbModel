@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Sat Jun 17 18:51:26 PDT 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Direct true error messages to error output, not standard output.
+
+    *
+------------------------------------------------------------
 User: jrb  Sat May  6 23:54:34 PDT 2006
 rdbModel/doc
 
