@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.43 2006/01/26 00:37:59 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.44 2006/04/06 23:20:35 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -357,9 +357,10 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
-      (*m_out) << "rdbModel::MysqlConnection::update: ";
-      (*m_out) << "MySQL error during UPDATE, code " << mysqlRet << std::endl;
-      m_out->flush();
+      (*m_err) << "rdbModel::MysqlConnection::update: ";
+      (*m_err) << "MySQL error during UPDATE, code " 
+                  << mysqlRet << std::endl;
+      m_err->flush();
       return 0;
     }
     my_ulonglong nModLong = mysql_affected_rows(m_mysql);
@@ -444,8 +445,8 @@ namespace rdbModel {
       std::string codeString;
       facilities::Util::itoa(mysqlRet, codeString);
       msg += codeString;
-      (*m_out) << std::endl << msg << std::endl;
-      m_out->flush();
+      (*m_err) << std::endl << msg << std::endl;
+      m_err->flush();
       throw RdbException(msg, mysqlRet);
       return 0;
     }
@@ -470,8 +471,8 @@ namespace rdbModel {
       std::string codeString;
       facilities::Util::itoa(mysqlRet, codeString);
       msg += codeString;
-      (*m_out) << std::endl << msg << std::endl;
-      m_out->flush();
+      (*m_err) << std::endl << msg << std::endl;
+      m_err->flush();
 
       throw RdbException(msg, mysqlRet);
       return 0;
@@ -486,8 +487,8 @@ namespace rdbModel {
       else {
         std::string msg =
           "rdbModel::MysqlConnection::dbRequest: expected data; none returned";
-        (*m_out) << std::endl << msg << std::endl;
-        m_out->flush();
+        (*m_err) << std::endl << msg << std::endl;
+        m_err->flush();
         throw RdbException(msg);
         return 0;
       }
@@ -505,8 +506,8 @@ namespace rdbModel {
       return compileOperator(a->getOperator(), sqlString);
     }
     catch (RdbException ex) {
-      (*m_out) << std::endl << ex.getMsg() << std::endl;
-      m_out->flush();
+      (*m_err) << std::endl << ex.getMsg() << std::endl;
+      m_err->flush();
       return false;
     }
   }
@@ -653,8 +654,8 @@ namespace rdbModel {
     MYSQL_RES* res = mysql_list_tables(m_mysql, 0);
     if (!res) {
       m_matchReturn = MATCHfail;
-      (*m_out) << std::endl << "Match failed.  Could not list db tables" 
-               << std::endl;
+      (*m_err) << std::endl << "Match failed.  Could not list db tables" 
+                  << std::endl;
       return Visitor::VERRORABORT;
     }
     unsigned int nRemote = mysql_num_rows(res);
@@ -662,9 +663,9 @@ namespace rdbModel {
 
     if (nRemote < nLocal) {
       m_matchReturn = MATCHfail;
-      (*m_out) << std::endl << "Match failed.  Real db missing tables" 
-               << std::endl;
-      m_out->flush();
+      (*m_err) << std::endl << "Match failed.  Real db missing tables" 
+                  << std::endl;
+      m_err->flush();
       return Visitor::VDONE;
     }
     else if (nRemote > nLocal) m_matchReturn = MATCHcompatible;
@@ -695,16 +696,16 @@ namespace rdbModel {
     int ret = mysql_query(m_mysql, query.c_str());
     if (ret) {
       m_matchReturn = MATCHfail;
-      (*m_out) << std::endl << "SHOW COLUMNS request failed " << std::endl;
-      m_out->flush();
+      (*m_err) << std::endl << "SHOW COLUMNS request failed " << std::endl;
+      m_err->flush();
       return Visitor::VERRORABORT;
     }
       
     m_tempRes = mysql_store_result(m_mysql);
     if (!m_tempRes) {
-      (*m_out) << std::endl << "Could not access SHOW COLUMNS results" 
-               << std::endl;
-      m_out->flush();
+      (*m_err) << std::endl << "Could not access SHOW COLUMNS results" 
+                  << std::endl;
+      m_err->flush();
       m_matchReturn = MATCHfail;
       return Visitor::VERRORABORT;
     }
@@ -725,9 +726,9 @@ namespace rdbModel {
   Visitor::VisitorState MysqlConnection::visitColumn(Column* col) {
     std::string myName = col->getName();
     if (m_colIx.find(myName) == m_colIx.end()) {
-      (*m_out) << "Could not find column " << myName << " in MySQL db "
-               << std::endl;
-      m_out->flush();
+      (*m_err) << "Could not find column " << myName << " in MySQL db "
+                  << std::endl;
+      m_err->flush();
       m_matchReturn = MATCHfail;
       return Visitor::VERRORABORT;
     }
@@ -740,8 +741,8 @@ namespace rdbModel {
     Datatype* dtype = col->getDatatype();
     if (!checkDType(dtype, sqlDtype)) {
       m_matchReturn = MATCHfail;
-      (*m_out) << "Failed dtype match of col " << myName << std::endl;
-      m_out->flush();
+      (*m_err) << "Failed dtype match of col " << myName << std::endl;
+      m_err->flush();
       return Visitor::VERRORABORT;
     }
     
@@ -749,8 +750,9 @@ namespace rdbModel {
     bool nullable = (std::string(colDescrip[2]) == std::string("YES"));
     if (nullable != col->nullAllowed()) {
       m_matchReturn = MATCHfail;
-      (*m_out) << "Failed null/not null match of col " << myName << std::endl;
-      m_out->flush();
+      (*m_err) << "Failed null/not null match of col " << myName 
+                  << std::endl;
+      m_err->flush();
       return Visitor::VERRORABORT;
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
@@ -765,8 +767,9 @@ namespace rdbModel {
       (std::string(colDescrip[5]) == std::string("auto_increment"));
     if (autoInc != col->isAutoIncrement()) {
       m_matchReturn = MATCHfail;
-      (*m_out) << "Failed isAutoIncrement match of col " << myName << std::endl;
-      m_out->flush();
+      (*m_err) << "Failed isAutoIncrement match of col " 
+               << myName << std::endl;
+      m_err->flush();
       return Visitor::VERRORABORT;
     }
     return Visitor::VCONTINUE;
@@ -879,21 +882,24 @@ namespace rdbModel {
     }
     }     // end switch
     if (m_matchReturn == MATCHfail) {
-      (*m_out) << std::endl << "Datatype match for base " 
-               << base <<  "failed " << std::endl;
+      (*m_err) << std::endl << "Datatype match for base " 
+                  << base <<  "failed " << std::endl;
+      m_err->flush();
       return false;
     }
     if (sqlType.find(base) != 0) {
       m_matchReturn = MATCHfail;
-      (*m_out) << std::endl << "Datatype match failed for base = " 
-               << base << std::endl;
+      (*m_err) << std::endl << "Datatype match failed for base = " 
+                 << base << std::endl;
+      m_err->flush();
       return false;
     }
     // Also need to check for unsigned here
     unsigned loc = sqlType.find("unsigned");
     if ((loc < sqlType.size()) != (dtype->isUnsigned())) {
-      (*m_out) << std::endl << "Datatype match failed signed/unsigned " 
-               << std::endl;
+      (*m_err) << std::endl << "Datatype match failed signed/unsigned " 
+                  << std::endl;
+      m_err->flush();
       m_matchReturn = MATCHfail;
       return false;
     }
