@@ -6,6 +6,9 @@
 
    *  EOH  *
 
+   v2r6p1 17-Jun-2006  jrb    Direct error messages to error stream, not
+                              regular output stream, so that users can choose
+                              to see only error output
    v2r6   21-Mar-2006  jrb    Update for MySQL upgrade (to MySQL 4.1.18)
    v2r5p4 25-Jan-2006  jrb    Fix handling of db columns of type 'float'
    v2r5p3 24-Jan-2006  jrb    Add diagnostic error message or two
