@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Fri Jun 30 11:48:50 PDT 2006
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_test.xml calib_user.xml 
+Log Message:
+Add ANC calibration types to the list 
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r6p1, operation: add
 Package: rdbModel
