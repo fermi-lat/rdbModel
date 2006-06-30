@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r6p2 30-Jun-2006  jrb    Add calib types for ancillary detectors
    v2r6p1 17-Jun-2006  jrb    Direct error messages to error stream, not
                               regular output stream, so that users can choose
                               to see only error output
