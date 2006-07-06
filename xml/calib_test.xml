@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
-<rdbms        xsi:noNamespaceSchemaLocation="new-rdbmsDescrip.xsd"
+<rdbms        xsi:noNamespaceSchemaLocation="rdbmsDescrip.xsd"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        dbs="calib_test"
        SchemaVersion="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.9 2006/06/30 18:48:50 jrb Exp $"   >
+       CVSid= "$Id: calib_test.xml,v 1.10 2006/07/06 23:35:16 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
