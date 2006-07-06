@@ -3,8 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        dbs="calib"
        SchemaVersion="2.0"
-       SchemaExpected="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.8 2005/10/29 06:33:35 jrb Exp $"   >
+       CVSid= "$Id: calib.xml,v 1.8 2006/06/30 18:48:50 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
