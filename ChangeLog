@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Jul  6 16:35:16 PDT 2006
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_test.xml calib_user.xml 
+Log Message:
+Don't specify value for FIXED SchemaExpected attribute 
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r6p2, operation: add
 Package: rdbModel
