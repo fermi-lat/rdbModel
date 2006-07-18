@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Jul 18 13:13:00 PDT 2006
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.xsd 
+Log Message:
+Add element to keep track of foreign key constraint
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Jul  6 16:36:25 PDT 2006
 rdbModel/xml
 
