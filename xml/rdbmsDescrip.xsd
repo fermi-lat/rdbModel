@@ -68,7 +68,7 @@
         </xs:element>
       </xs:sequence>
       <xs:attribute name="dbs" type="xs:NMTOKEN" use="required" />
-      <xs:attribute name="SchemaExpected" type="xs:decimal" fixed="2.0" />
+      <xs:attribute name="SchemaExpected" type="xs:decimal" fixed="2.1" />
       <xs:attribute name="SchemaVersion" type="xs:decimal" use="required" />
       <xs:attribute name="CVSid" type="xs:string" use="required" />
     </xs:complexType>
@@ -77,6 +77,18 @@
       <xs:selector xpath="table" />
       <xs:field    xpath="@name" />
     </xs:key>
+
+    <xs:key name="primKey" >
+      <xs:selector xpath="table" />
+      <xs:field    xpath="@name" />
+      <xs:field    xpath="primary/@col" />
+    </xs:key >
+    <xs:keyref name="primKeyRef" refer="primKey" >
+      <xs:selector xpath="table/col/fk" />
+      <xs:field xpath="@tableName" />
+      <xs:field xpath="@keyCol" />
+    </xs:keyref>
+
 
   </xs:element>
 
@@ -161,6 +173,14 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="type" type="typeType" />
+      <xs:element name="fk" minOccurs="0" >
+         <xs:complexType>
+           <xs:attribute name="tableName" type="xs:NMTOKEN" 
+                         use="required" />
+           <xs:attribute name="keyCol" type="xs:NMTOKEN"
+                         use="required" />
+         </xs:complexType>
+      </xs:element>
       <xs:element name="comment" type="xs:string" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
