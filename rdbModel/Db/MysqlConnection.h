@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.20 2005/12/17 00:40:59 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.21 2006/04/06 23:20:17 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -150,6 +150,17 @@ namespace rdbModel{
                                  const std::string& where,
                                  int   rowLimit=0,
                                  int   rowOffset=0);
+
+    /**
+       Another alternate form.  Get rid of rowOffset arg (never used)
+       and instead add flags.  Three flags are defined: 
+    */
+    virtual ResultHandle* select(const std::string& tableName,
+                                 const StringVector& getCols,
+                                 const StringVector& orderCols,
+                                 SELECTOPTIONS flags,
+                                 const std::string& where,
+                                 int   rowLimit=0);
 
 
     /** 

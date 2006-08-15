@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.20 2005/12/17 00:40:59 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.21 2006/04/06 23:20:17 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 #include <vector>
@@ -33,6 +33,13 @@ namespace rdbModel{
   enum DBOPTIONS {
     DBreadDefaultFile,   
     DBreadDefaultGroup
+  };
+
+  enum SELECTOPTIONS {
+    SELECTnone=0,
+    SELECTdesc=1,       /* sort descending, rather than default ascending */
+    SELECTforUpdate=2,  /* SELECT .... FOR UPDATE */
+    SELECTshareLock=4   /* SELECT ... LOCK IN SHARE MODE */
   };
 
   class ResultHandle;
@@ -184,6 +191,17 @@ namespace rdbModel{
                                  const std::string& where,
                                  int   rowLimit=0,
                                  int   rowOffset=0)=0;
+
+    /**
+       Another alternate form.  Get rid of rowOffset arg (never used)
+       and instead add flags.  Two flags are defined: 
+    */
+    virtual ResultHandle* select(const std::string& tableName,
+                                 const StringVector& getCols,
+                                 const StringVector& orderCols,
+                                 SELECTOPTIONS flags,
+                                 const std::string& where,
+                                 int   rowLimit=0)=0;
 
 
     /**
