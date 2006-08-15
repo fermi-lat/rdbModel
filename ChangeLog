@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Tue Aug 15 16:13:08 PDT 2006
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Add alternate select function
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Jul 18 13:13:00 PDT 2006
 rdbModel/xml
 
