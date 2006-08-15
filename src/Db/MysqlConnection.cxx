@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.44 2006/04/06 23:20:35 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.45 2006/06/18 01:51:25 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -456,9 +456,76 @@ namespace rdbModel {
     return results;
   }
 
+  ResultHandle* MysqlConnection::select(const std::string& tableName,
+                                        const StringVector& getCols,
+                                        const StringVector& orderCols,
+                                        SELECTOPTIONS flags,
+                                        const std::string& where,
+                                        int   rowLimit) {
+    std::string sqlString = "SELECT ";
+    unsigned nGet = getCols.size();
+    unsigned nOrder = orderCols.size();
+
+    sqlString += getCols[0];
+    for (unsigned iGet = 1; iGet < nGet; iGet++) {
+      sqlString += ",";
+      sqlString += getCols[iGet];
+    }
+    sqlString +=  " FROM " + tableName +  " ";
+    if (where.size() >  0) {
+      sqlString += where + " ";
+    }
+    if (nOrder > 0 ) {
+      sqlString += " ORDER BY " + orderCols[0]; 
+      for (unsigned iOrder = 1; iOrder < nOrder; iOrder++) {
+        sqlString += ",";
+        sqlString += orderCols[iOrder];
+      }
+      if (flags & SELECTdesc) {
+        sqlString += " DESC ";
+      }
+    }
+    if (rowLimit > 0) {
+      sqlString += " LIMIT ";
+      std::string limitStr;
+      limitStr.clear();
+      facilities::Util::itoa(rowLimit, limitStr);
+      sqlString += limitStr;
+    }
+
+    if (flags & SELECTforUpdate) {
+      sqlString += " FOR UPDATE ";
+    }
+    else if (flags & SELECTshareLock) {
+      sqlString += " LOCK IN SHARE MODE ";
+    }
+
+    (*m_out) << std::endl << "# About to issue SELECT:" << std::endl;
+    (*m_out) << sqlString << std::endl;
+    m_out->flush();
+    
+    int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
+    if (mysqlRet) {
+      std::string msg = 
+        "rdbModel::MysqlConnection::select: mysql_query error, code ";
+      std::string codeString;
+      facilities::Util::itoa(mysqlRet, codeString);
+      msg += codeString;
+      (*m_err) << std::endl << msg << std::endl;
+      m_err->flush();
+      throw RdbException(msg, mysqlRet);
+      return 0;
+    }
+
+    MYSQL_RES *myres = mysql_store_result(m_mysql);
+    MysqlResults* results = new MysqlResults(myres);
+    return results;
+
+  }
 
 
- ResultHandle* MysqlConnection::dbRequest(const std::string& request) {
+
+  ResultHandle* MysqlConnection::dbRequest(const std::string& request) {
 
     (*m_out) << std::endl << "# About to issue SQL request:" << std::endl;
     (*m_out) << request << std::endl;
