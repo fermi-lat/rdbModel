@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Sep 13 16:57:59 PDT 2006
+rdbModel/src/Tables
+
+Modified Files:
+	Column.cxx 
+Log Message:
+Fix ancient bug, only now exposed by some new MOOT code
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r7, operation: add
 Package: rdbModel
