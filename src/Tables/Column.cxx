@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.13 2005/10/19 01:16:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.14 2005/10/29 06:33:34 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -102,6 +102,8 @@ namespace rdbModel {
 
   FieldVal* Row::find(std::string colname) {
     unsigned nField = m_fields.size();
+    if (!nField) return 0;
+
     unsigned minI = 0;
     unsigned maxI = nField;
 
