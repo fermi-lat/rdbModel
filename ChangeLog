@@ -1,4 +1,65 @@
 ------------------------------------------------------------
+TAG
+Tag name: v2r7p1, operation: add
+Package: rdbModel
+User: jrb  Wed Sep 13 17:00:59 2006
+Files:
+  rdbModel/.cvsignore  1.2
+  rdbModel/ChangeLog  1.422
+  rdbModel/cmt/.cvsignore  1.1.1.1
+  rdbModel/cmt/requirements  1.49
+  rdbModel/doc/release.notes  1.42
+  rdbModel/rdbModel/Rdb.h  1.16
+  rdbModel/rdbModel/RdbException.h  1.2
+  rdbModel/rdbModel/Db/MysqlResults.h  1.5
+  rdbModel/rdbModel/Db/ResultHandle.h  1.3
+  rdbModel/rdbModel/Db/MysqlConnection.h  1.22
+  rdbModel/rdbModel/Db/Connection.h  1.22
+  rdbModel/rdbModel/Management/Visitor.h  1.6
+  rdbModel/rdbModel/Management/XercesBuilder.h  1.8
+  rdbModel/rdbModel/Management/Manager.h  1.2
+  rdbModel/rdbModel/Management/Builder.h  1.3
+  rdbModel/rdbModel/Tables/Set.h  1.2
+  rdbModel/rdbModel/Tables/Supersede.h  1.2
+  rdbModel/rdbModel/Tables/Column.h  1.22
+  rdbModel/rdbModel/Tables/InterRow.h  1.1
+  rdbModel/rdbModel/Tables/Query.h  1.1
+  rdbModel/rdbModel/Tables/Table.h  1.17
+  rdbModel/rdbModel/Tables/Datatype.h  1.13
+  rdbModel/rdbModel/Tables/InsertNew.h  1.1
+  rdbModel/rdbModel/Tables/Index.h  1.4
+  rdbModel/rdbModel/Tables/Assertion.h  1.17
+  rdbModel/src/mainpage.h  1.1
+  rdbModel/src/Rdb.cxx  1.11
+  rdbModel/src/Db/MysqlResults.cxx  1.8
+  rdbModel/src/Db/MysqlConnection.cxx  1.46
+  rdbModel/src/Db/ResultHandle.cxx  1.2
+  rdbModel/src/Management/XercesBuilder.cxx  1.30
+  rdbModel/src/Management/Manager.cxx  1.3
+  rdbModel/src/Tables/Supersede.cxx  1.2
+  rdbModel/src/Tables/Column.cxx  1.15
+  rdbModel/src/Tables/Table.cxx  1.18
+  rdbModel/src/Tables/InsertNew.cxx  1.1
+  rdbModel/src/Tables/Assertion.cxx  1.19
+  rdbModel/src/Tables/Set.cxx  1.1
+  rdbModel/src/Tables/InterRow.cxx  1.1
+  rdbModel/src/Tables/Datatype.cxx  1.13
+  rdbModel/src/Tables/Query.cxx  1.2
+  rdbModel/src/Tables/Index.cxx  1.4
+  rdbModel/src/test/test_build.cxx  1.24
+  rdbModel/xml/rdbmsDescrip.xsd  1.12
+  rdbModel/xml/rdbmsDescrip.dtd  1.6
+  rdbModel/xml/calib_user.xml  1.9
+  rdbModel/xml/calib_test_S.xml  1.2
+  rdbModel/xml/calib_test.xml  1.11
+  rdbModel/xml/calib.xml  1.9
+  rdbModel/xml/connect/mysqlSlac.xml  1.1
+  rdbModel/xml/connect/mysqlConnection.dtd  1.1
+  rdbModel/xml/connect/mysqlSlacT.xml  1.1
+  rdbModel/xml/maint/calibMaint.xml  1.2
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Sep 13 17:00:48 PDT 2006
 rdbModel/doc
 
