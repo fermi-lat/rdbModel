@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r7p1 13-Sep-2006  jrb    Bug fix in Row::find (notice if row is empty)
    v2r7   11-Sep-2006  jrb    Add alternate select function to Connection,
                               MysqlConnection classes
    v2r6p2 30-Jun-2006  jrb    Add calib types for ancillary detectors
