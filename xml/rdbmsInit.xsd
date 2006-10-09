@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    elementFormDefault="unqualified" >
+  <xs:element name="rdbmsInit">
+    <xs:annotation>
+      <xs:documentation>
+       Root element for instructions on initializing a dbs
+       described by an XML document using the schema rdbmsDescrip.xsd
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="table"  type="tableType" 
+                     minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+<!-- tables have attribute name of NMtoken type and contain
+      arbitrary # of <forAll> elements, followed by
+      >= 1 <row> element
+
+      <forAll> has empty content, two attributes:  col (value is NMtoken)
+              and val (value is string).  Intent is to set col to val
+              for all rows inserted.
+
+      <row> has at least one <field> or <ref> element, followed by
+         an arbitary number of addition <field> or <ref> elements
+         in any order.  Intent is to describe fields for a new row
+         (and also should use any <forAll> specifications).
+      <field> has empty content, attributes col and val as for <forAll>
+         Intent: set field to the specified value
+      <ref> has empty content, attributes col and val as above 
+             and also attribute table (value is NMtoken)
+         Intent: set field to primary key of row in specified table
+                 with specified field value
+-->
+ <!-- col is name of column to be filled; val is value to set it to -->
+   <xs:complexType name="fieldType" >
+     <xs:attribute name="col" type="xs:NMTOKEN" use="required" />
+     <xs:attribute name="val" type="xs:string" use="required" />
+   </xs:complexType>
+
+<!-- col is column to be filled.  Value is obtained by
+      finding primary key for row in specified table with refCol
+      value = refVal.
+ -->
+   <xs:complexType name="refType" >
+     <xs:attribute name="col" type="xs:NMTOKEN" use="required" />
+     <xs:attribute name="refVal" type="xs:string" use="required" />
+     <xs:attribute name="table" type="xs:NMTOKEN" use="required" />
+     <xs:attribute name="refCol" type="xs:NMTOKEN" use="required" />
+   </xs:complexType>
+
+   <xs:complexType name="tableType" >
+     <xs:sequence>
+       <xs:element name="forAll" type="fieldType" minOccurs="0" 
+                   maxOccurs="unbounded" />
+       <xs:element name="row" minOccurs="1" maxOccurs="unbounded">
+         <xs:complexType>
+           <xs:choice minOccurs="1" maxOccurs="unbounded">
+             <xs:element name="field" type="fieldType" />
+             <xs:element name="ref" type="refType" />
+           </xs:choice>
+         </xs:complexType>
+       </xs:element>
+     </xs:sequence>
+     <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+   </xs:complexType>
+</xs:schema>
