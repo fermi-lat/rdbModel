@@ -1,6 +1,6 @@
 package rdbModel
 
-# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.48 2006/09/12 01:18:36 jrb Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/cmt/requirements,v 1.49 2006/09/13 23:58:25 jrb Exp $
 version v2r7p1
 
 author Joanne Bogart <jrb@slac.stanford.edu>
@@ -30,3 +30,4 @@ library rdbModel  \
 
 
 application test_build  test/test_build.cxx
+application initRdb     test/initRdb.cxx
