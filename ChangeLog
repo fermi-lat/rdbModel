@@ -1,5 +1,19 @@
 ------------------------------------------------------------
 User: jrb  Mon Oct  9 16:57:23 PDT 2006
+rdbModel/src/test
+
+Added Files:
+	initRdb.cxx 
+Log Message:
+initRdb.cxx:    Application to initialize a rdbModel-style database
+                -- a work in progress.
+rdbmsInit.xsd:  Schema definition for input describing initialization
+                 to initRdb
+requirements:   Add initRdb application
+
+    *
+------------------------------------------------------------
+User: jrb  Mon Oct  9 16:57:23 PDT 2006
 rdbModel/cmt
 
 Modified Files:
