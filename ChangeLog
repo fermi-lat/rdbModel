@@ -1,5 +1,21 @@
 ------------------------------------------------------------
 User: jrb  Wed Oct 11 16:53:55 PDT 2006
+rdbModel/src/test
+
+Modified Files:
+	InitRdb.cxx InitRdb.h 
+Added Files:
+	initRdbMain.cxx 
+Removed Files:
+	initRdb.cxx 
+Log Message:
+1. Changed name of main program file for init program to initRdbMain 
+   to distinguish clearly from class name InitRdb
+2. Chipping away at init program
+
+    *
+------------------------------------------------------------
+User: jrb  Wed Oct 11 16:53:55 PDT 2006
 rdbModel/cmt
 
 Modified Files:
