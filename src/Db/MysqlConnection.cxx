@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.45 2006/06/18 01:51:25 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.46 2006/08/15 23:13:15 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -174,8 +174,9 @@ namespace rdbModel {
                                           port, NULL, 0);
 
     if (connected != 0) {  // Everything is fine.  Put out an info message
-      (*m_out) << "Successfully connected to MySQL host " << 
-        host << ", database " << dbName << std::endl;
+      (*m_out) << "Successfully connected to MySQL host " 
+               << ((host != 0) ? host : "from init file" )
+               << ", database " << dbName << std::endl;
       m_out->flush();
       m_connected = true;
       m_dbName = dbName;
