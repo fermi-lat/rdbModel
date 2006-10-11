@@ -1,4 +1,4 @@
-// $Header: $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.1 2006/10/11 00:17:32 jrb Exp $
 // Class to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema, invoked from main initRdb.
 
@@ -18,13 +18,15 @@
 #include "rdbModel/Tables/Assertion.h"
 #include "facilities/Util.h"
 #include "InitRdb.h"
-
+#include "xmlBase/XmlParser.h"
+#include "xmlBase/Dom.h"
 
 namespace rdbModel {
+  using XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
   int InitRdb::buildModel(std::string& dfile) {
-    Builder* b = new XercesBuilder;
+    m_build = new XercesBuilder;
     m_rdb = new Rdb;
-    int errcode = m_rdb->build(dfile, b);
+    int errcode = m_rdb->build(dfile, m_build);
 
     if (errcode) {
       std::cerr << "Build failed with error code " << errcode << std::endl;
@@ -90,6 +92,49 @@ namespace rdbModel {
 
   InitRdb::~InitRdb() {
     if (m_rdb) delete m_rdb;
+    if (m_build) delete m_build;
   }
+
+  // Return 0 if no errors or warnings
+  int InitRdb::init(std::string& ifile) {
+    //    using XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument;
+    using xmlBase::Dom;
+    int   ret;
+
+    xmlBase::XmlParser parser;
+
+    parser.doSchema(true);
+
+    m_doc = parser.parse(ifile.c_str());
+
+    DOMElement* top = m_doc->getDocumentElement();
+    std::vector<DOMElement*> tables;
+    Dom::getChildrenByTagName(top, std::string("table"), tables);
+    if (m_dbg) std::cout << std::endl << tables.size() 
+                         << " tables found in document " << ifile
+                         << std::endl;
+
+    for (unsigned i = 0; i < tables.size(); i++) {
+      ret = handleTable(tables[i]);
+      if (ret > 0) return ret;  // error
+    }
+    return 0;
     
+  }
+
+  int InitRdb::handleTable(DOMElement* tblElt) {
+    using xmlBase::Dom;
+    std::string name = Dom::getAttribute(tblElt, "name");
+    if (m_dbg) 
+      std::cout << "Processing table named '" << name << "'" << std::endl;
+
+    // Make sure we have a table with this name
+    Table* tbl = m_rdb->getTable(name);
+    if (!tbl) {
+      std::cerr << "Cannot initialize table '" << name 
+                << "' -- no such table in db" << std::endl;
+      return 1;
+    }
+    return 0;
+  }
 }
