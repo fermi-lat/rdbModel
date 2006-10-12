@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: jrb  Thu Oct 12 15:44:49 PDT 2006
+rdbModel/src/test
+
+Modified Files:
+	InitRdb.cxx InitRdb.h 
+Log Message:
+Table.h:  Add public getPrimaryKey() function
+InitRdb:  First draft of fully-functional class.  It compiles but
+          is untested.
+
+    *
+------------------------------------------------------------
+User: jrb  Thu Oct 12 15:44:49 PDT 2006
 rdbModel/rdbModel/Tables
 
 Modified Files:
