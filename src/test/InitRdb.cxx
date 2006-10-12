@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.1 2006/10/11 00:17:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.2 2006/10/11 23:53:55 jrb Exp $
 // Class to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema, invoked from main initRdb.
 
@@ -14,13 +14,39 @@
 #include "rdbModel/Db/MysqlResults.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
-#include "rdbModel/Tables/Datatype.h"
-#include "rdbModel/Tables/Assertion.h"
+// #include "rdbModel/Tables/Datatype.h"
+// #include "rdbModel/Tables/Assertion.h"
 #include "facilities/Util.h"
 #include "InitRdb.h"
 #include "xmlBase/XmlParser.h"
 #include "xmlBase/Dom.h"
 
+namespace {
+  using XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
+  // Check that Table has this field and that value is compatible
+  // with column definition
+  int handleFieldType(DOMElement* fieldElt, rdbModel::Table* tbl,
+                      std::string& fieldName, std::string& fieldValue) {
+    using xmlBase::Dom;
+    fieldName = Dom::getAttribute(fieldElt, "col");
+    rdbModel::Column* column = tbl->getColumnByName(fieldName);
+    if (!column) {
+      std::cerr << "Table " << tbl->getName() << " has no such column as"
+                << fieldName << std::endl;
+      return 1;
+    }
+    fieldValue = Dom::getAttribute(fieldElt, "val");
+    if (!(column->okValue(fieldValue))) {
+      std::cerr << "Value " << fieldValue 
+                << "incompatible with column definition for column " 
+                << fieldName << " in table " << tbl->getName() << std::endl;
+      return 2;
+    }
+    return 0;
+  }
+
+
+}
 namespace rdbModel {
   using XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
   int InitRdb::buildModel(std::string& dfile) {
@@ -125,6 +151,7 @@ namespace rdbModel {
   int InitRdb::handleTable(DOMElement* tblElt) {
     using xmlBase::Dom;
     std::string name = Dom::getAttribute(tblElt, "name");
+    int ret;
     if (m_dbg) 
       std::cout << "Processing table named '" << name << "'" << std::endl;
 
@@ -135,6 +162,130 @@ namespace rdbModel {
                 << "' -- no such table in db" << std::endl;
       return 1;
     }
+    // Process <forAll>s
+    std::vector<DOMElement*> elts;
+    Dom::getChildrenByTagName(tblElt, std::string("forAll"), elts);
+    std::vector<rdbModel::FieldVal> forAllFields;
+    forAllFields.reserve(elts.size());
+    for (unsigned i = 0; i < elts.size(); i++) {
+      std::string fieldName;
+      std::string fieldValue;
+      ret = handleFieldType(elts[i], tbl, fieldName, fieldValue);
+      if (ret) return ret;
+      forAllFields.push_back(FieldVal(fieldName, fieldValue));
+    }
+    // Remaining children should all be <row>
+    elts.clear();
+    Dom::getChildrenByTagName(tblElt, std::string("row"), elts);
+    for (unsigned iRow = 0; iRow < elts.size(); iRow++) {
+      ret = handleRow(elts[iRow], tbl, forAllFields);
+      if (ret) return ret;
+    }
     return 0;
   }
+  int InitRdb::handleRow(DOMElement* row, Table* tbl, 
+                         const std::vector<FieldVal>& forAllFields,
+                         unsigned* newKey) {
+    using xmlBase::Dom;
+    int ret;
+
+    std::vector<DOMElement*> children;
+    std::vector<FieldVal> fields = forAllFields;
+    Dom::getChildrenByTagName(row, std::string("*"), children);
+    for (unsigned i = 0; i < children.size(); i++) {
+      DOMElement* child = children[i];
+      std::string tagname = Dom::getTagName(child);
+      if (tagname == "field") {
+        std::string col, val;
+        ret = handleFieldType(child, tbl, col, val);
+        if (ret) return ret;
+        fields.push_back(FieldVal(col, val));
+      }
+      else if (tagname == "ref") {
+        std::string col, val;
+        ret = handleRef(child, col, val);
+        if (ret) return ret;
+        fields.push_back(FieldVal(col, val));
+      }
+      else {  // should never happen
+        std::cerr << "Encountered unknown tag '"  << tagname << "'" 
+                  << std::endl;
+        return 3;
+      }
+    }
+    Row toInsert(fields);
+    const std::string tname = tbl->getName();
+    //    int* signedKey = 0;
+    //    m_rdb->insertRow(tname, toInsert, signedKey, newKey);
+    m_rdb->insertRow(tname, toInsert, 0, newKey);
+    if (m_dbg) {
+      std::cout << "Inserted row into table " << tbl->getName() 
+                << ", assigned key " << newKey << std::endl;
+    }
+    return 0;
+    // Should be ready to do insert 
+  }
+  int InitRdb::handleRef(DOMElement* refElt,
+                         std::string& col, std::string& val) {
+    using xmlBase::Dom;
+
+    col = Dom::getAttribute(refElt, "col");
+    
+    std::string refTableName = Dom::getAttribute(refElt, "table");
+    std::string refCol = Dom::getAttribute(refElt, "refCol");
+    std::string refVal = Dom::getAttribute(refElt, "refVal");
+    Table* refTable = m_rdb->getTable(refTableName);
+    if (!refTable) {
+      std::cerr << "No table '" << refTableName << "' in dbs" << std::endl;
+      return 1;
+    }
+
+    // Find colname for primary key of 'table'
+    std::string primCol = refTable->getPrimaryKeyCol();
+    if (primCol.size() == 0) {
+      std::cerr << "Table " << refTable << " has no primary key " 
+               << std::endl;
+      return 1;
+    }
+    
+    std::vector<std::string> getCols;
+    getCols.push_back(primCol);
+
+    // do sql
+    //   select [primary key] from [table] where
+    //             [refCol] = [refVal]
+    std::string where(" WHERE ");
+    where += refCol + std::string("='") + refVal + std::string("'");
+    ResultHandle* res;
+    try {
+      res = m_rdb->getConnection()->select(refTableName, getCols, getCols, where);
+    }
+    catch (std::exception ex) {
+      std::cerr << "InitRdb::handleRef " << ex.what() << std::endl;
+      std::cerr.flush();
+      if (res) delete res;
+      return 1;
+    }
+    int got = res->getNRows();
+    if (got != 1) {
+      if (got == 0) {
+        std::cerr << "No rows found in table " << refTableName 
+                  << " satisfying " << where << std::endl;
+      }
+      else if (got > 1) {
+        std::cerr << "Too many rows found in table " << refTableName 
+                  << " satisfying " << where << std::endl;
+      }
+      delete res;
+      return 1;
+    }
+    std::vector<std::string>selFields;
+
+    res->getRow(selFields);
+    val = selFields[0];
+    delete res;
+    return 0;
+  }
+
+    
 }
