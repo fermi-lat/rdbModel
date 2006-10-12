@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Oct 12 16:41:55 PDT 2006
+rdbModel/src/test
+
+Modified Files:
+	InitRdb.cxx 
+Log Message:
+Fix debug output to write out primary key of new row, as intended.
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Oct 12 15:44:49 PDT 2006
 rdbModel/src/test
 
