@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: jrb  Thu Oct 19 17:54:50 PDT 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Column.h:  Add bool set to true for unique index (or primary key)
+MysqlConnection.cxx: has responsibility to set unique index flag
+InitRdb.cxx:  add exception handling
+rdbmsInit.xsd:  add mode attribute to <table> (values are 'new' or 'add')
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Oct 19 17:54:49 PDT 2006
 rdbModel/rdbModel/Tables
 
