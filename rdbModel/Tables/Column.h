@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.21 2005/10/21 01:30:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.22 2005/10/29 06:33:34 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -14,6 +14,7 @@ namespace rdbModel {
   class Enum;
   class Table;
   class XercesBuilder;
+  class MysqlConnection;
 
 
 
@@ -46,7 +47,7 @@ namespace rdbModel {
     };
 
     Column(Table* myTable=0) : m_myTable(myTable), m_type(0), 
-                               m_isPrimaryKey(false) {
+                               m_isPrimaryKey(false), m_isUniqueKey(false) {
       m_contents = CONTENTSunspecified;
       m_default = std::string("");
       m_defaultInterp = std::string("");};
@@ -86,6 +87,7 @@ namespace rdbModel {
     bool stickyInsert() const { return m_stickyInsert;}
 
     bool isPrimaryKey() const {return m_isPrimaryKey;}
+    bool isUniqueKey() const {return m_isUniqueKey;}
 
     bool isAutoIncrement() const;  
 
@@ -104,7 +106,7 @@ namespace rdbModel {
 
   private:
     friend class rdbModel::XercesBuilder; // needs access to add.. methods 
-
+    friend class rdbModel::MysqlConnection; // ..to set uniqueKey flag
     Table* m_myTable;
 
     std::string m_name;
@@ -123,6 +125,13 @@ namespace rdbModel {
     
     /// Is this column a primary key?
     bool m_isPrimaryKey;
+
+    /// Is this column a unique and non-nullable key (may or may not also
+    /// be primary key).  
+    bool m_isUniqueKey;
+    // Note there is currently (Oct 06) no way to describe this property
+    // in the xml model of the db. It is only established after connecting
+    // to a MySQL db while checking for compatibility.
 
     /// Normally empty string.  If non-empty, default value
     /// requires interpretation

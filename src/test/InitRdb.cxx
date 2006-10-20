@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.3 2006/10/12 22:44:49 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.4 2006/10/12 23:41:55 jrb Exp $
 // Class to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema, invoked from main initRdb.
 
@@ -218,7 +218,15 @@ namespace rdbModel {
     const std::string tname = tbl->getName();
     //    int* signedKey = 0;
     //    m_rdb->insertRow(tname, toInsert, signedKey, newKey);
-    m_rdb->insertRow(tname, toInsert, 0, newKey);
+    try {
+      m_rdb->insertRow(tname, toInsert, 0, newKey);
+    }
+    catch (RdbException ex) {
+      std::cerr << "Insert row for table " << tname
+                << " failed with error" << std::endl
+                << "***  " << ex.what()  << std::endl;
+      return 4;
+    }
     if (m_dbg) {
       std::cout << "Inserted row into table " << tbl->getName();
       if (newKey) std::cout  << ", assigned key " << *newKey;
