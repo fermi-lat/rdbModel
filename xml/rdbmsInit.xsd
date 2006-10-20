@@ -16,7 +16,8 @@
     </xs:complexType>
   </xs:element>
 
-<!-- tables have attribute name of NMtoken type and contain
+<!-- tables have attribute name of NMtoken type, mode = 'new' or 'add'
+     (default = 'new') and contain
       arbitrary # of <forAll> elements, followed by
       >= 1 <row> element
 
@@ -66,5 +67,13 @@
        </xs:element>
      </xs:sequence>
      <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+     <xs:attribute name="mode" type="tableModeType" default="new" />
    </xs:complexType>
+
+   <xs:simpleType name="tableModeType">
+     <xs:restriction base="xs:NMTOKEN">
+       <xs:enumeration value="new" />
+       <xs:enumeration value="add" />
+     </xs:restriction>
+   </xs:simpleType >
 </xs:schema>

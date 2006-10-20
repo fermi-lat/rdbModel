@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.46 2006/08/15 23:13:15 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.47 2006/10/11 00:17:32 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -824,9 +824,13 @@ namespace rdbModel {
       return Visitor::VERRORABORT;
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
-    // Save primary key info, if any
+    // or if nullable unique key, UNI if not nullable, unique.  
+    // Save primary key and unique key info, if any
     if (std::string(colDescrip[3]) == std::string("PRI")) {
       m_primColName = myName;
+      col->m_isUniqueKey = true;
+    } else if  (std::string(colDescrip[3]) == std::string("UNI")) {
+      col->m_isUniqueKey = true;
     }
 
     // Field 4 is default
