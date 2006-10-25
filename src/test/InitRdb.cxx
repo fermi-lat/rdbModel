@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.4 2006/10/12 23:41:55 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.5 2006/10/20 00:54:50 jrb Exp $
 // Class to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema, invoked from main initRdb.
 
@@ -82,7 +82,6 @@ namespace rdbModel {
     std::string cnf("$(HOME)/.my.cnf");
     facilities::Util::expandEnvVar(&cnf);
     ok = conn->setOption(rdbModel::DBreadDefaultFile, cnf.c_str());
-    //if (ok) ok = conn->setOption(rdbModel::DBreadDefaultGroup, "MOOT_WRITE");
     if (ok) ok = conn->setOption(rdbModel::DBreadDefaultGroup, group.c_str());
     if (ok) ok =  conn->open(host, port, NULL, NULL, dbname.c_str());
     if (!ok) return -2;   // no connection
