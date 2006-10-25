@@ -6,6 +6,9 @@
 
    *  EOH  *
 
+   v2r8   25-Oct-2006  jrb    Add initRdb application and xml schema describing
+                              its input. 
+                              Add unique index flag to model.
    v2r7p1 13-Sep-2006  jrb    Bug fix in Row::find (notice if row is empty)
    v2r7   11-Sep-2006  jrb    Add alternate select function to Connection,
                               MysqlConnection classes
