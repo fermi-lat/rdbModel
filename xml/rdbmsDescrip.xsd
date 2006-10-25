@@ -142,6 +142,10 @@
                 <xs:attribute name="interp" type="xs:token" default="" />
               </xs:complexType>
             </xs:element>
+<!--
+ How value gets established.  'Agent' is entity setting the value.
+ May be end user, service parsing the xml, or auto_increment.
+-->
             <xs:element name="from" >
               <xs:complexType>
                 <xs:attribute name="agent" use="required" >
