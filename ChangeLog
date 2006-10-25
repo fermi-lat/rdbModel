@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Oct 25 15:37:04 PDT 2006
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.xsd 
+Log Message:
+Cosmetic change to comments
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Oct 25 15:36:50 PDT 2006
 rdbModel/src/test
 
