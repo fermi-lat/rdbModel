@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Oct 25 15:36:50 PDT 2006
+rdbModel/src/test
+
+Modified Files:
+	InitRdb.cxx initRdbMain.cxx 
+Log Message:
+Use MySQL group = supplied dbname in InitRdb program
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r8, operation: add
 Package: rdbModel
