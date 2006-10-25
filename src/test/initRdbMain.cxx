@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/initRdb.cxx,v 1.2 2006/10/11 00:17:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/initRdbMain.cxx,v 1.1 2006/10/11 23:53:55 jrb Exp $
 // Program to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema
 
@@ -86,10 +86,10 @@ int main(int narg, char** args) {
   int ret = i.buildModel(dfile);
   if (ret) return 0;
   // Make db connection and verify compatibility
-  // First arg is char* host.  Should pick up value in .my.cnf
+  // Account info should be in group with name = dbname
   ret = i.dbconnect(host, 0, 
-                    std::string("mood_test"), 
-                    std::string("MOOT_WRITE"));
+                    dbname,
+                    dbname);
   if (ret) return 0;
   
   // Handle init file
