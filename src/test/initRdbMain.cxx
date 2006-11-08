@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/initRdbMain.cxx,v 1.1 2006/10/11 23:53:55 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/initRdbMain.cxx,v 1.2 2006/10/25 22:36:50 jrb Exp $
 // Program to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema
 
@@ -87,7 +87,7 @@ int main(int narg, char** args) {
   if (ret) return 0;
   // Make db connection and verify compatibility
   // Account info should be in group with name = dbname
-  ret = i.dbconnect(host, 0, 
+  ret = i.dbconnect(host, port, 
                     dbname,
                     dbname);
   if (ret) return 0;
