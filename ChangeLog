@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed Nov  8 15:13:51 PST 2006
+rdbModel/src/test
+
+Modified Files:
+	InitRdb.cxx initRdbMain.cxx 
+Log Message:
+initRdbMain.cxx:  pay attention to user-specified port
+InitRdb.cxx:      clean up commented-out code
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r8p1, operation: add
 Package: rdbModel
