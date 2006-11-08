@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r8p2  8-Nov-2006  jrb    Bug fix for initRdb app
    v2r8p1 25-Oct-2006  jrb    In initRdb app use MySQL group with name= dbname 
    v2r8   25-Oct-2006  jrb    Add initRdb application and xml schema describing
                               its input. 
