@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.47 2006/10/11 00:17:32 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.48 2006/10/20 00:54:50 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -18,6 +18,7 @@
 
 #include "mysql.h"
 #include <iostream>
+#include <cerrno>
 #include "facilities/Util.h"
 namespace {
 
@@ -59,6 +60,16 @@ namespace {
       if (loc == std::string::npos) return false;
     }
     return true;
+  }
+  std::string getMysqlError(MYSQL* my, unsigned* myErrno) {
+    if ((*myErrno = mysql_errno(my)) ) {
+      const char* errstring = mysql_error(my);
+      std::string report("MySQL error code "), code;
+      facilities::Util::utoa(*myErrno, code);
+      report += code + std::string(": ") + std::string(errstring);
+      return report;
+    }
+    return std::string("");
   }
 }
     
@@ -292,8 +303,10 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, ins.c_str());
 
     if (mysqlRet) {
-      (*m_out) << "MySQL error during INSERT, code " << mysqlRet << std::endl;
-      m_out->flush();
+      unsigned errcode;
+      (*m_err) << "MySQL error during INSERT"  << std::endl;
+      (*m_err) << getMysqlError(m_mysql, &errcode) << std::endl;
+      m_err->flush();
       return false;
     }
     if ((auto_value) || (u_auto_value)) {
@@ -358,9 +371,10 @@ namespace rdbModel {
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
+      unsigned errcode;
       (*m_err) << "rdbModel::MysqlConnection::update: ";
-      (*m_err) << "MySQL error during UPDATE, code " 
-                  << mysqlRet << std::endl;
+      (*m_err) << "MySQL error during UPDATE" << std::endl;
+      (*m_err) << getMysqlError(m_mysql, &errcode) << std::endl;
       m_err->flush();
       return 0;
     }
@@ -441,11 +455,10 @@ namespace rdbModel {
     
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
     if (mysqlRet) {
+      unsigned errcode;
       std::string msg = 
-        "rdbModel::MysqlConnection::select: mysql_query error, code ";
-      std::string codeString;
-      facilities::Util::itoa(mysqlRet, codeString);
-      msg += codeString;
+        "rdbModel::MysqlConnection::select. ";
+      msg += getMysqlError(m_mysql, &errcode);
       (*m_err) << std::endl << msg << std::endl;
       m_err->flush();
       throw RdbException(msg, mysqlRet);
@@ -507,11 +520,10 @@ namespace rdbModel {
     
     int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
     if (mysqlRet) {
+      unsigned errcode;
       std::string msg = 
-        "rdbModel::MysqlConnection::select: mysql_query error, code ";
-      std::string codeString;
-      facilities::Util::itoa(mysqlRet, codeString);
-      msg += codeString;
+        "rdbModel::MysqlConnection::select. ";
+      msg += getMysqlError(m_mysql, &errcode);
       (*m_err) << std::endl << msg << std::endl;
       m_err->flush();
       throw RdbException(msg, mysqlRet);
@@ -534,14 +546,12 @@ namespace rdbModel {
     
     int mysqlRet = mysql_query(m_mysql, request.c_str());
     if (mysqlRet) {
+      unsigned errcode;
       std::string msg = 
-        "rdbModel::MysqlConnection::dbRequest: mysql_query error, code ";
-      std::string codeString;
-      facilities::Util::itoa(mysqlRet, codeString);
-      msg += codeString;
+        "rdbModel::MysqlConnection::dbRequest. ";
+      msg += getMysqlError(m_mysql, &errcode);
       (*m_err) << std::endl << msg << std::endl;
       m_err->flush();
-
       throw RdbException(msg, mysqlRet);
       return 0;
     }
@@ -763,8 +773,10 @@ namespace rdbModel {
     
     int ret = mysql_query(m_mysql, query.c_str());
     if (ret) {
+      unsigned errcode;
       m_matchReturn = MATCHfail;
       (*m_err) << std::endl << "SHOW COLUMNS request failed " << std::endl;
+      (*m_err) << getMysqlError(m_mysql, &errcode) << std::endl;
       m_err->flush();
       return Visitor::VERRORABORT;
     }
