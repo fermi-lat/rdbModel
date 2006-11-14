@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE mysqlConnection SYSTEM "./mysqlConnection.dtd" >
-<mysqlConnection host="centaurusa.slac.stanford.edu"
+<mysqlConnection host="glastDB.slac.stanford.edu"
                  user="glastreader"
                  password="glastreader"
                  dbname="calib"
