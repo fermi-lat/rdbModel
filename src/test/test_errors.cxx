@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.24 2005/11/04 21:45:31 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_errors.cxx,v 1.1 2006/11/14 01:40:46 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -19,7 +19,8 @@
 // When TEST_INSERT is defined, use connection which can write
 #define TEST_INSERT
 
-int doInsert(rdbModel::Rdb* con);
+int doBadInsert(rdbModel::Rdb* con);
+int doBadUpdate(rdbModel::Rdb*, int serial);
 int doUpdate(rdbModel::Rdb*, int serial);
 
 int main(int, char**) {
@@ -59,7 +60,12 @@ int main(int, char**) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
   }
-
+  /*
+  if (!(con->open(connectfileT)) ) {
+    std::cerr << "Unable to connect to MySQL test database" << std::endl;
+    return -1;
+  }
+  */
 
   rdbModel::MATCH match = con->matchSchema(rdb, false);
 
@@ -110,14 +116,57 @@ int main(int, char**) {
     }
   }
 
-  /*
+  // Make a bad query with con->select
+  std::vector<std::string> getCols;
+  std::vector<std::string> orderCols;
+  std::string where(" WHERE ser_no >=<  7");
+  getCols.push_back("flavor");
+  try {
+    rdbModel::ResultHandle* res =
+      con->select("metadata_v2r1", getCols, orderCols, where);
+  }
+  catch (rdbModel::RdbException ex) {
+    std::cerr << "select failed with error: " << ex.getMsg() << std::endl;
+      //      std::cerr << "Code " << ex.getCode() << std::endl;
+  }
 
+  doUpdate(rdb, 1);     // should fail because we don't have write access
+  con->close();
 
 // Following will do an insert if disable = set to false.  
 // To keep from cluttering up the
 // database, mostly don't execute
 //  
 # ifdef TEST_INSERT
+
+  if (!(con->open(connectfileT)) ) {
+    std::cerr << "Unable to connect to MySQL test database" << std::endl;
+    return -1;
+  }
+
+
+  match = con->matchSchema(rdb, false);
+
+  switch (match) {
+  case rdbModel::MATCHequivalent:
+    std::cout << "XML schema and MySQL database are equivalent!" << std::endl;
+    break;
+  case rdbModel::MATCHcompatible:
+    std::cout << "XML schema and MySQL database are compatible" << std::endl;
+    break;
+  case rdbModel::MATCHfail:
+    std::cout << "XML schema and MySQL database are NOT compatible" 
+              << std::endl;
+    return -2;
+  case rdbModel::MATCHnoConnection:
+    std::cout << "Connection failed while attempting match" << std::endl;
+    return -1;
+  }
+
+  doBadInsert(rdb);  
+  doBadUpdate(rdb, 23);  
+# endif
+  /*
 
   bool disable = true;
   con->disableModify(disable);     // so don't really change db
@@ -191,7 +240,7 @@ int main(int, char**) {
 }
 
 // int doInsert(rdbModel::Connection* con) {
-int doInsert(rdbModel::Rdb* rdb) {
+int doBadInsert(rdbModel::Rdb* rdb) {
   
   using rdbModel::FieldVal;
   using rdbModel::Row;
@@ -211,6 +260,7 @@ int doInsert(rdbModel::Rdb* rdb) {
   fields.push_back(FieldVal("notes", 
                             "Absurd test item, setting input_desc to NULL"));
   fields.push_back(FieldVal("input_desc","", true));
+  fields.push_back(FieldVal("noSuchField","", true));
 
   int  serial = 0;
   
@@ -222,27 +272,18 @@ int doInsert(rdbModel::Rdb* rdb) {
 }
 
 // int doUpdate(rdbModel::Connection* con, int serial) {
-int doUpdate(rdbModel::Rdb* rdb, int serial) {
-  using rdbModel::Assertion;
+int doBadUpdate(rdbModel::Rdb* rdb, int serial) {
   using rdbModel::Column;
   using facilities::Util;
   using rdbModel::FieldVal;
   using rdbModel::Row;
 
-  // Set up WHERE clause, always the same
+  // Set up bad WHERE clause
   std::string serialStr;
   Util::itoa(serial, serialStr);
-  Assertion::Operator* serEquals = 
-    new Assertion::Operator(rdbModel::OPTYPEequal, "ser_no",
-                            serialStr, rdbModel::FIELDTYPEold, 
-                            rdbModel::FIELDTYPElit);
+  std::string where("ser_no = '~");
+  where += serialStr + std::string("'");
 
-  Assertion* whereSer = new Assertion(serEquals);
-  //  Assertion* whereSer = new Assertion(Assertion::WHENwhere, serEquals);
-
-  // First call an update without any null columns; change notes field
-  // and set data_size to something.
-  /*  std::vector<std::string> colNames, values, nullCols; */
   std::vector<FieldVal> fields;
   
   fields.push_back(FieldVal("notes", "1st update: set data_size to non-zero value"));
@@ -252,14 +293,32 @@ int doUpdate(rdbModel::Rdb* rdb, int serial) {
 
   std::string table("metadata_v2r1");
 
-  unsigned nChange = rdb->updateRows(table, row, whereSer);
+  unsigned nChange = rdb->updateRows(table, row, where);
+  return (int) nChange;
+}
 
-  // Now null out data_size
-  fields.clear();
-  fields.push_back(FieldVal("data_size", "", true));
-  fields.push_back(FieldVal("notes", "2nd update: data_size set to NULL"));
-  Row row2(fields);
+int doUpdate(rdbModel::Rdb* rdb, int serial) {
+  using rdbModel::Column;
+  using facilities::Util;
+  using rdbModel::FieldVal;
+  using rdbModel::Row;
 
-  nChange += rdb->updateRows(table, row2, whereSer);
-  return nChange;
+  // WHERE clause
+  std::string serialStr;
+  Util::itoa(serial, serialStr);
+  std::string where(" where ser_no = '");
+  where += serialStr + std::string("'");
+
+  std::vector<FieldVal> fields;
+  
+  fields.push_back(FieldVal("notes", "Update: set data_size to non-zero value"));
+  fields.push_back(FieldVal("data_size", "883"));
+  
+  Row row(fields);
+
+  std::string table("metadata_v2r1");
+
+  unsigned nChange = rdb->updateRows(table, row, where);
+  return (int) nChange;
+
 }
