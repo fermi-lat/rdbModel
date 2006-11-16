@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Nov 15 16:22:26 PST 2006
+rdbModel/src/test
+
+Modified Files:
+	test_errors.cxx 
+Log Message:
+More comprehensive testing of mysql error-handling
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r8p3, operation: add
 Package: rdbModel
