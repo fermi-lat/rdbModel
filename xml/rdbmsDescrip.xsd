@@ -245,6 +245,14 @@
           <xs:enumeration value="double" />
           <xs:enumeration value="varchar" />
           <xs:enumeration value="char" />
+          <xs:enumeration value="blob" />
+          <xs:enumeration value="tinyblob" />
+          <xs:enumeration value="mediumblob" />
+          <xs:enumeration value="longblob" />
+          <xs:enumeration value="text" />
+          <xs:enumeration value="tinytext" />
+          <xs:enumeration value="mediumtext" />
+          <xs:enumeration value="longtext" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
