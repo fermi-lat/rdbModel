@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Dec  7 10:04:34 PST 2006
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.xsd 
+Log Message:
+Add more datatypes for blob and text columns
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Dec  7 10:04:24 PST 2006
 rdbModel/src/Tables
 
