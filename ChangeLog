@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Dec  7 10:04:08 PST 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add more datatypes for blob and text columns; use mysql_real_query just
+in case blobs are involved
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Dec  7 10:03:41 PST 2006
 rdbModel/rdbModel/Tables
 
