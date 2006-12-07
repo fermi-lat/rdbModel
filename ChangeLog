@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Dec  7 10:04:24 PST 2006
+rdbModel/src/Tables
+
+Modified Files:
+	Datatype.cxx 
+Log Message:
+Add more datatypes for blob and text columns
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Dec  7 10:04:08 PST 2006
 rdbModel/src/Db
 
