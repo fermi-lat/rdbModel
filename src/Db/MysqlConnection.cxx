@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.48 2006/10/20 00:54:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.49 2006/11/14 01:40:33 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -70,6 +70,11 @@ namespace {
       return report;
     }
     return std::string("");
+  }
+  int realQuery(MYSQL* my, std::string qstring) {
+    unsigned long sz = qstring.size();
+    const char* str = qstring.c_str();
+    return mysql_real_query(my, str, sz);
   }
 }
     
@@ -300,7 +305,7 @@ namespace rdbModel {
       return true;
     }
 
-    int mysqlRet = mysql_query(m_mysql, ins.c_str());
+    int mysqlRet = realQuery(m_mysql, ins.c_str());
 
     if (mysqlRet) {
       unsigned errcode;
@@ -368,7 +373,7 @@ namespace rdbModel {
       m_out->flush();
       return 0;
     }
-    int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
+    int mysqlRet = realQuery(m_mysql, sqlString.c_str());
 
     if (mysqlRet) {
       unsigned errcode;
@@ -453,7 +458,7 @@ namespace rdbModel {
     (*m_out) << sqlString << std::endl;
     m_out->flush();
     
-    int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
+    int mysqlRet = realQuery(m_mysql, sqlString.c_str());
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -518,7 +523,7 @@ namespace rdbModel {
     (*m_out) << sqlString << std::endl;
     m_out->flush();
     
-    int mysqlRet = mysql_query(m_mysql, sqlString.c_str());
+    int mysqlRet = realQuery(m_mysql, sqlString.c_str());
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -544,7 +549,7 @@ namespace rdbModel {
     (*m_out) << request << std::endl;
     m_out->flush();
     
-    int mysqlRet = mysql_query(m_mysql, request.c_str());
+    int mysqlRet = realQuery(m_mysql, request.c_str());
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -771,7 +776,7 @@ namespace rdbModel {
     (*m_out) << query << std::endl;
     m_out->flush();
     
-    int ret = mysql_query(m_mysql, query.c_str());
+    int ret = realQuery(m_mysql, query.c_str());
     if (ret) {
       unsigned errcode;
       m_matchReturn = MATCHfail;
@@ -916,6 +921,42 @@ namespace rdbModel {
       }
       return true;
     }
+      //
+
+    case Datatype::TYPEblob: {
+      base = "blob";
+      break;
+    }
+    case Datatype::TYPEtinyblob: {
+      base = "tinyblob";
+      break;
+    }
+    case Datatype::TYPEmediumblob: {
+      base = "mediumblob";
+      break;
+    }
+    case Datatype::TYPElongblob: {
+      base = "longblob";
+      break;
+    }
+    case Datatype::TYPEtext: {
+      base = "text";
+      break;
+    }
+    case Datatype::TYPEtinytext: {
+      base = "tinytext";
+      break;
+    }
+    case Datatype::TYPEmediumtext: {
+      base = "mediumtext";
+      break;
+    }
+    case Datatype::TYPElongtext: {
+      base = "longtext";
+      break;
+    }
+
+      //
     case Datatype::TYPEdatetime: {
       base = "datetime";
       if (sqlType != "datetime") {
@@ -988,12 +1029,6 @@ namespace rdbModel {
       return false;
     }
 
-    //    if (dtype->isUnsigned()) {
-    //      if (sqlType.find("unsigned") >= sqlType.size() ) {
-    //        m_matchReturn = MATCHfail;
-    //        return false;
-    //      }
-    //    }
     // Now check size.  It's only for display, so mismatch is not failure
     if (sqlSize != dtype->getOutputSize()) {
       m_matchReturn = MATCHcompatible;
