@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.12 2006/01/19 22:02:20 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.13 2006/01/26 00:38:00 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -9,7 +9,7 @@ namespace {
   using rdbModel::Datatype;
 
   bool initDone = false;
-  const unsigned int N_SUPPORTED_TYPES = rdbModel::Datatype::TYPEchar + 1;
+  const unsigned int N_SUPPORTED_TYPES = rdbModel::Datatype::TYPElongtext + 1;
   std::string typenames[N_SUPPORTED_TYPES];
   void init() {
     if (!initDone) {
@@ -24,6 +24,15 @@ namespace {
       typenames[Datatype::TYPEdouble] = std::string("double");
       typenames[Datatype::TYPEvarchar] = std::string("varchar");
       typenames[Datatype::TYPEchar] = std::string("char");
+      typenames[Datatype::TYPEtinyblob] = std::string("tinyblob");
+      typenames[Datatype::TYPEblob] = std::string("blob");
+      typenames[Datatype::TYPEmediumblob] = std::string("mediumblob");
+      typenames[Datatype::TYPElongblob] = std::string("longblob");
+      typenames[Datatype::TYPEtinytext] = std::string("tinytext");
+      typenames[Datatype::TYPEtext] = std::string("text");
+      typenames[Datatype::TYPEmediumtext] = std::string("mediumtext");
+      typenames[Datatype::TYPElongtext] = std::string("longtext");
+
       initDone = true;
     }
   }
@@ -51,7 +60,8 @@ namespace {
     TOTinteger = 0,
     TOTreal,
     TOTchar,
-    TOTdate
+    TOTdate,
+    TOTbinary
   };
   int findTOT(Datatype::TYPES aType) {
     if ((aType == Datatype::TYPEint) || (aType == Datatype::TYPEmediumint) ||
@@ -66,6 +76,11 @@ namespace {
     else if ((aType == Datatype::TYPEdatetime) || 
              (aType == Datatype::TYPEtimestamp))
       return TOTdate;
+    else if ( (aType == Datatype::TYPEtinyblob) ||
+              (aType == Datatype::TYPEblob) ||
+              (aType == Datatype::TYPEmediumblob) ||
+              (aType == Datatype::TYPElongblob) )
+      return TOTbinary;
     else return TOTchar;
   }
     
@@ -293,8 +308,8 @@ namespace rdbModel {
   }
 
   bool Datatype::isCompatible(const Datatype* other) const {
-    // The ten distinct types can be partitioned into 4 sorts: integer,
-    // real, character, and date.  Call two types compatible if they're
+    // The 19 distinct types can be partitioned into 5 sorts: integer,
+    // real, character, date and binary.  Call two types compatible if they're
     // in the same partition.
     return (findTOT(m_type) == findTOT(other->m_type));
   }

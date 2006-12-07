@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.12 2006/01/19 22:02:18 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Datatype.h,v 1.13 2006/01/26 00:37:59 jrb Exp $
 #ifndef RDBMODEL_DATATYPE_H
 #define RDBMODEL_DATATYPE_H
 #include <vector>
@@ -44,7 +44,15 @@ namespace rdbModel{
       TYPEintUnsigned,
       TYPEmediumintUnsigned,
       TYPEsmallintUnsigned,
-      TYPEtinyintUnsigned
+      TYPEtinyintUnsigned,
+      TYPEtinyblob,
+      TYPEblob,
+      TYPEmediumblob,
+      TYPElongblob,
+      TYPEtinytext,
+      TYPEtext,
+      TYPEmediumtext,
+      TYPElongtext
     };
     enum RESTRICT {
       RESTRICTnone = 0,
@@ -63,6 +71,17 @@ namespace rdbModel{
     bool okValue(const std::string& val) const;
     bool isCompatible(const Datatype* other) const;
     bool isUnsigned() {return m_isUnsigned;}
+    bool isText() {return ((m_type == TYPEtinytext) ||
+                           (m_type == TYPEtext) ||
+                           (m_type == TYPEmediumtext) ||
+                           (m_type == TYPElongtext) ); }
+                           
+                           
+    bool isBlob() {return ((m_type == TYPEtinyblob) ||
+                           (m_type == TYPEblob) ||
+                           (m_type == TYPEmediumblob) ||
+                           (m_type == TYPElongblob) ); }
+                           
     TYPES getType() const {return m_type;}
     int   getOutputSize() const {return m_outputSize;}
 
