@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Dec  7 16:40:15 PST 2006
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Datatype.h 
+Log Message:
+Make isBlob( ), isText( ) const, as they should be
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Dec  7 10:04:34 PST 2006
 rdbModel/xml
 
