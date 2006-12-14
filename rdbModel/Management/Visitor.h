@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.5 2004/04/07 23:06:49 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Visitor.h,v 1.6 2005/06/19 20:39:19 jrb Exp $
 #ifndef RDBMODEL_VISITOR_H
 #define RDBMODEL_VISITOR_H
 #include <string>
@@ -40,6 +40,9 @@ namespace rdbModel {
     };
 
   public:
+    Visitor() { }
+    virtual ~Visitor() { }
+
     /// This method says if the visitor is recursive or not
     //    bool getRecursive(){return recursive;}
     /// This method sets if the visitor is recursive or not

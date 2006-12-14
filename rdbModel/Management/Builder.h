@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.2 2004/03/07 08:20:16 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.3 2005/11/04 21:45:26 jrb Exp $
 
 #ifndef RDBMODEL_BUILDER_H
 #define RDBMODEL_BUILDER_H
@@ -18,7 +18,8 @@ namespace rdbModel{
   class Builder {
   public:
   
-    Builder(){};
+    Builder() : m_currentRdb(NULL) {}
+    virtual ~Builder() {}
     
     /** This method parses the input into an intermediate in-memeory form.
      *  For now, the only acceptable input source is an xml file and the

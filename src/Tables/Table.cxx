@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.17 2005/10/28 07:13:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.18 2005/10/29 01:09:46 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -48,8 +48,11 @@ namespace rdbModel {
 
   void Table::setConnection(Connection* connect) {
     m_connect = connect;
-    m_out = connect->getOut();
-    m_err = connect->getErrOut();
+    if (connect)
+      {
+	m_out = connect->getOut();
+	m_err = connect->getErrOut();
+      }
   }
   // Columns are stored in order; binary cuts should do better than
   // just dumb compare one by one.

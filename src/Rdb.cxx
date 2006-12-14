@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.10 2005/10/28 07:13:07 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.11 2005/11/04 21:45:28 jrb Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/RdbException.h"
@@ -15,6 +15,8 @@ namespace rdbModel {
   }
 
   int Rdb::build(const std::string& description, Builder* b) {
+    this->setConnection(NULL);
+
     m_descrip = description;
     m_builder = b;
     int errCode = m_builder->parseInput(m_descrip);
@@ -121,7 +123,8 @@ namespace rdbModel {
 
   unsigned int Rdb::accept(Visitor* v) {
     Visitor::VisitorState state = v->visitRdb(this);
-    if (state != Visitor::VCONTINUE) return state;
+    if (state != Visitor::VCONTINUE)
+      return state;
 
     unsigned nTable = m_tables.size();
 
