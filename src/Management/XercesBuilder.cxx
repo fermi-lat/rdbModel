@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.29 2005/10/04 16:47:14 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.30 2005/11/04 21:45:29 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -40,14 +40,13 @@ namespace rdbModel {
 
   int XercesBuilder::buildRdb(Rdb* rdb) {
     using xmlBase::Dom;
-
-
-    if (m_doc == 0 ) return 0;
+    Manager* man = Manager::getManager();
+    
+    if (m_doc == 0 ) return -1;
     if (rdb) {
       m_rdb = rdb;
     }
     else {
-      Manager* man = Manager::getManager();
       m_rdb = man->getRdb();
     }
     DOMElement* docElt = m_doc->getDocumentElement();
@@ -55,6 +54,14 @@ namespace rdbModel {
     
     //  save attribute information associated with outermost (rdbms) element.
     m_rdb->m_dbName = Dom::getAttribute(docElt, "dbs");
+    if (m_rdb->m_dbName.empty())
+      {
+	std::cerr << "Invalid XML dialect" << std::endl;
+	if (! rdb) man->cleanRdb();
+	this->m_rdb = NULL;
+	return -1;
+      }
+
     m_rdb->m_majorVersion = 0;
     m_rdb->m_minorVersion = 0;
 
@@ -63,11 +70,23 @@ namespace rdbModel {
       versionString = Dom::getAttribute(docElt, "DTDversion");
     }
 
-    unsigned dotPos = versionString.find('.');
+    if (versionString.empty())
+      {
+	std::cerr << "Invalid XML version" << std::endl;
+	if (! rdb) man->cleanRdb();
+	this->m_rdb = NULL;
+	return -1;
+      }
 
-    std::string minorStr = std::string(versionString, dotPos+1);
-    //                               versionString.size() - (dotPos+1));
-    versionString.resize(dotPos);    // now contains just major #
+
+    std::string minorStr = "UNKNOWN";
+    unsigned dotPos = versionString.find('.');
+    if (dotPos != std::string::npos)
+      {
+	minorStr = std::string(versionString, dotPos+1);
+	//                               versionString.size() - (dotPos+1));
+	versionString.resize(dotPos);    // now contains just major #
+      }
 
     try {
       m_rdb->m_majorVersion = facilities::Util::stringToInt(versionString);
@@ -83,7 +102,9 @@ namespace rdbModel {
                 << std::endl;
       std::cerr << "Bye for now";
       std::cerr.flush();
-      exit(1);
+      if (! rdb) man->cleanRdb();
+      this->m_rdb = NULL;
+      return -1;
     }
 
     // Get vector of table elements.  
