@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.11 2005/11/04 21:45:28 jrb Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.12 2006/12/14 23:07:34 decot Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/RdbException.h"
@@ -48,7 +48,8 @@ namespace rdbModel {
   Index* Rdb::getIndex(const std::string& tableName, 
                        const std::string& indexName) const {
     Table* table = getTable(tableName);
-    if (!table) return 0;
+    if (!table)
+	return 0;
 
     return table->getIndexByName(indexName);
 
