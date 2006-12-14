@@ -1,4 +1,26 @@
 ------------------------------------------------------------
+User: decot  Thu Dec 14 15:19:32 PST 2006
+rdbModel/src
+
+Modified Files:
+	Rdb.cxx 
+Log Message:
+2006-12-14  David Decotigny  <decot@glastlnx07.slac.stanford.edu>
+
+	* src/Management/XercesBuilder.cxx (buildRdb): fixed failure
+	handling path (no ::exit, no SEGV)
+
+	* src/Db/MysqlResults.cxx (select): supports arbitrary field data
+	contents (printable chars, binary with inserted \0, ...)
+
+	* src/Rdb.cxx (rdbModel): (non-mandatory) reset the m_connection
+	field at build time
+
+	* rdbModel/Management/*.h: suppr gcc warnings
+
+
+    *
+------------------------------------------------------------
 User: decot  Thu Dec 14 15:07:35 PST 2006
 rdbModel/src/Tables
 
