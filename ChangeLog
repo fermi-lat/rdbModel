@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: decot  Fri Dec 15 10:49:41 PST 2006
+rdbModel/rdbModel
+
+Modified Files:
+	RdbException.h 
+Log Message:
+what() exception method consistent with stdexcept
+    *
+------------------------------------------------------------
 User: decot  Thu Dec 14 15:19:32 PST 2006
 rdbModel/src
 
