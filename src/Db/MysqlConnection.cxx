@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.49 2006/11/14 01:40:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.50 2006/12/07 18:04:08 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -71,10 +71,18 @@ namespace {
     }
     return std::string("");
   }
-  int realQuery(MYSQL* my, std::string qstring) {
+  int realQuery(MYSQL* my, std::string const& qstring) {
     unsigned long sz = qstring.size();
     const char* str = qstring.c_str();
     return mysql_real_query(my, str, sz);
+  }
+  std::string mysqlEscape(MYSQL* my, std::string const& s)
+  {
+    char * asciiz = new char[s.size()*2+1];
+    unsigned sz = mysql_real_escape_string(my, asciiz, s.c_str(), s.size());
+    std::string result(asciiz, sz);
+    delete [] asciiz;
+    return result;
   }
 }
     
@@ -281,9 +289,11 @@ namespace rdbModel {
     // have supplied all necessary columns
 
     ins += "insert into " + tableName;
-    ins += " set " + colNames[0] + "='" + values[0] + "' ";
+    ins += " set " + colNames[0] + "='" + mysqlEscape(m_mysql,
+						      values[0]) + "' ";
     for (unsigned iCol = 1; iCol < nCol; iCol++) {
-      ins += ", " + colNames[iCol] + "='" + values[iCol] + "' ";
+      ins += ", " + colNames[iCol] + "='" + mysqlEscape(m_mysql,
+							values[iCol]) + "' ";
     }
     if (nullCols) {
       if (nullCols->size() > 0) {
@@ -305,7 +315,7 @@ namespace rdbModel {
       return true;
     }
 
-    int mysqlRet = realQuery(m_mysql, ins.c_str());
+    int mysqlRet = realQuery(m_mysql, ins);
 
     if (mysqlRet) {
       unsigned errcode;
@@ -351,9 +361,12 @@ namespace rdbModel {
       return 0;
     }
     std::string sqlString = "UPDATE " + tableName + " SET ";
-    sqlString += colNames[0] + " = '" + values[0] + "'";
+    sqlString += colNames[0] + " = '" + mysqlEscape(m_mysql,
+						    values[0]) + "'";
     for (unsigned int iCol = 1; iCol < nCol; iCol++) {
-      sqlString += "," + colNames[iCol] + " = '" + values[iCol] + "'";
+      sqlString += "," + colNames[iCol] + " = '"
+	+ mysqlEscape(m_mysql,
+		      values[iCol]) + "'";
     }
     if (nullCols) {
       unsigned nNull = nullCols->size();
@@ -373,7 +386,7 @@ namespace rdbModel {
       m_out->flush();
       return 0;
     }
-    int mysqlRet = realQuery(m_mysql, sqlString.c_str());
+    int mysqlRet = realQuery(m_mysql, sqlString);
 
     if (mysqlRet) {
       unsigned errcode;
@@ -458,7 +471,7 @@ namespace rdbModel {
     (*m_out) << sqlString << std::endl;
     m_out->flush();
     
-    int mysqlRet = realQuery(m_mysql, sqlString.c_str());
+    int mysqlRet = realQuery(m_mysql, sqlString);
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -523,7 +536,7 @@ namespace rdbModel {
     (*m_out) << sqlString << std::endl;
     m_out->flush();
     
-    int mysqlRet = realQuery(m_mysql, sqlString.c_str());
+    int mysqlRet = realQuery(m_mysql, sqlString);
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -549,7 +562,7 @@ namespace rdbModel {
     (*m_out) << request << std::endl;
     m_out->flush();
     
-    int mysqlRet = realQuery(m_mysql, request.c_str());
+    int mysqlRet = realQuery(m_mysql, request);
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -776,7 +789,7 @@ namespace rdbModel {
     (*m_out) << query << std::endl;
     m_out->flush();
     
-    int ret = realQuery(m_mysql, query.c_str());
+    int ret = realQuery(m_mysql, query);
     if (ret) {
       unsigned errcode;
       m_matchReturn = MATCHfail;
