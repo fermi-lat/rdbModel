@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: decot  Fri Dec 15 16:44:08 PST 2006
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Support for binary insert/update. ATTENTION: I performed only SIMPLE tests, should be tested more throughly. ATTENTION: select queries don't support conditions (aka where ...) involving binary data; it can however retrieve any binary contents. And the generic dbRequest assumes that the query string already escaped the binary parameters (cannot be fixed).
+    *
+------------------------------------------------------------
 User: decot  Fri Dec 15 10:49:41 PST 2006
 rdbModel/rdbModel
 
