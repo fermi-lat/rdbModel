@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: decot  Fri Jan  5 15:02:13 PST 2007
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Support for sanity checks and field formatting online at insert/update time.
+    *
+------------------------------------------------------------
 User: decot  Fri Dec 15 16:44:08 PST 2006
 rdbModel/src/Db
 
