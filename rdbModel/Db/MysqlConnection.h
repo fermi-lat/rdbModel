@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.21 2006/04/06 23:20:17 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.22 2006/08/15 23:13:07 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -6,7 +6,6 @@
 #include "rdbModel/Tables/Assertion.h"
 #include "rdbModel/Management/Visitor.h"
 #include <map>
-#include <iostream>
 
 typedef struct st_mysql MYSQL;
 typedef struct st_mysql_res MYSQL_RES;
@@ -85,6 +84,18 @@ namespace rdbModel{
        some things; for example, rows for which agent = "service"
     */
     virtual MATCH matchSchema(Rdb *rdb, bool matchDbName=true);
+
+
+    /**
+       Format a field string into a new string suited to be sent to
+       the DB, escaping any special character if needed.
+       THROW an RdbException if the value does not match the
+       constraints of the datatype representation on the actual DB
+       implementation.
+     */
+    virtual std::string formatField(Datatype const* dtype,
+				    std::string const& value) const;
+
 
     /** Typical derived class will form a syntactically correct 
         INSERT statement from the input arguments and issue it to
@@ -214,8 +225,6 @@ namespace rdbModel{
     bool   m_connected;
 
     std::string m_dbName;
-    std::ostream* m_out;
-    std::ostream* m_err;
 
     // Following collection of data members is only of interest while 
     // visit is in progress.

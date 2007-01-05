@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.17 2005/10/28 07:13:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Table.h,v 1.18 2006/10/12 22:44:49 jrb Exp $
 #ifndef RDBMODEL_TABLE_H
 #define RDBMODEL_TABLE_H
 #include <vector>
@@ -163,7 +163,13 @@ namespace rdbModel {
     /// See also public routine getPrimaryKeyCol which will only get.
     const std::string& setPrimaryKeyCol();
 
-
+    // Translate a row into lists of field name/value and a list of null cells
+    // The field values are guaranteed to respect the Connection constraints
+    // Return false in case of error (an error is displayed on err stream)
+    bool rowRegroup(const Row& row,
+		    std::vector<std::string>& colNames, 
+		    std::vector<std::string>& colVals, 
+		    std::vector<std::string>& nullCols) const;
   };
 
 }

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.18 2005/10/29 01:09:46 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.19 2006/12/14 23:07:35 decot Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -206,7 +206,8 @@ namespace rdbModel {
     std::vector<std::string> colValues;
     std::vector<std::string> nullCols;
 
-    row.regroup(colNames, colValues, nullCols);
+    if (! this->rowRegroup(row, colNames, colValues, nullCols))
+      return -1;
 
     satisfied = condO->verify(empty, row);
 
@@ -304,12 +305,15 @@ namespace rdbModel {
         return -1;
       }
     }
+
     // Insert and exit
     std::vector<std::string> colNames;
     std::vector<std::string> colValues;
     std::vector<std::string> nullCols;
 
-    row.regroup(colNames, colValues, nullCols);
+    if (! this->rowRegroup(row, colNames, colValues, nullCols))
+      return -1;
+
     bool ok = m_connect->insertRow(m_name, colNames, colValues,
                                    serial, &nullCols, unserial);
     return (ok) ?  0 : -1;
@@ -463,7 +467,8 @@ namespace rdbModel {
     std::vector<std::string> colValues;
     std::vector<std::string> nullCols;
 
-    row.regroup(colNames, colValues, nullCols);
+    if (! this->rowRegroup(row, colNames, colValues, nullCols))
+      return -1;
 
     return m_connect->update(m_name, colNames, colValues, where, &nullCols);
   }
@@ -482,7 +487,8 @@ namespace rdbModel {
     std::vector<std::string> colValues;
     std::vector<std::string> nullCols;
 
-    row.regroup(colNames, colValues, nullCols);
+    if (! this->rowRegroup(row, colNames, colValues, nullCols))
+      return -1;
 
     return m_connect->update(m_name, colNames, colValues, where, &nullCols);
   }
@@ -604,7 +610,8 @@ namespace rdbModel {
     std::vector<std::string> updateVals;
     std::vector<std::string> nullCols;
 
-    row.regroup(updateCols, updateVals, nullCols);
+    if (! this->rowRegroup(row, updateCols, updateVals, nullCols))
+      return -1;
 
     // Make specified changes (update)
     m_connect->update(m_name, updateCols, updateVals, subsAssert);
@@ -650,6 +657,65 @@ namespace rdbModel {
     delete where;
 
     return (results->getNRows() > 0);
+  }
+
+
+  bool Table::rowRegroup(const Row& row,
+			 std::vector<std::string>& colNames, 
+			 std::vector<std::string>& colValues, 
+			 std::vector<std::string>& nullCols) const
+  {
+    if (! this->m_connect)
+      {
+	(*m_err) << "Table::rowRegroup: no connection object yet"
+		 << std::endl;
+	return false;
+      }
+
+    StringVector colVals;
+    row.regroup(colNames, colVals, nullCols);
+
+    // check that sizes of vectors match
+    unsigned  nCol = colNames.size();    
+    if (!nCol || (nCol != colVals.size()  ) ) {
+      (*m_err) << " Table::rowRegroup: vector lengths incompatible"
+	       << std::endl;
+      m_err->flush();
+      return false;
+    }
+
+    /* Make sure values in columns match the column constraints */
+    for (unsigned i = 0 ; i < nCol ; i ++)
+      {
+	Column * c = this->getColumnByName(colNames[i]);
+	if (! c)
+	  {
+	    (*m_err) << " Table::rowRegroup: invalid column "
+		     << colNames[i]
+		     << std::endl;
+	    m_err->flush();
+	    return false;
+	  }
+
+	try
+	  {
+	    colValues.push_back(m_connect->formatField(c->getDatatype(),
+						       colVals[i]));
+	  }
+	catch (RdbException const& e)
+	  {
+	    (*m_err) << " Table::rowRegroup: error for column "
+		     << colNames[i] << ", reason: "
+		     << e.what()
+		     << std::endl;
+	    m_err->flush();
+	    return false;
+	  }
+      }
+
+    // Invalid NULL columns will be detected by the rdbms
+
+    return true;
   }
 
 }
