@@ -1,8 +1,10 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.21 2006/04/06 23:20:17 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.22 2006/08/15 23:13:07 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
+
 #include <vector>
 #include <string>
+#include <ostream>
 
 
 namespace rdbModel{
@@ -44,6 +46,7 @@ namespace rdbModel{
 
   class ResultHandle;
   class Assertion;
+  class Datatype;
   class Rdb;
   /** 
       Class to handle connection to an SQL database, or something very like
@@ -70,8 +73,8 @@ namespace rdbModel{
         return true if successful
     */
   public:
-    Connection() {};
-    virtual ~Connection() {};
+    Connection(std::ostream* out=0, std::ostream* errOut=0);
+    virtual ~Connection() {}
 
     /**
        Call init explicitly in order to set options.  Otherwise, open
@@ -113,9 +116,25 @@ namespace rdbModel{
      */
     virtual MATCH matchSchema(Rdb *rdb, bool matchDbName=true) = 0;
 
+
+    /**
+       Format a field string into a new string suited to be sent to
+       the DB, escaping any special character if needed.
+       THROW an RdbException if the value does not match the
+       constraints of the datatype representation on the actual DB
+       implementation.
+     */
+    virtual std::string formatField(Datatype const* dtype,
+				    std::string const& value) const =0;
+
+
     /** Typical derived class will form a syntactically correct 
         INSERT statement from the input arguments and issue it to
         the dbms. Return true if row was inserted successfully
+	
+	@note: the values are EXPECTED to be valid, ie already escaped
+	correctly and having a valid size. See Table::insertRow() or
+	formatField() to do this.
 
         Might also want to add a routine for INSERT ... SELECT
     */
@@ -125,6 +144,7 @@ namespace rdbModel{
                            int* auto_value=0,
                            const StringVector* nullCols = 0,
                            unsigned int* u_auto_value=0) = 0;
+
 
     /*
        So far anticipated uses of UPDATE would just modify a single row
@@ -147,6 +167,10 @@ namespace rdbModel{
 
     /**
       Generic UPDATE. Return value is number of rows changed.
+
+      @note: the values are EXPECTED to be valid, ie already escaped
+      correctly and having a valid size. See Table::updateRow() or
+      formatField() to do this.
     */
     virtual unsigned int update(const std::string& tableName, 
                                 const StringVector& colNames, 
@@ -227,6 +251,9 @@ namespace rdbModel{
     virtual bool compileAssertion(const Assertion* a, std::string& sqlString)
       const = 0;
 
+  protected:
+    std::ostream* m_out;
+    std::ostream* m_err;
   };
 
 }  // end namespace rdbModel

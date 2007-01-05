@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.50 2006/12/07 18:04:08 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.51 2006/12/16 00:44:08 decot Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -91,11 +91,11 @@ namespace rdbModel {
 
   MysqlConnection::MysqlConnection(std::ostream* out,
                                    std::ostream* errOut) :
-    m_mysql(0), m_connected(0), m_out(out), m_err(errOut),
+    Connection(out, errOut),
+    m_mysql(0), m_connected(0),
     m_visitorType(VISITORundefined), m_rdb(0), m_tempRes(0),
-    m_writeDisabled(false)                                   {
-    if (m_out == 0) m_out = &std::cout;
-    if (m_err == 0) m_err = &std::cerr;
+    m_writeDisabled(false)
+  {
   }
 
   bool MysqlConnection::close() {
@@ -259,12 +259,46 @@ namespace rdbModel {
     else return m_matchReturn;
   }
 
-
-
     // For each table
     //         compare # of columns
     //         compare datatype description, other attributes of column
     //         compare indices
+
+
+  std::string MysqlConnection::formatField(Datatype const* dtype,
+					   std::string const& value) const
+  {
+    /* Essentially make sure that the string has the correct size. The
+       other verifications (syntax, enum-correctness, ...) are made by
+       mysql itself */
+    switch (dtype->getType())
+      {
+#define CASE_TYPELEN(tname,szmax) \
+      case Datatype::TYPE ## tname: \
+        { \
+	  if (value.size() >= szmax)  \
+	    throw RdbException("formatField: contents too large for " \
+		  	       #tname " field"); \
+        }
+
+	CASE_TYPELEN(tinyblob, 1<<8) break;
+	CASE_TYPELEN(blob, 1<<16) break;
+	CASE_TYPELEN(mediumblob, 1<<24) break;
+	// Nothing for longblobs: value.size() is unsigned int, which is 32b
+	// even on 64b hosts
+
+	CASE_TYPELEN(tinytext, 1<<8) break;
+	CASE_TYPELEN(text, 1<<16) break;
+	CASE_TYPELEN(mediumtext, 1<<24) break;
+	// Nothing for longtexts: value.size() is unsigned int, which is 32b
+	// even on 64b hosts
+
+      default:
+	break;
+      }
+
+    return mysqlEscape(m_mysql, value);
+  }
 
 
   bool MysqlConnection::insertRow(const std::string& tableName, 
@@ -289,11 +323,9 @@ namespace rdbModel {
     // have supplied all necessary columns
 
     ins += "insert into " + tableName;
-    ins += " set " + colNames[0] + "='" + mysqlEscape(m_mysql,
-						      values[0]) + "' ";
+    ins += " set " + colNames[0] + "='" + values[0] + "' ";
     for (unsigned iCol = 1; iCol < nCol; iCol++) {
-      ins += ", " + colNames[iCol] + "='" + mysqlEscape(m_mysql,
-							values[iCol]) + "' ";
+      ins += ", " + colNames[iCol] + "='" + values[iCol] + "' ";
     }
     if (nullCols) {
       if (nullCols->size() > 0) {
@@ -361,12 +393,9 @@ namespace rdbModel {
       return 0;
     }
     std::string sqlString = "UPDATE " + tableName + " SET ";
-    sqlString += colNames[0] + " = '" + mysqlEscape(m_mysql,
-						    values[0]) + "'";
+    sqlString += colNames[0] + " = '" + values[0] + "'";
     for (unsigned int iCol = 1; iCol < nCol; iCol++) {
-      sqlString += "," + colNames[iCol] + " = '"
-	+ mysqlEscape(m_mysql,
-		      values[iCol]) + "'";
+      sqlString += "," + colNames[iCol] + " = '" + values[iCol] + "'";
     }
     if (nullCols) {
       unsigned nNull = nullCols->size();
