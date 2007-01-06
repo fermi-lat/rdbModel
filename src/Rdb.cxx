@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.12 2006/12/14 23:07:34 decot Exp $ 
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Rdb.cxx,v 1.13 2006/12/14 23:19:32 decot Exp $ 
 #include "rdbModel/Rdb.h"
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/RdbException.h"
@@ -15,8 +15,6 @@ namespace rdbModel {
   }
 
   int Rdb::build(const std::string& description, Builder* b) {
-    this->setConnection(NULL);
-
     m_descrip = description;
     m_builder = b;
     int errCode = m_builder->parseInput(m_descrip);
