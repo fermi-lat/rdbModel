@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.30 2005/11/04 21:45:29 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.31 2006/12/14 23:07:35 decot Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -56,7 +56,7 @@ namespace rdbModel {
     m_rdb->m_dbName = Dom::getAttribute(docElt, "dbs");
     if (m_rdb->m_dbName.empty())
       {
-	std::cerr << "Invalid XML dialect" << std::endl;
+	std::cerr << "Invalid XML input" << std::endl;
 	if (! rdb) man->cleanRdb();
 	this->m_rdb = NULL;
 	return -1;
