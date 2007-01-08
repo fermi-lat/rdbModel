@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Jan  8 11:45:10 PST 2007
+rdbModel/src/Tables
+
+Modified Files:
+	Table.cxx 
+Log Message:
+Get rid of unnecessary check in rowRegroup
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Jan  8 11:44:40 PST 2007
 rdbModel/src/Management
 
