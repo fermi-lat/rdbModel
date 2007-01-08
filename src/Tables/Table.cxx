@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.19 2006/12/14 23:07:35 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.20 2007/01/05 23:02:13 decot Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -674,15 +674,7 @@ namespace rdbModel {
 
     StringVector colVals;
     row.regroup(colNames, colVals, nullCols);
-
-    // check that sizes of vectors match
-    unsigned  nCol = colNames.size();    
-    if (!nCol || (nCol != colVals.size()  ) ) {
-      (*m_err) << " Table::rowRegroup: vector lengths incompatible"
-	       << std::endl;
-      m_err->flush();
-      return false;
-    }
+    unsigned nCol = colNames.size();
 
     /* Make sure values in columns match the column constraints */
     for (unsigned i = 0 ; i < nCol ; i ++)
