@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.3 2005/11/04 21:45:26 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/Builder.h,v 1.4 2006/12/14 23:07:34 decot Exp $
 
 #ifndef RDBMODEL_BUILDER_H
 #define RDBMODEL_BUILDER_H
@@ -30,8 +30,7 @@ namespace rdbModel{
     virtual unsigned int parseInput(const std::string&) = 0;
 
     /** This method start the parser (implemented in a concrete
-     *  subclass of this class) for the sections part and put the
-     *  result in a private pointer
+     *  subclass of this class) and puts the result in a private pointer
      *  Return is number of tables built.  If negative, indicates
      *  error.
      */

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.7 2005/06/19 20:39:19 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Management/XercesBuilder.h,v 1.8 2005/11/04 21:45:26 jrb Exp $
 #ifndef RDBMODEL_XERCESBUILDER_H
 #define RDBMODEL_XERCESBUILDER_H
 
@@ -39,7 +39,12 @@ namespace rdbModel{
     */
     virtual unsigned int parseInput(const std::string& inputPath);
 
-    /** Concrete implementation of pure virtual Builder::buildRdb */
+    /** Concrete implementation of pure virtual Builder::buildRdb.
+     *  It starts the parser and puts the result in a private pointer
+     *  Return is number of tables built.  If negative, indicates
+     *  error.
+     */
+
     virtual int buildRdb(rdbModel::Rdb* rdb=0);
 
   private:
