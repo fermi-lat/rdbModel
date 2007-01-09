@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.20 2007/01/05 23:02:13 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.21 2007/01/08 19:45:10 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -166,6 +166,9 @@ namespace rdbModel {
 
     if (!m_connect) {
       throw RdbException("Table::insertLatest Need matching connection");
+    }
+    if (!this->m_iNew) {
+      throw RdbException("Table::insertLatest The schema does not define any insertNew policy for this table. Can't proceed request.");
     }
     row.rowSort();
 
