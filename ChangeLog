@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: decot  Mon Jan  8 17:51:42 PST 2007
+rdbModel/src/Tables
+
+Modified Files:
+	Table.cxx 
+Log Message:
+insertNew throws an exception if schema does not support insertNew
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r9, operation: add
 Package: rdbModel
