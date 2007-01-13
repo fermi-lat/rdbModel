@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.h,v 1.2 2006/10/11 23:53:55 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.h,v 1.3 2006/10/12 22:44:49 jrb Exp $
 // Public include for class to initialize rdb-type database
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
@@ -33,6 +33,8 @@ namespace rdbModel {
     Rdb* m_rdb;
     Builder* m_build;
     bool     m_dbg;
+    /// If m_add is true, keep going after certain kinds of insert failures
+    bool     m_add;   
     XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* m_doc;
 
   };
