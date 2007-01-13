@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.13 2006/01/26 00:38:00 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.14 2006/12/07 18:04:24 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -271,6 +271,16 @@ namespace rdbModel {
       }
       return ((intVal >= m_minInt) && (intVal <= m_maxInt));
     }
+      // Connection::formatField does most of the checking for these types
+    case TYPEtinytext:
+    case TYPEtext:
+    case TYPEmediumtext:
+    case TYPElongtext:
+    case TYPEtinyblob:
+    case TYPEblob:
+    case TYPEmediumblob:
+    case TYPElongblob:
+
     case TYPEvarchar:
     case TYPEchar:
       if (m_restrict == RESTRICTnone) return true;

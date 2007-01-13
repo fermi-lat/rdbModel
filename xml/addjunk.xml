@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<rdbmsInit        xsi:noNamespaceSchemaLocation="rdbmsInit.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+  <table name="junk" mode="add" >
+    <row>
+      <field col="texty" val="add a row from file addjunk.xml" />
+      <field col="unique_name" val="Cassandra" />
+    </row>
+    <row>
+      <field col="texty" val="add another row from file addjunk.xml" />
+      <field col="unique_name" val="Alice" />
+    </row>
+  </table>
+</rdbmsInit>

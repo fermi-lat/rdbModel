@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<rdbms  xsi:noNamespaceSchemaLocation="rdbmsDescrip.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       dbs="mood_junk"
+       SchemaVersion="2.0"
+       CVSid= "$Id: mood_test.xml,v 1.2 2006/12/18 19:42:18 jrb Exp $"   >
+
+  <table name="junk"
+     comment="For testing. Bears no relation to real mood structure" 
+            version="v0r1" >
+    <col name="junk_key" >
+      <src null="false">
+        <from agent="auto_increment" />
+      </src>
+      <type typename="int" unsigned="true">
+        <restriction>          
+          <nonnegative />   
+        </restriction>
+      </type>
+      <comment>This is the primary key, automatically set when a 
+          row is inserted.</comment>
+    </col>
+    <col name="texty" >
+      <src null="true" >
+         <from agent="enduser" />
+      </src>
+      <type typename="text" />
+      <comment>A text column</comment>
+    </col>
+    <col name="unique_name" >
+      <src null="false">
+        <from agent="enduser" />
+      </src>
+      <type typename="varchar" size="32" />
+      <comment>user-friendly way to identify the row.
+               Must be unique within the table
+      </comment>
+
+    </col>
+    <primary col="junk_key" />
+    <index name="unique_index" cols="unique_name" />
+  </table>
+</rdbms>
+

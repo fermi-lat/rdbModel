@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.6 2006/10/25 22:36:50 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.7 2006/11/08 23:13:51 jrb Exp $
 // Class to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema, invoked from main initRdb.
 
@@ -147,6 +147,10 @@ namespace rdbModel {
   int InitRdb::handleTable(DOMElement* tblElt) {
     using xmlBase::Dom;
     std::string name = Dom::getAttribute(tblElt, "name");
+    std::string mode = Dom::getAttribute(tblElt, "mode"); 
+    // If mode is add, report attempts to add rows violating
+    // uniqueness constraints (which will fail) but keep going
+    m_add = (mode == std::string("add"));
     int ret;
     if (m_dbg) 
       std::cout << "Processing table named '" << name << "'" << std::endl;
@@ -211,9 +215,11 @@ namespace rdbModel {
       }
     }
     Row toInsert(fields);
+    int insertRet;
+
     const std::string tname = tbl->getName();
     try {
-      m_rdb->insertRow(tname, toInsert, 0, newKey);
+      insertRet = m_rdb->insertRow(tname, toInsert, 0, newKey);
     }
     catch (RdbException ex) {
       std::cerr << "Insert row for table " << tname
@@ -221,6 +227,24 @@ namespace rdbModel {
                 << "***  " << ex.what()  << std::endl;
       return 4;
     }
+    if (insertRet) { // Failure
+      if (!m_add) {
+        std::cerr << "Insert row for table " << tname
+                  << "row " << toInsert 
+                  << " failed" << std::endl;
+        return 5;
+      }
+      else {
+        if (m_dbg) { 
+          std::cout <<  "Insert row for table " << tname
+                    << "row " << toInsert 
+                  << " failed. Continuing with next row..." << std::endl;
+          return 0;
+        }
+      }
+      // keep going if mode is add.
+    }
+
     if (m_dbg) {
       std::cout << "Inserted row into table " << tbl->getName();
       if (newKey) std::cout  << ", assigned key " << *newKey;
