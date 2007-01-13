@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r9p1 12-Jan-2007  jrb    Small enhancement to InitRdb standalone; bug
+                              fix in handling of text and blob datatypes
    v2r9    8-Jan-2007  jrb    (For David Decotigny) Add support for text 
                               and blob fields in dbs; miscellaneous bug fixes
    v2r8p3 13-Nov-2006  jrb    Improve reporting of MySQL errors
