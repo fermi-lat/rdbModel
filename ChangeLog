@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: jrb  Fri Jan 12 16:29:54 PST 2007
+rdbModel/rdbModel/Tables
+
+Modified Files:
+	Column.h 
+Log Message:
+Column.*       Add function to output a Row object to an ostream
+DataType.cxx   Bug fix in handling of text and blob types
+InitRdb.*      If so specified with mode attribute, recover from
+               certain kinds of failed INSERTs and go on to next row
+*junk.xml      For testing InitRdb
+
+    *
+------------------------------------------------------------
 User: decot  Mon Jan  8 17:51:42 PST 2007
 rdbModel/src/Tables
 
