@@ -138,7 +138,7 @@
           <xs:choice>
             <xs:element name="default">
               <xs:complexType>
-                <xs:attribute name="value" type="xs:NMTOKEN" use="required" />
+                <xs:attribute name="value" type="xs:NMTOKEN"  />
                 <xs:attribute name="interp" type="xs:token" default="" />
               </xs:complexType>
             </xs:element>
