@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed May  2 18:39:00 PDT 2007
+rdbModel/xml
+
+Modified Files:
+	rdbmsDescrip.xsd 
+Log Message:
+Change description of <default> element so that value attribute is not
+required.  If absent, should be interpreted as default value = NULL
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r9p1, operation: add
 Package: rdbModel
