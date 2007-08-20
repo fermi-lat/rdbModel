@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r9p3   20-Aug-2007  ma Added two new calibration types to calib_test.xml
    v2r9p2 24-Jul-2007  jrb    Modify rdbmsDescrip.xsd so that "value" attribute
                               is not required for <default>
    v2r9p1 12-Jan-2007  jrb    Small enhancement to InitRdb standalone; bug
