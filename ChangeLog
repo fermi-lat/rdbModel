@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: markusa  Mon Aug 20 16:36:02 PDT 2007
+rdbModel/xml
+
+Modified Files:
+	calib_test.xml 
+Log Message:
+
+Added two new calibration types in calib_test.xml: 
+NAS_SAABoundary and NAS_LATAlignment
+
+
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r9p2, operation: add
 Package: rdbModel
