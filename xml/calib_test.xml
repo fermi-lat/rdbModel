@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        dbs="calib_test"
        SchemaVersion="2.0"
-       CVSid= "$Id: calib_test.xml,v 1.10 2006/07/06 23:35:16 jrb Exp $"   >
+       CVSid= "$Id: calib_test.xml,v 1.11 2006/07/06 23:36:25 jrb Exp $"   >
   <table name="metadata_v2r1" 
     comment="metadata table for LAT calibrations" version="v2r1">
     <!-- define columns -->
@@ -51,7 +51,7 @@
       <type typename="varchar" size="20">
         <restriction>
           <enum use="prefer" values=
-            "TKR_DeadChan TKR_HotChan TKR_Splits TKR_TOTSignal TKR_ChargeScale TKR_TrgThresh TKR_DataThresh CAL_Ped CAL_MuSlope CAL_MevPerDac CAL_TholdCI CAL_TholdMuon CAL_Asym CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen ANC_TaggerPed ANC_TaggerGain ANC_QdcPed" />
+            "TKR_DeadChan TKR_HotChan TKR_Splits TKR_TOTSignal TKR_ChargeScale TKR_TrgThresh TKR_DataThresh CAL_Ped CAL_MuSlope CAL_MevPerDac CAL_TholdCI CAL_TholdMuon CAL_Asym CAL_ElecGain CAL_LightAsym CAL_IntNonlin ACD_Ped ACD_ElecGain Test_Gen ANC_TaggerPed ANC_TaggerGain ANC_QdcPed NAS_SAABoundary NAS_LATAlignment" />
         </restriction>
       </type>
       <comment>Calibration type.  Standard
