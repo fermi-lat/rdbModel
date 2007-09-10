@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Sep 10 11:11:05 PDT 2007
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_user.xml 
+Log Message:
+Add new calibration types to rdbGUI, rdbCtl repertoire
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r9p3, operation: add
 Package: rdbModel
