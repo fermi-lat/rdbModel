@@ -6,6 +6,8 @@
 
    *  EOH  *
 
+   v2r10  12-Nov-2007  jrb    1. Support for MySQL retries
+                              2. use new-style MySQL include path
    v2r9p4 10-Sep-2007  jrb    Add new calib types to calib_user and calib.
    v2r9p3 20-Aug-2007  ma     Added two new calibration types to calib_test.xml
    v2r9p2 24-Jul-2007  jrb    Modify rdbmsDescrip.xsd so that "value" attribute
