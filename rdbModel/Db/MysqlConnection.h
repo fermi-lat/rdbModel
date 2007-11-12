@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.22 2006/08/15 23:13:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.23 2007/01/05 23:02:13 decot Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -75,6 +75,14 @@ namespace rdbModel{
 
     std::ostream* getOut() const {return m_out;}
     std::ostream* getErrOut() const {return m_err;}
+
+    unsigned getMaxRetry() const {return m_maxRetry;}
+    void setMaxRetry(unsigned maxRetry) { m_maxRetry = maxRetry;}
+
+    /** Get/set avg wait in milliseconds between retries 
+     */
+    unsigned getAvgWait() const {return m_avgWait;}
+    void setAvgWait(unsigned avgWait) { m_avgWait = avgWait;}
     /**
        Check to what degree local schema definition is compatible with
        remote db accessed via this connection.  By default check db names
@@ -224,8 +232,12 @@ namespace rdbModel{
     MYSQL* m_mysql;
     bool   m_connected;
 
+    // cache all connection parameters in case we have to reconnect
+    std::string m_host;
+    int m_port;
+    std::string m_user;
+    std::string m_pw;
     std::string m_dbName;
-
     // Following collection of data members is only of interest while 
     // visit is in progress.
 
@@ -253,6 +265,9 @@ namespace rdbModel{
     static bool   m_compileInit;
     bool          m_writeDisabled;
 
+    unsigned      m_maxRetry;
+    unsigned      m_avgWait;   // milliseconds
+
     static void compileInit();
     static bool compileComparison(Assertion::Operator* op, 
                                   std::string& sqlString);
@@ -260,6 +275,11 @@ namespace rdbModel{
                                 std::string &sqlString);
 
     bool checkDType(Datatype* dtype, const std::string& sqlType);
+
+    /**
+       Retry query up to maxRetry times if it fails.
+     */
+    int realQueryRetry(const std::string& qstring);
 
 
   };

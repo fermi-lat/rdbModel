@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.51 2006/12/16 00:44:08 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.52 2007/01/05 23:02:13 decot Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -16,9 +16,12 @@
 #include "xmlBase/XmlParser.h"
 #include "xmlBase/Dom.h"
 
-#include "mysql.h"
+#include "mysql/mysql.h"
+#include "mysql/errmsg.h"
 #include <iostream>
 #include <cerrno>
+#include <cstdlib>
+#include <cstdio>
 #include "facilities/Util.h"
 namespace {
 
@@ -71,6 +74,7 @@ namespace {
     }
     return std::string("");
   }
+  unsigned 
   int realQuery(MYSQL* my, std::string const& qstring) {
     unsigned long sz = qstring.size();
     const char* str = qstring.c_str();
@@ -92,10 +96,13 @@ namespace rdbModel {
   MysqlConnection::MysqlConnection(std::ostream* out,
                                    std::ostream* errOut) :
     Connection(out, errOut),
-    m_mysql(0), m_connected(0),
+    m_mysql(0), m_connected(0), m_host(""), m_port(-1),
+    m_user(""), m_pw(""), m_dbName(""),
     m_visitorType(VISITORundefined), m_rdb(0), m_tempRes(0),
-    m_writeDisabled(false)
+    m_writeDisabled(false), m_maxRetry(2), m_avgWait(10000)
   {
+    // Seed random number generator with a random thing
+    srand(time(0));
   }
 
   bool MysqlConnection::close() {
@@ -191,7 +198,11 @@ namespace rdbModel {
                              const char* password,
                              const char* dbName) {
   
-  //    mysql_init(m_mysql);
+    if (!m_mysql) {
+      bool ok = init();
+      if (!ok) return false;
+    }
+
     MYSQL *connected = mysql_real_connect(m_mysql, host,
                                           user,
                                           password, dbName,
@@ -203,6 +214,13 @@ namespace rdbModel {
                << ", database " << dbName << std::endl;
       m_out->flush();
       m_connected = true;
+      if (host) m_host = std::string(host);
+      else m_host = std::string("");
+      m_port = port;
+      if (user) m_user = std::string(user);
+      else m_user = std::string("");
+      if (password) m_pw = std::string(password);
+      else m_pw = std::string("");
       m_dbName = dbName;
     }
     else {
@@ -347,6 +365,7 @@ namespace rdbModel {
       return true;
     }
 
+    // For the time being, no retries for code which writes to db
     int mysqlRet = realQuery(m_mysql, ins);
 
     if (mysqlRet) {
@@ -415,6 +434,7 @@ namespace rdbModel {
       m_out->flush();
       return 0;
     }
+    // No retries for code which modifies db
     int mysqlRet = realQuery(m_mysql, sqlString);
 
     if (mysqlRet) {
@@ -500,7 +520,7 @@ namespace rdbModel {
     (*m_out) << sqlString << std::endl;
     m_out->flush();
     
-    int mysqlRet = realQuery(m_mysql, sqlString);
+    int mysqlRet = realQueryRetry(sqlString);
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -565,7 +585,11 @@ namespace rdbModel {
     (*m_out) << sqlString << std::endl;
     m_out->flush();
     
-    int mysqlRet = realQuery(m_mysql, sqlString);
+    int mysqlRet;
+    if (flags & (SELECTforUpdate | SELECTshareLock)) { // no retry
+      mysqlRet = realQuery(m_mysql, sqlString);
+    }
+    else mysqlRet = realQueryRetry(sqlString);
     if (mysqlRet) {
       unsigned errcode;
       std::string msg = 
@@ -591,6 +615,7 @@ namespace rdbModel {
     (*m_out) << request << std::endl;
     m_out->flush();
     
+    // no retries for totally arbitrary request
     int mysqlRet = realQuery(m_mysql, request);
     if (mysqlRet) {
       unsigned errcode;
@@ -818,7 +843,7 @@ namespace rdbModel {
     (*m_out) << query << std::endl;
     m_out->flush();
     
-    int ret = realQuery(m_mysql, query);
+    int ret = realQueryRetry(query);
     if (ret) {
       unsigned errcode;
       m_matchReturn = MATCHfail;
@@ -1080,6 +1105,51 @@ namespace rdbModel {
     return true;
   }
 
+  /**
+     Retry up to retry count if query fails with retriable error
+  */
+  int MysqlConnection::realQueryRetry(const std::string& qstring) {
+    unsigned remain = m_maxRetry;
+    int mysqlRet = realQuery(m_mysql, qstring);
+    while (remain) {
+      --remain;
+      switch (mysqlRet) {
+        // retriable errors
+      case CR_SERVER_GONE_ERROR:
+      case CR_SERVER_LOST:
+      case CR_UNKNOWN_ERROR: {
+        close();        // close old connection
+        // calculate sleep time, sleep
+        // rand returns a value in the range 0 - MAX_RAND.  The latter
+        // is OS-dependent, but must be at least 32767 = 0x7fff
+        unsigned maxRnd = 0xfff;
+        unsigned wait = m_avgWait;
+        if (wait < maxRnd/2) wait += maxRnd/2;
+
+        unsigned rnd = rand() & maxRnd;  // just use last 12 bits
+        wait += (rnd - maxRnd/2);
+        facilities::Util::gsleep(wait);
+        // open new connection, retry
+        const char* host =0;
+        const char* user = 0;
+        const char* pw = 0;
+        if (m_host.size()) host = m_host.c_str();
+        if (m_user.size()) user = m_user.c_str();
+        if (m_pw.size()) pw = m_pw.c_str();
+        bool ok = open(host, m_port, user, pw, m_dbName.c_str());
+        if (!ok) continue;  // on to next retry
+
+        mysqlRet = realQuery(m_mysql, qstring);
+        break;
+      }
+        // For other errors or success just return
+      default:
+        return mysqlRet;
+      }
+    }
+    return mysqlRet;
+
+  }
 
 
   Visitor::VisitorState MysqlConnection::visitIndex(Index* ) {
