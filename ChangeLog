@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Nov 12 11:54:41 PST 2007
+rdbModel/rdbModel/Db
+
+Modified Files:
+	MysqlConnection.h 
+Log Message:
+1. Support for retries of some classes of MySQL operations
+2. Use new-style include path for MySQL files
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r9p4, operation: add
 Package: rdbModel
