@@ -1,10 +1,10 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlResults.cxx,v 1.8 2005/07/11 23:49:40 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlResults.cxx,v 1.9 2006/12/14 23:07:35 decot Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
 
 #include "rdbModel/Db/MysqlResults.h"
-#include "mysql.h"
+#include "mysql/mysql.h"
 
 namespace rdbModel {
 
