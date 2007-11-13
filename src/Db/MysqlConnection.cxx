@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.52 2007/01/05 23:02:13 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.53 2007/11/12 19:54:48 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -22,6 +22,7 @@
 #include <cerrno>
 #include <cstdlib>
 #include <cstdio>
+#include <ctime>
 #include "facilities/Util.h"
 namespace {
 
