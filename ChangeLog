@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Nov 12 22:07:39 PST 2007
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+patch for Windows
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r10, operation: add
 Package: rdbModel
