@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.53 2007/11/12 19:54:48 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.54 2007/11/13 06:07:39 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -527,6 +527,7 @@ namespace rdbModel {
       std::string msg = 
         "rdbModel::MysqlConnection::select. ";
       msg += getMysqlError(m_mysql, &errcode);
+      msg += "  Original SQL: " + sqlString;
       (*m_err) << std::endl << msg << std::endl;
       m_err->flush();
       throw RdbException(msg, mysqlRet);
