@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Dec  6 15:24:01 PST 2007
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add a little more info to error output in case of SELECT problem 
+(useful for MoodConnection specifying no debug output; Jim's request)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r10p1, operation: add
 Package: rdbModel
