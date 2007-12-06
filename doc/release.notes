@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r10p2  6-Dec-2007 jrb    Add some info to error output from failed SELECT
    v2r10p1 12-Nov-2007 jrb    Patch for Windows compile
    v2r10  12-Nov-2007  jrb    1. Support for MySQL retries
                               2. use new-style MySQL include path
