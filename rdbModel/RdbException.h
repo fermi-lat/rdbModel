@@ -1,11 +1,11 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/RdbException.h,v 1.2 2004/04/08 01:34:16 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/RdbException.h,v 1.3 2006/12/15 18:49:41 decot Exp $
 #ifndef RDBMODEL_RDBEXCEPTION_H
 #define RDBMODEL_RDBEXCEPTION_H
 #include <exception>
 
 namespace rdbModel {
 
-  class RdbException : std::exception {
+  class RdbException : public std::exception {
   public:
     RdbException(const std::string& extraInfo = "", int code=0) : 
       std::exception(),
