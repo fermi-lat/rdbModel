@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Wed Jan  9 16:41:53 PST 2008
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Loosen defn. of sql/schema compatibility.  Ok for schema to specify enum
+when actual column is varchar.
+
+    *
+------------------------------------------------------------
 User: jrb  Tue Jan  8 16:50:43 PST 2008
 rdbModel/rdbModel
 
