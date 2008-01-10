@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.54 2007/11/13 06:07:39 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.55 2007/12/06 23:24:01 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -48,9 +48,12 @@ namespace {
     return;
   }
 
+  // It's ok for 'sqlType' to allow for more possibilities than 'choices'
+  // as long as 'choices' is a subset.  If it is a proper subset, 
+  // return true but also set match to MATCHcompatible
   bool compareEnumList(const std::vector<std::string>& choices, 
-                       std::string sqlType) {
-    // Number has to be the same.  
+                       std::string sqlType, rdbModel::MATCH& match) {
+    // # of sql values has to be >= # of schema-specified values
     unsigned locComma = sqlType.find(",");
     unsigned nComma = 0;
     while (locComma != std::string::npos) {
@@ -58,10 +61,20 @@ namespace {
       locComma = sqlType.find(",", locComma+1);
     }
     unsigned nChoice = choices.size();
-    if (nChoice != (nComma + 1)) return false;
+    if (nChoice > (nComma + 1)) {
+      match = rdbModel::MATCHfail;
+      return false;
+    }
+    else if (nChoice < (nComma + 1) ) {
+      match = rdbModel::MATCHcompatible;
+    }
+
     for (unsigned iChoice = 0; iChoice < nChoice; iChoice++) {
       unsigned loc = sqlType.find(choices[iChoice]);
-      if (loc == std::string::npos) return false;
+      if (loc == std::string::npos) {
+        match = rdbModel::MATCHfail;
+        return false;
+      }
     }
     return true;
   }
@@ -942,19 +955,36 @@ namespace rdbModel {
     }
 
     // Cases  char, varchar, enum and datetime are handled entirely within
-    // the switch statement, but most do the bulk of the work in
+    // the switch statement; most other cases do the bulk of the work in
     // common, after the switch.
     switch (dtype->getType()) {
+      // enum in schema is compatible with varchar in dbs as long
+      // as longest enum value will fit
     case Datatype::TYPEenum: {
       base = "enum";
-      if (sqlType.find(base) != 0) {
+      Enum* ourEnum = dtype->getEnum();
+      const std::vector<std::string>& choices = ourEnum->getChoices();
+
+      if (sqlType.find(base) == 0) { // both enums
+        // Compare local list of choices to those listed in sqlType
+        // Local list is a vector; in sqlType they're quoted, comma separated
+        return compareEnumList(choices, sqlType, m_matchReturn);
+      }
+      else if (sqlType.find("varchar") == 0) {
+        // compare sql size to enum value sizes
+        sqlSize = extractSize(sqlType);
+        for (unsigned i = 0; i < choices.size(); i++) {
+          if (sqlSize < choices[i].size() ) {
+            m_matchReturn = MATCHfail;
+            break;
+          }
+        }
+        m_matchReturn = MATCHcompatible;
+        return true;
+      } else {
         m_matchReturn = MATCHfail;
         break;        //        return false;
       }
-      Enum* ourEnum = dtype->getEnum();
-      // Finally compare local list of choices to those listed in sqlType
-      // Local list is a vector; in sqlType they're quoted, comma separated
-      return compareEnumList(ourEnum->getChoices(), sqlType);
     }
     case Datatype::TYPEvarchar: {
       base = "varchar";
