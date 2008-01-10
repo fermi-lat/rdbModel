@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Jan  9 17:01:02 PST 2008
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Bug fix in new datatype compatibility checking
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Jan  9 16:41:53 PST 2008
 rdbModel/src/Db
 
