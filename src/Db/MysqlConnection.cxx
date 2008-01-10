@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.55 2007/12/06 23:24:01 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.56 2008/01/10 00:41:53 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -976,9 +976,10 @@ namespace rdbModel {
         for (unsigned i = 0; i < choices.size(); i++) {
           if (sqlSize < choices[i].size() ) {
             m_matchReturn = MATCHfail;
-            break;
+            break;      // just gets us out of this loop; not out of switch
           }
         }
+        if (m_matchReturn == MATCHfail) break; // if varchar size was too small
         m_matchReturn = MATCHcompatible;
         return true;
       } else {
@@ -1107,7 +1108,7 @@ namespace rdbModel {
     }     // end switch
     if (m_matchReturn == MATCHfail) {
       (*m_err) << std::endl << "Datatype match for base " 
-                  << base <<  "failed " << std::endl;
+                  << base <<  " failed " << std::endl;
       m_err->flush();
       return false;
     }
