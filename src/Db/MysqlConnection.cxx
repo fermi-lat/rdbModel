@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.56 2008/01/10 00:41:53 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.57 2008/01/10 01:01:02 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -423,6 +423,7 @@ namespace rdbModel {
       (*m_err) << "rdbModel::mysqlConnection::update: ";
       (*m_err) << "Incompatible vector arguments " << std::endl;
       m_err->flush();
+      throw RdbException(std::string("Incompatible vector arg lens"));
       return 0;
     }
     std::string sqlString = "UPDATE " + tableName + " SET ";
@@ -457,6 +458,7 @@ namespace rdbModel {
       (*m_err) << "MySQL error during UPDATE" << std::endl;
       (*m_err) << getMysqlError(m_mysql, &errcode) << std::endl;
       m_err->flush();
+      throw RdbException("MySQL error during UPDATE", errcode);
       return 0;
     }
     my_ulonglong nModLong = mysql_affected_rows(m_mysql);
