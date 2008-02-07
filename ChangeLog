@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Feb  7 14:12:53 PST 2008
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Throw exceptions when update fails
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Feb  7 14:12:25 PST 2008
 rdbModel/src
 
