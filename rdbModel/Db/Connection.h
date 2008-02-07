@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.22 2006/08/15 23:13:07 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.23 2007/01/05 23:02:13 decot Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 
@@ -171,6 +171,11 @@ namespace rdbModel{
       @note: the values are EXPECTED to be valid, ie already escaped
       correctly and having a valid size. See Table::updateRow() or
       formatField() to do this.
+
+      @note: Should not normally be called by application code. See
+            instead Rdb::updateRows, which knows about fields which
+            should be handled automatically.
+
     */
     virtual unsigned int update(const std::string& tableName, 
                                 const StringVector& colNames, 

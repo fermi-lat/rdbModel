@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.23 2007/01/05 23:02:13 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.24 2007/11/12 19:54:41 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -127,6 +127,9 @@ namespace rdbModel{
 
     /**
       Generic UPDATE. Return value is number of rows changed.
+      @note: Should not normally be called by application code. See
+            instead Rdb::updateRows, which knows about fields which
+            should be handled automatically.
     */
     virtual unsigned int update(const std::string& tableName, 
                                 const StringVector& colNames, 
