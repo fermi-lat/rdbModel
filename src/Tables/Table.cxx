@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.21 2007/01/08 19:45:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.22 2007/01/09 01:51:41 decot Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -459,7 +459,7 @@ namespace rdbModel {
   int Table::updateRows(Row &row, Assertion* where) const {
 
     if (!m_connect) {
-      throw RdbException("Table::insertLatest Need matching connection");
+      throw RdbException("Table::updateRows Need matching connection");
     }
     row.rowSort();
 
@@ -473,7 +473,12 @@ namespace rdbModel {
     if (! this->rowRegroup(row, colNames, colValues, nullCols))
       return -1;
 
-    return m_connect->update(m_name, colNames, colValues, where, &nullCols);
+    try {
+      return m_connect->update(m_name, colNames, colValues, where, &nullCols);
+    }
+    catch (...) {
+      return -1;
+    }
   }
 
   int Table::updateRows(Row &row, const std::string& where) const {
@@ -492,8 +497,12 @@ namespace rdbModel {
 
     if (! this->rowRegroup(row, colNames, colValues, nullCols))
       return -1;
-
-    return m_connect->update(m_name, colNames, colValues, where, &nullCols);
+    try {
+      return m_connect->update(m_name, colNames, colValues, where, &nullCols);
+    }
+    catch (...) {
+      return -1;
+    }
   }
 
   bool Table::fillProgramCols(Row& row, bool newRow) const {
@@ -617,10 +626,15 @@ namespace rdbModel {
       return -1;
 
     // Make specified changes (update)
-    m_connect->update(m_name, updateCols, updateVals, subsAssert);
-    
-    delete subsAssert;
-    return true;
+    try {
+      m_connect->update(m_name, updateCols, updateVals, subsAssert);
+      delete subsAssert;
+      return true;
+    }
+    catch (...) {
+      delete subsAssert;
+      return false;
+    }
   }
 
   const std::string& Table::setPrimaryKeyCol() {
