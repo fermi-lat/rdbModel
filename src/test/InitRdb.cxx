@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.7 2006/11/08 23:13:51 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/InitRdb.cxx,v 1.8 2007/01/13 00:29:54 jrb Exp $
 // Class to initialize rdbModel-type database from init file
 // satisfying initRdbms.xsd schema, invoked from main initRdb.
 
@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include "mysql/mysqld_error.h"
 #include "rdbModel/Rdb.h"
 #include "rdbModel/RdbException.h"
 #include "rdbModel/Management/Manager.h"
@@ -230,16 +231,34 @@ namespace rdbModel {
     if (insertRet) { // Failure
       if (!m_add) {
         std::cerr << "Insert row for table " << tname
-                  << "row " << toInsert 
+                  << ", row " << std::endl << toInsert 
                   << " failed" << std::endl;
         return 5;
       }
       else {
+        unsigned errcode = m_rdb->getConnection()->getLastError();
         if (m_dbg) { 
+
           std::cout <<  "Insert row for table " << tname
-                    << "row " << toInsert 
-                  << " failed. Continuing with next row..." << std::endl;
+                    << ", row " << std::endl << toInsert;
+          if (errcode == ER_DUP_ENTRY) { // keep going; acceptable error
+            std::cout << " failed with acceptable error" << std::endl;
+            std::cout << "Continuing with next row..." << std::endl;
+            return 0;
+          }
+          else {
+            std::cout << " failed with fatal error" << std::endl;
+            return 5;
+          }
+        }
+        else if (errcode == ER_DUP_ENTRY) { // keep going; acceptable error
+          std::cout << "Dup. failure ok. Continuing with next row..." 
+                    << std::endl;
           return 0;
+        }
+        else {
+          std::cout << " failed with fatal error" << std::endl;
+          return 5;
         }
       }
       // keep going if mode is add.
