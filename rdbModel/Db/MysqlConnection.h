@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.24 2007/11/12 19:54:41 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.25 2008/02/07 22:11:43 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -202,6 +202,8 @@ namespace rdbModel{
     */
     virtual bool 
     compileAssertion(const Assertion* a, std::string& sqlString) const;
+
+    virtual unsigned  getLastError( ) const;
 
     /**
       Turn select and update into no-ops: output SQL string for

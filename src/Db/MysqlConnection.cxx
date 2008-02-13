@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.57 2008/01/10 01:01:02 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.58 2008/02/07 22:12:53 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -332,6 +332,15 @@ namespace rdbModel {
     return mysqlEscape(m_mysql, value);
   }
 
+
+  unsigned MysqlConnection::getLastError( ) const {
+    unsigned errcode;
+    if (m_mysql) {
+      
+      getMysqlError(m_mysql, &errcode);
+    }
+    return errcode;
+  }
 
   bool MysqlConnection::insertRow(const std::string& tableName, 
                                   const StringVector& colNames, 
