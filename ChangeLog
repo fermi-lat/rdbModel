@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Feb 13 14:42:42 PST 2008
+rdbModel/src/test
+
+Modified Files:
+	test_errors.cxx 
+Log Message:
+Test new getLastError method
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Feb 13 14:42:33 PST 2008
 rdbModel/src/Db
 
