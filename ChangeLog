@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Feb 13 14:42:28 PST 2008
+rdbModel/rdbModel/Db
+
+Modified Files:
+	Connection.h MysqlConnection.h 
+Log Message:
+Add getLastError method
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-10-04, operation: add
 Package: rdbModel
