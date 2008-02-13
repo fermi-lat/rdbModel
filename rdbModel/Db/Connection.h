@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.23 2007/01/05 23:02:13 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.24 2008/02/07 22:11:43 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 
@@ -255,6 +255,8 @@ namespace rdbModel{
     */
     virtual bool compileAssertion(const Assertion* a, std::string& sqlString)
       const = 0;
+
+    virtual unsigned getLastError( ) const = 0;
 
   protected:
     std::ostream* m_out;
