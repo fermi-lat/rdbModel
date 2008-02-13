@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_errors.cxx,v 1.1 2006/11/14 01:40:46 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_errors.cxx,v 1.2 2006/11/16 00:22:25 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -267,6 +267,10 @@ int doBadInsert(rdbModel::Rdb* rdb) {
   Row row(fields);
 
   rdb->insertRow("metadata_v2r1", row, &serial);
+
+  unsigned errcode = rdb->getConnection()->getLastError();
+  std::cerr << "From doBadInsert.  Last error code was " << errcode 
+            << std::endl;
     
   return serial;
 }
@@ -294,6 +298,11 @@ int doBadUpdate(rdbModel::Rdb* rdb, int serial) {
   std::string table("metadata_v2r1");
 
   unsigned nChange = rdb->updateRows(table, row, where);
+
+  unsigned errcode = rdb->getConnection()->getLastError();
+  std::cerr << "From doBadUpdate.  Last error code was " << errcode 
+            << std::endl;
+
   return (int) nChange;
 }
 
