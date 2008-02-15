@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r10p5 14-Feb-2008 jrb    Better handling, reporting of MySQL errors
    v2r10p4  7-Feb-2008 jrb    Throw exceptions as appropriate from db update rtn
    v2r10p3  9-Jan-2008 jrb    enum in schema description is compatible with
                               varchar if varchar size is sufficient
