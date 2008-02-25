@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Mon Feb 25 15:12:24 PST 2008
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Admit that sql type of tinytext, text, etc. may be compatible with
+varchar and enum in xml description file
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-11-00, operation: add
 Package: rdbModel
