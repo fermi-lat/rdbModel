@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.58 2008/02/07 22:12:53 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.59 2008/02/13 22:42:33 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -27,8 +27,14 @@
 namespace {
 
   // Size specification is of form (m) or (m,d)  If no size specification 
-  // return 0; else return value of m.
+  // return 0; else return value of m.  Also handle TEXT and BLOB types.
   int extractSize(const std::string& sqlString) {
+    if ((sqlString == "tinytext") || (sqlString == "tinyblob")) return 255;
+    if ((sqlString == "text") || (sqlString == "blob")) return (1 << 16) -1 ;
+    if ((sqlString == "mediumtext") || (sqlString == "mediumblob"))
+      return (1 << 24) -1;
+    if ((sqlString == "longtext") || (sqlString == "longblob"))
+      return 0x7fffffff;
     unsigned leftLoc = sqlString.find("(");
     if (leftLoc == std::string::npos) return 0;
     leftLoc++;           // now is at start of m
@@ -41,7 +47,7 @@ namespace {
     return facilities::Util::stringToInt(numString);
   }
 
-  void addArg(bool literal, const std::string arg, std::string& sqlString) {
+void addArg(bool literal, const std::string arg, std::string& sqlString) {
     if (literal) sqlString += '"';
     sqlString += arg;
     if (literal) sqlString += '"';
@@ -981,24 +987,37 @@ namespace rdbModel {
         // Local list is a vector; in sqlType they're quoted, comma separated
         return compareEnumList(choices, sqlType, m_matchReturn);
       }
-      else if (sqlType.find("varchar") == 0) {
+      else if ( (sqlType.find("varchar") == 0) || 
+                (sqlType.find("text") < sqlType.size() ) )
+      {
         // compare sql size to enum value sizes
         sqlSize = extractSize(sqlType);
         for (unsigned i = 0; i < choices.size(); i++) {
           if (sqlSize < choices[i].size() ) {
             m_matchReturn = MATCHfail;
+            (*m_err) << "sql type " << sqlType << " too small for this Enum "
+                    << std::endl;
             break;      // just gets us out of this loop; not out of switch
           }
         }
-        if (m_matchReturn == MATCHfail) break; // if varchar size was too small
+        if (m_matchReturn == MATCHfail) {
+          (*m_err) << sqlType << " too small for this Enum " << std::endl;
+          break; // if varchar size was too small
+        }
         m_matchReturn = MATCHcompatible;
         return true;
       } else {
         m_matchReturn = MATCHfail;
+        (*m_err) << "sql type " << sqlType << " not compatible with ENUM"
+                << std::endl;
         break;        //        return false;
       }
-    }
+                }
     case Datatype::TYPEvarchar: {
+      if (sqlType.find("text") < sqlType.size() ) { //compatible
+        m_matchReturn = MATCHcompatible;
+        return true;
+      }
       base = "varchar";
       if (sqlType.find(base) != 0) {
         m_matchReturn = MATCHfail;
@@ -1015,8 +1034,12 @@ namespace rdbModel {
       return true;
     }
     case Datatype::TYPEchar: {
-      base = "char";
-      if (sqlType.find(base) != 0) {
+      base = "char";           // text is always ok; varchar may be
+      if (sqlType.find("text") < sqlType.size() ) {
+        m_matchReturn = MATCHcompatible;
+        return true;
+      }
+      if (sqlType.find(base) >= sqlType.size() ) {
         m_matchReturn = MATCHfail;
         break;  //        return false;
       }
