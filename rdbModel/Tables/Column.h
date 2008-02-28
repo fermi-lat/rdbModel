@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.24 2007/01/05 23:02:13 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.25 2007/01/13 00:29:54 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -146,6 +146,11 @@ namespace rdbModel {
   public:
     FieldVal(std::string colname="", std::string val="", bool isNull=false) :
       m_colname(colname), m_val(val), m_null(isNull) { }
+
+    // Alternate constructors if value is unsigned int or int
+    FieldVal(std::string colname="", unsigned int val=0);
+    FieldVal(std::string colname="", int val=0);
+
     void write (std::ostream& out) const;
     std::string m_colname;
     std::string m_val;
