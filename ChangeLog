@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Feb 28 14:59:08 PST 2008
+rdbModel/src/Tables
+
+Modified Files:
+	Column.cxx 
+Log Message:
+Add additional constructor for FieldVal
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Feb 28 14:59:03 PST 2008
 rdbModel/rdbModel/Tables
 
