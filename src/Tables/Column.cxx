@@ -1,9 +1,10 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.15 2006/09/13 23:57:59 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.16 2007/01/13 00:29:54 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/Tables/Table.h"
 #include "facilities/Timestamp.h"
+#include "facilities/Util.h"
 
 #include <algorithm>
 namespace rdbModel {
@@ -149,6 +150,16 @@ namespace rdbModel {
     for (unsigned i = 0; i < m_fields.size(); i++) {
       out << m_fields[i] << std::endl;
     }
+  }
+
+  FieldVal::FieldVal(std::string colname, unsigned int val)
+    : m_colname(colname), m_null(false) {
+    facilities::Util::utoa(val, m_val);
+  }
+ 
+  FieldVal::FieldVal(std::string colname, int val)
+    : m_colname(colname), m_null(false) {
+    facilities::Util::itoa(val, m_val);
   }
  
   void FieldVal::write(std::ostream& out) const {
