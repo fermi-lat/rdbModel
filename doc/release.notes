@@ -6,7 +6,8 @@
 
    *  EOH  *
 
-   v2r12p1 28-Feb-2008 jrb    Really do it this time 
+   v2r12p2 28-Feb-2008 jrb    Little bug fix
+   v2r12p1 28-Feb-2008 jrb    Really do it this time (forgot commit for v2r12)
    v2r12   28-Feb-2008 jrb    Add a constructor to rdbModel::FieldVal
    v2r11   22-Feb-2008 jrb    Add Connection::getLastError
    v2r10p5 14-Feb-2008 jrb    Better handling, reporting of MySQL errors
