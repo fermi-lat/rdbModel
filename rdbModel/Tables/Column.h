@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.25 2007/01/13 00:29:54 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Tables/Column.h,v 1.26 2008/02/28 22:59:03 jrb Exp $
 #ifndef RDBMODEL_COLUMN_H
 #define RDBMODEL_COLUMN_H
 #include <vector>
@@ -16,8 +16,6 @@ namespace rdbModel {
   class Table;
   class XercesBuilder;
   class MysqlConnection;
-
-
 
   /** 
    * rdbModel representation of a(n SQL-like) table description
@@ -148,8 +146,8 @@ namespace rdbModel {
       m_colname(colname), m_val(val), m_null(isNull) { }
 
     // Alternate constructors if value is unsigned int or int
-    FieldVal(std::string colname="", unsigned int val=0);
-    FieldVal(std::string colname="", int val=0);
+    FieldVal(std::string colname, unsigned int val);
+    FieldVal(std::string colname, int val);
 
     void write (std::ostream& out) const;
     std::string m_colname;
