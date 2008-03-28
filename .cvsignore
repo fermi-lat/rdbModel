@@ -7,3 +7,5 @@ Visual
 VC*
 setup.*
 *.mak*
+build
+*.pyc
