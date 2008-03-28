@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: jrb  Fri Mar 28 10:56:36 PDT 2008
+rdbModel
+
+Modified Files:
+	.cvsignore 
+Added Files:
+	SConscript rdbModelLib.py 
+Log Message:
+For SCons
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-12-02, operation: add
 Package: rdbModel
