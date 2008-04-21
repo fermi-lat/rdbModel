@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Apr 21 13:41:58 PDT 2008
+rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+Add duplicateError( )  routine (often a benign error)
+
+    *
+------------------------------------------------------------
 User: jrb  Mon Apr 21 13:41:52 PDT 2008
 rdbModel/src
 
