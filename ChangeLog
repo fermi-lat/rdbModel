@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Mon Apr 21 13:41:39 PDT 2008
+rdbModel/rdbModel
+
+Modified Files:
+	Rdb.h 
+Log Message:
+Add duplicateError( )  routine (often a benign error)
+
+    *
+------------------------------------------------------------
 User: jrb  Fri Mar 28 10:56:36 PDT 2008
 rdbModel
 
