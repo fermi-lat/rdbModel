@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.25 2008/02/07 22:11:43 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.26 2008/02/13 22:42:27 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -202,6 +202,10 @@ namespace rdbModel{
     */
     virtual bool 
     compileAssertion(const Assertion* a, std::string& sqlString) const;
+
+    // Return true iff last operation was an insert violating
+    // uniqueness constraint
+    virtual bool duplicateError() const;
 
     virtual unsigned  getLastError( ) const;
 

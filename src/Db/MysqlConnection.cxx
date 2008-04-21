@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.59 2008/02/13 22:42:33 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.60 2008/02/25 23:12:24 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -18,6 +18,7 @@
 
 #include "mysql/mysql.h"
 #include "mysql/errmsg.h"
+#include "mysql/mysqld_error.h"
 #include <iostream>
 #include <cerrno>
 #include <cstdlib>
@@ -338,6 +339,9 @@ namespace rdbModel {
     return mysqlEscape(m_mysql, value);
   }
 
+  bool MysqlConnection::duplicateError() const {
+    return (getLastError() == ER_DUP_ENTRY);
+  }
 
   unsigned MysqlConnection::getLastError( ) const {
     unsigned errcode;
