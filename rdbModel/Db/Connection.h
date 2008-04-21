@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.24 2008/02/07 22:11:43 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/Connection.h,v 1.25 2008/02/13 22:42:27 jrb Exp $
 #ifndef RDBMODEL_CONNECTION_H
 #define RDBMODEL_CONNECTION_H
 
@@ -257,6 +257,10 @@ namespace rdbModel{
       const = 0;
 
     virtual unsigned getLastError( ) const = 0;
+
+    // Return true iff last operation was an insert violating
+    // uniqueness constraint
+    virtual bool duplicateError() const = 0;
 
   protected:
     std::ostream* m_out;

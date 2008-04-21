@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.15 2005/10/28 07:13:06 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Rdb.h,v 1.16 2005/11/04 21:45:25 jrb Exp $
 #ifndef RDBMODEL_RDB_H
 #define RDBMODEL_RDB_H
 #include <vector>
@@ -48,6 +48,9 @@ namespace rdbModel {
      */
     virtual ~Rdb();
     Rdb() : m_connection(0), m_builder(0), m_descrip("") { }
+
+    // Return true iff insert failed because of uniqueness constraint
+    bool duplicateError() const;
 
     int build(const std::string& description, Builder* b);
 
