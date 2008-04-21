@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r13   21-Apr-2008 jrb    Add easy way to check for insert of non-unique row
    v2r12p2 28-Feb-2008 jrb    Little bug fix
    v2r12p1 28-Feb-2008 jrb    Really do it this time (forgot commit for v2r12)
    v2r12   28-Feb-2008 jrb    Add a constructor to rdbModel::FieldVal
