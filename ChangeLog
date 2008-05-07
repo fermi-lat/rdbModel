@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed May  7 15:40:52 PDT 2008
+rdbModel/xml
+
+Modified Files:
+	calib.xml calib_test.xml calib_user.xml 
+Log Message:
+Add a few more known calibration types
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-13-00, operation: add
 Package: rdbModel
