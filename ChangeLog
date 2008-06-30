@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: glastrm  Mon Jun 30 13:18:34 PDT 2008
+GlastRelease-scons/rdbModel
+
+Modified Files:
+	SConscript rdbModelLib.py 
+Log Message:
+Added Author and Version info to SConscript file. Usig correct env name for mysql libraries
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-13-01, operation: add
 Package: rdbModel
