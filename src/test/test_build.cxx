@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_build.cxx,v 1.23 2005/07/11 20:22:51 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/test/test_build.cxx,v 1.24 2005/11/04 21:45:31 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -28,7 +28,7 @@ int   doSupersede(rdbModel::Rdb* rdb, rdbModel::Row& row,
 int main(int, char**) {
   using rdbModel::FieldVal;
 
-  std::string infile("$(RDBMODELROOT)/xml/calib_test.xml");
+  std::string infile("$(RDBMODELXMLPATH)/calib_test.xml");
 
   rdbModel::Builder* b = new rdbModel::XercesBuilder;
   rdbModel::Rdb* rdb = new rdbModel::Rdb;
@@ -112,15 +112,15 @@ int main(int, char**) {
   // mostly don't want to run code doing an insert.  For times
   // when we do, must connect as user with INSERT priv.
 #ifdef TEST_INSERT
-  std::string connectfileT("$(RDBMODELROOT)/xml/connect/mysqlTester.xml");
+  std::string connectfileT("$(RDBMODELXMLPATH)/connect/mysqlTester.xml");
 #else
-  std::string connectfileT("$(RDBMODELROOT)/xml/connect/mysqlSlacT.xml");
+  std::string connectfileT("$(RDBMODELXMLPATH)/connect/mysqlSlacT.xml");
 #endif
   
   // Connect to production database, read only
   rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
 
-  std::string connectfile("$(RDBMODELROOT)/xml/connect/mysqlSlac.xml");
+  std::string connectfile("$(RDBMODELXMLPATH)/connect/mysqlSlac.xml");
 
   if (!(con->open(connectfile)) ) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
