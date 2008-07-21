@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: glastrm  Mon Jul 21 08:17:38 PDT 2008
+GlastRelease-scons/rdbModel/src/test
+
+Modified Files:
+	test_build.cxx test_errors.cxx 
+Log Message:
+Removed dependency on CMT env variables
+    *
+------------------------------------------------------------
 User: glastrm  Mon Jun 30 13:18:34 PDT 2008
 GlastRelease-scons/rdbModel
 
