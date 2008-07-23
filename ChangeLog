@@ -1,5 +1,13 @@
 ------------------------------------------------------------
 TAG
+Tag name: v2r13p2, operation: mov
+Package: rdbModel
+User: glastrm  Wed Jul 23 13:31:12 2008
+Files:
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: v2r13p2, operation: add
 Package: rdbModel
 User: jrb  Wed Jul 23 13:11:00 2008
