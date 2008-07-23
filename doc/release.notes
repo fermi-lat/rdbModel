@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+   v2r13p2 23-Jul-2008 jrb    Tag Navid's latest updates for SCons, new RM
    v2r13p1  7-May-2008 jrb    Add some calib. types to known list
    v2r13   21-Apr-2008 jrb    Add easy way to check for insert of non-unique row
    v2r12p2 28-Feb-2008 jrb    Little bug fix
