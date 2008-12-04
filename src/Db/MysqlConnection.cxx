@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.60 2008/02/25 23:12:24 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Db/MysqlConnection.cxx,v 1.61 2008/04/21 20:41:58 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -120,7 +120,8 @@ namespace rdbModel {
     m_mysql(0), m_connected(0), m_host(""), m_port(-1),
     m_user(""), m_pw(""), m_dbName(""),
     m_visitorType(VISITORundefined), m_rdb(0), m_tempRes(0),
-    m_writeDisabled(false), m_maxRetry(2), m_avgWait(10000)
+    m_writeDisabled(false), m_maxRetry(2), m_avgWait(10000),
+    m_maxOpenTry(3)
   {
     // Seed random number generator with a random thing
     srand(time(0));
@@ -224,32 +225,48 @@ namespace rdbModel {
       if (!ok) return false;
     }
 
-    MYSQL *connected = mysql_real_connect(m_mysql, host,
-                                          user,
-                                          password, dbName,
-                                          port, NULL, 0);
+    unsigned retriesRemaining = m_maxOpenTry;
+    
+    do {
+      retriesRemaining--;
+      MYSQL *connected = mysql_real_connect(m_mysql, host,
+                                            user,
+                                            password, dbName,
+                                            port, NULL, 0);
 
-    if (connected != 0) {  // Everything is fine.  Put out an info message
-      (*m_out) << "Successfully connected to MySQL host " 
-               << ((host != 0) ? host : "from init file" )
-               << ", database " << dbName << std::endl;
-      m_out->flush();
-      m_connected = true;
-      if (host) m_host = std::string(host);
-      else m_host = std::string("");
-      m_port = port;
-      if (user) m_user = std::string(user);
-      else m_user = std::string("");
-      if (password) m_pw = std::string(password);
-      else m_pw = std::string("");
-      m_dbName = dbName;
-    }
-    else {
-      (*m_err) <<  "Failed to connect to MySQL host " << host <<
-        "with error " << mysql_error(m_mysql) << std::endl;
-      m_err->flush();
-      m_connected = false;
-    }
+      if (connected != 0) {  // Everything is fine.  Put out an info message
+        (*m_out) << "Successfully connected to MySQL host " 
+                 << ((host != 0) ? host : "from init file" )
+                 << ", database " << dbName << std::endl;
+        m_out->flush();
+        m_connected = true;
+        if (host) m_host = std::string(host);
+        else m_host = std::string("");
+        m_port = port;
+        if (user) m_user = std::string(user);
+        else m_user = std::string("");
+        if (password) m_pw = std::string(password);
+        else m_pw = std::string("");
+        m_dbName = dbName;
+        return connected;
+      }
+      else {
+        (*m_err) <<  "Failed to connect to MySQL host " << host <<
+          "with error " << mysql_error(m_mysql) << std::endl;
+        (*m_err) << "Retries remaining: " << retriesRemaining;
+        m_err->flush();
+        m_connected = false;
+        if (retriesRemaining > 0) {
+          unsigned maxRnd = 0xfff;
+          unsigned wait = m_avgWait;
+          if (wait < maxRnd/2) wait += maxRnd/2;
+
+          unsigned rnd = rand() & maxRnd;  // just use last 12 bits
+          wait += (rnd - maxRnd/2);
+          facilities::Util::gsleep(wait);
+        }
+      }
+    } while (retriesRemaining > 0);
     return m_connected;
   }
 
