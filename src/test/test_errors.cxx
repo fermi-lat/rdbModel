@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/test/test_errors.cxx,v 1.4 2008/04/21 20:42:37 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_errors.cxx,v 1.5 2008/07/21 15:17:38 glastrm Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -15,9 +15,10 @@
 #include "rdbModel/Tables/Datatype.h"
 #include "rdbModel/Tables/Assertion.h"
 #include "facilities/Util.h"
+#include "facilities/commonUtilities.h"
 
 // When TEST_INSERT is defined, use connection which can write
-#define TEST_INSERT
+// #define TEST_INSERT
 
 int doBadInsert(rdbModel::Rdb* con);
 int doBadUpdate(rdbModel::Rdb*, int serial);
@@ -26,7 +27,8 @@ int doUpdate(rdbModel::Rdb*, int serial);
 int main(int, char**) {
   using rdbModel::FieldVal;
 
-  std::string infile("$(RDBMODELXMLPATH)/calib_test.xml");
+  std::string xmlPath = facilities::commonUtilities::getXmlPath("rdbModel");
+  std::string infile = xmlPath + std::string("/calib_test.xml");
 
   rdbModel::Builder* b = new rdbModel::XercesBuilder;
   rdbModel::Rdb* rdb = new rdbModel::Rdb;
@@ -43,10 +45,10 @@ int main(int, char**) {
   // mostly don't want to run code doing an insert.  For times
   // when we do, must connect as user with INSERT priv.
 #ifdef TEST_INSERT
-  std::string connectfileT("$(RDBMODELXMLPATH)/connect/mysqlTester.xml");
+  std::string connectfileT = xmlPath + std::string("connect/mysqlTester.xml");
 #else
   // This is glastreader, calib_test
-  std::string connectfileT("$(RDBMODELXMLPATH)/connect/mysqlSlacT.xml");
+  std::string connectfileT = xmlPath + std::string("connect/mysqlSlacT.xml");
 #endif
   
 
@@ -54,8 +56,7 @@ int main(int, char**) {
   // Connect to production database, read only
   rdbModel::MysqlConnection* con = new rdbModel::MysqlConnection();
 
-  std::string connectfile("$(RDBMODELXMLPATH)/connect/mysqlSlac.xml");
-
+  std::string connectfile = xmlPath + std::string("/connect/mysqlSlac.xml");
   if (!(con->open(connectfile)) ) {
     std::cerr << "Unable to connect to MySQL database" << std::endl;
     return -1;
@@ -166,76 +167,6 @@ int main(int, char**) {
   doBadInsert(rdb);  
   doBadUpdate(rdb, 23);  
 # endif
-  /*
-
-  bool disable = true;
-  con->disableModify(disable);     // so don't really change db
-  int serial = doInsert(rdb);
-  if (serial) {
-    std::cout << "Hallelujah!  Inserted new row, serial# " 
-              << serial  << std::endl;
-  } else if (disable) {  // pick random serial# to check out disabled update
-    serial = 17;
-  }
-  if (serial) {
-
-    int nUpdates = doUpdate(rdb, serial);
-
-    if (nUpdates) {
-      std::cout << "Did " << nUpdates << " on row " << serial
-                << std::endl;
-    }
-    else std::cout << "Failed to update row " << serial << std::endl;
-  }
-  else {
-    std::cout << "Bah, humbug.  Insert failed. " << std::endl;
-  }
-
-#else
-
-
-  // Check that we can really do something with this connection
-
-  switch (match) {
-  case rdbModel::MATCHequivalent:
-    std::cout << "XML schema and MySQL database are equivalent!" << std::endl;
-    break;
-  case rdbModel::MATCHcompatible:
-    std::cout << "XML schema and MySQL database are compatible" << std::endl;
-    break;
-  case rdbModel::MATCHfail:
-    std::cout << "XML schema and MySQL database are NOT compatible" 
-              << std::endl;
-    break;
-    //    return -2;
-  case rdbModel::MATCHnoConnection:
-    std::cout << "Connection failed while attempting match" << std::endl;
-    return -1;
-  }
-
-  if (match == rdbModel::MATCHfail) { // try again without dbname match
-    match = con->matchSchema(rdb, false);
-
-    switch (match) {
-    case rdbModel::MATCHequivalent:
-      std::cout << "XML schema and MySQL database are equivalent!" 
-                << std::endl;
-      break;
-    case rdbModel::MATCHcompatible:
-      std::cout << "XML schema and MySQL database are compatible" << std::endl;
-      break;
-    case rdbModel::MATCHfail:
-      std::cout << "XML schema and MySQL database are NOT compatible" 
-                << std::endl;
-      //    return -2;
-    case rdbModel::MATCHnoConnection:
-      std::cout << "Connection failed while attempting match" << std::endl;
-      return -1;
-    }
-
-  }
-#endif
-  */
   return 0;
 }
 

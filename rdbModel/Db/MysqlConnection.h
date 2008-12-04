@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.26 2008/02/13 22:42:27 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/rdbModel/Db/MysqlConnection.h,v 1.27 2008/04/21 20:41:45 jrb Exp $
 #ifndef RDBMODEL_MYSQLCONNECTION_H
 #define RDBMODEL_MYSQLCONNECTION_H
 
@@ -78,6 +78,9 @@ namespace rdbModel{
 
     unsigned getMaxRetry() const {return m_maxRetry;}
     void setMaxRetry(unsigned maxRetry) { m_maxRetry = maxRetry;}
+
+    unsigned getMaxOpenTry() const {return m_maxOpenTry;}
+    void setMaxOpenTry(unsigned maxOpenTry) { m_maxOpenTry = maxOpenTry;}
 
     /** Get/set avg wait in milliseconds between retries 
      */
@@ -276,6 +279,7 @@ namespace rdbModel{
 
     unsigned      m_maxRetry;
     unsigned      m_avgWait;   // milliseconds
+    unsigned      m_maxOpenTry;   // 1 means no retries
 
     static void compileInit();
     static bool compileComparison(Assertion::Operator* op, 
