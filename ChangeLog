@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Dec  4 12:23:10 PST 2008
+rdbModel/rdbModel/Db
+
+Modified Files:
+	MysqlConnection.h 
+Log Message:
+Add retry to MySQL open.  Max tries for open hard-coded to 3 for now
+Modernize test_errors test program to find xml files properly
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-13-02, operation: add
 Package: rdbModel
