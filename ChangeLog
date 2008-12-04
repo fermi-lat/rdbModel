@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+User: glastrm  Thu Dec  4 12:30:19 PST 2008
+rdbModel
+
+Modified Files:
+	SConscript 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: v2r14, operation: add
 Package: rdbModel
