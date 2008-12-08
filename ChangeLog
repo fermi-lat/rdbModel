@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: ecephas  Mon Dec  8 13:40:42 PST 2008
+GlastRelease-scons/rdbModel
+
+Modified Files:
+	SConscript 
+Log Message:
+Check in SConscript for rdbModel v2r14 (for branch-tag, GlastReleasev15r49) 
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-14-00, operation: add
 Package: rdbModel
