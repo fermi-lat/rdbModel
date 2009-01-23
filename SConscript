@@ -1,8 +1,8 @@
 # -*- python -*-
-# $Id: SConscript,v 1.3 2008/12/04 20:30:19 glastrm Exp $
+# $Id: SConscript,v 1.2 2008/06/30 20:18:34 glastrm Exp $
 # rdbModel SConscript file
 # Authors: Joanne Bogart <jrb@slac.stanford.edu>
-# Version: rdbModel-02-14-00
+# Version: rdbModel-02-13-02
 Import('baseEnv')
 Import('listFiles')
 progEnv = baseEnv.Clone()
@@ -19,6 +19,7 @@ initRdb = progEnv.Program('initRdb', ['src/test/initRdbMain.cxx','src/test/InitR
 progEnv.Tool('registerObjects', package = 'rdbModel', libraries = [rdbModelLib], testApps = [test_build, test_errors, initRdb],
             includes = listFiles(['rdbModel/*'], recursive = True),
                                  xml = listFiles(['xml/*'], recursive=True))
+
 
 
 
