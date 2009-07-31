@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Id: SConscript,v 1.2 2008/06/30 20:18:34 glastrm Exp $
+# $Id: SConscript,v 1.5 2009/01/23 00:07:51 ecephas Exp $
 # rdbModel SConscript file
 # Authors: Joanne Bogart <jrb@slac.stanford.edu>
 # Version: rdbModel-02-13-02
@@ -16,9 +16,12 @@ test_build = progEnv.Program('test_build', ['src/test/test_build.cxx'])
 test_errors = progEnv.Program('test_errors', ['src/test/test_errors.cxx'])
 initRdb = progEnv.Program('initRdb', ['src/test/initRdbMain.cxx','src/test/InitRdb.cxx'])
 
-progEnv.Tool('registerObjects', package = 'rdbModel', libraries = [rdbModelLib], testApps = [test_build, test_errors, initRdb],
-            includes = listFiles(['rdbModel/*'], recursive = True),
-                                 xml = listFiles(['xml/*'], recursive=True))
+progEnv.Tool('registerTargets', package = 'rdbModel',
+             libraryCxts = [[rdbModelLib,libEnv]],
+             testAppCxts = [[test_build, progEnv], [test_errors, progEnv],
+                            [initRdb,progEnv]],
+             includes = listFiles(['rdbModel/*'], recursive = True),
+             xml = listFiles(['xml/*'], recursive=True))
 
 
 
