@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Thu Jul 30 17:35:27 PDT 2009
+CHS-scons/rdbModel
+
+Modified Files:
+	SConscript 
+Log Message:
+Switch to registerTargets
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: CHS-10-01-00, operation: add
 Package: rdbModel
