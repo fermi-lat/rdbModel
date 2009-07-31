@@ -2,6 +2,27 @@
 TAG
 Tag name: rdbModel-02-14-01, operation: add
 Package: rdbModel
+User: jrb  Thu Jul 30 17:48:20 2009
+Files:
+  rdbModel/xml/rdbmsInit.xsd  1.2
+  rdbModel/xml/rdbmsDescrip.xsd  1.15
+  rdbModel/xml/rdbmsDescrip.dtd  1.6
+  rdbModel/xml/calib_user.xml  1.11
+  rdbModel/xml/calib_test_S.xml  1.2
+  rdbModel/xml/calib_test.xml  1.13
+  rdbModel/xml/calib.xml  1.11
+  rdbModel/xml/junk.xml  1.1
+  rdbModel/xml/addjunk.xml  1.1
+  rdbModel/xml/connect/mysqlSlac.xml  1.2
+  rdbModel/xml/connect/mysqlConnection.dtd  1.1
+  rdbModel/xml/connect/mysqlSlacT.xml  1.2
+  rdbModel/xml/maint/calibMaint.xml  1.2
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: rdbModel-02-14-01, operation: add
+Package: rdbModel
 User: jrb  Thu Jul 30 17:48:14 2009
 Files:
   rdbModel/src/mainpage.h  1.1
