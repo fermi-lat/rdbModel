@@ -2,6 +2,15 @@
 TAG
 Tag name: rdbModel-02-14-02, operation: add
 Package: rdbModel
+User: jrb  Thu Sep 10 17:54:44 2009
+Files:
+  rdbModel/doc/release.notes  1.67
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: rdbModel-02-14-02, operation: add
+Package: rdbModel
 User: jrb  Thu Sep 10 17:54:38 2009
 Files:
   rdbModel/cmt/.cvsignore  1.1.1.1
