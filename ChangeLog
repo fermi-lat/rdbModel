@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+TAG
+Tag name: rdbModel-02-14-02, operation: add
+Package: rdbModel
+User: jrb  Thu Sep 10 17:54:32 2009
+Files:
+  rdbModel/.cvsignore  1.3
+  rdbModel/ChangeLog  1.612
+  rdbModel/rdbModelLib.py  1.2
+  rdbModel/SConscript  1.8
+
+    *
+------------------------------------------------------------
 User: jrb  Thu Sep 10 17:54:26 PDT 2009
 GlastRelease-scons/rdbModel/doc
 
