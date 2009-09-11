@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: jrb  Thu Sep 10 17:34:54 PDT 2009
+GlastRelease-scons/rdbModel/src/test
+
+Modified Files:
+	test_errors.cxx 
+Log Message:
+Get rid of compiler warnings
+
+    *
+------------------------------------------------------------
+User: jrb  Thu Sep 10 17:34:54 PDT 2009
 GlastRelease-scons/rdbModel/src/Tables
 
 Modified Files:
