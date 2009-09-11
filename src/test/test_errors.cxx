@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/test/test_errors.cxx,v 1.5 2008/07/21 15:17:38 glastrm Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/test/test_errors.cxx,v 1.6 2008/12/04 20:23:10 jrb Exp $
 // Test program for rdbModel primitive buiding blocks
 
 #include <iostream>
@@ -39,7 +39,8 @@ int main(int, char**) {
     return errcode;
   }
   
-  rdbModel::Table* t = rdb->getTable("metadata_v2r1");
+  /* rdbModel::Table* t = */
+  rdb->getTable("metadata_v2r1");
 
 
   // mostly don't want to run code doing an insert.  For times
@@ -123,8 +124,8 @@ int main(int, char**) {
   std::string where(" WHERE ser_no >=<  7");
   getCols.push_back("flavor");
   try {
-    rdbModel::ResultHandle* res =
-      con->select("metadata_v2r1", getCols, orderCols, where);
+    // rdbModel::ResultHandle* res =
+    con->select("metadata_v2r1", getCols, orderCols, where);
   }
   catch (rdbModel::RdbException ex) {
     std::cerr << "select failed with error: " << ex.getMsg() << std::endl;

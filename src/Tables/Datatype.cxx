@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Datatype.cxx,v 1.14 2006/12/07 18:04:24 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Tables/Datatype.cxx,v 1.15 2007/01/13 00:29:54 jrb Exp $
 #include <iostream>
 #include "rdbModel/Tables/Datatype.h"
 #include "facilities/Util.h"
@@ -100,7 +100,8 @@ namespace rdbModel {
     switch (m_type) {
       case TYPEint: {
         if (isUnsigned) {
-          m_maxIntUnsigned = 4294967295;
+          // m_maxIntUnsigned = 4294967295;
+          m_maxIntUnsigned = 0xffffffff;
           m_minInt = 0;
           m_isUnsigned = true;
           m_type = TYPEintUnsigned;
