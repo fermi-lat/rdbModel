@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Thu Sep 10 17:54:26 PDT 2009
+GlastRelease-scons/rdbModel
+
+Modified Files:
+	SConscript 
+Log Message:
+GoGui_auto-tag
+    *
+------------------------------------------------------------
 User: jrb  Thu Sep 10 17:54:10 PDT 2009
 GlastRelease-scons/rdbModel/cmt
 
