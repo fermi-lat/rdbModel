@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Column.cxx,v 1.16 2007/01/13 00:29:54 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Tables/Column.cxx,v 1.17 2008/02/28 22:59:08 jrb Exp $
 
 #include "rdbModel/Tables/Column.h"
 #include "rdbModel/Tables/Datatype.h"
@@ -24,7 +24,6 @@ namespace rdbModel {
     *pInt = m_default;
     // Special handling if interp is time
     if (m_defaultInterp.size() > 0  ) {
-      Datatype::TYPES dtype = m_type->getType();
       interpret(m_defaultInterp, *pInt);
     }
     return m_default;
