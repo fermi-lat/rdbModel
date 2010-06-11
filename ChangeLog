@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Thu Jun 10 17:47:09 PDT 2010
+GlastRelease-scons/rdbModel
+
+Modified Files:
+	SConscript 
+Log Message:
+updates for SCons build
+    *
+------------------------------------------------------------
 TAG
 Tag name: CHS-10-02-01, operation: add
 Package: rdbModel
