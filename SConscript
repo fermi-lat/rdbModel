@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Id: SConscript,v 1.9 2010/03/04 03:06:12 jrb Exp $
+# $Id: SConscript,v 1.10 2010/03/04 03:06:33 jrb Exp $
 # rdbModel SConscript file
 # Authors: Joanne Bogart <jrb@slac.stanford.edu>
 # Version: rdbModel-02-14-03
@@ -8,7 +8,7 @@ Import('listFiles')
 progEnv = baseEnv.Clone()
 libEnv = baseEnv.Clone()
 
-libEnv.Tool('addLinkDeps', pacakge='rdbModel', toBuild='shared')
+libEnv.Tool('addLinkDeps', package='rdbModel', toBuild='shared')
 rdbModelLib = libEnv.SharedLibrary('rdbModel', [ 'src/Rdb.cxx', listFiles(['src/Tables/*.cxx']), listFiles(['src/Management/*.cxx']),listFiles(['src/Db/*.cxx'])])
 
 progEnv.Tool('rdbModelLib')
