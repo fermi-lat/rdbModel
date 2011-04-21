@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Db/MysqlConnection.cxx,v 1.62 2008/12/04 20:23:10 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Db/MysqlConnection.cxx,v 1.63 2009/09/11 00:34:54 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -952,14 +952,17 @@ namespace rdbModel {
       return Visitor::VERRORABORT;
     }
     
-    // Null
-    bool nullable = (std::string(colDescrip[2]) == std::string("YES"));
-    if (nullable != col->nullAllowed()) {
-      m_matchReturn = MATCHfail;
-      (*m_err) << "Failed null/not null match of col " << myName 
-                  << std::endl;
-      m_err->flush();
-      return Visitor::VERRORABORT;
+    // Null.  Don't check for timestamp data type. MySQL 4 and 5
+    // give different answers in some cases
+    if (dtype->getType() != Datatype::TYPEtimestamp) {
+      bool nullable = (std::string(colDescrip[2]) == std::string("YES"));
+      if (nullable != col->nullAllowed()) {
+        m_matchReturn = MATCHfail;
+        (*m_err) << "Failed null/not null match of col " << myName 
+                 << std::endl;
+        m_err->flush();
+        return Visitor::VERRORABORT;
+      }
     }
     // Key (PRI for primary, MUL if first in a multiple-field key
     // or if nullable unique key, UNI if not nullable, unique.  
