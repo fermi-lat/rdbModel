@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: jrb  Thu Apr 21 12:44:06 PDT 2011
+GlastRelease-scons/rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+When validating db description don't check nullable for datatype timestamp;
+MySQL 4 and MySQL 5 can give different answers, and it doesn't really matter.
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: rdbModel-02-14-04, operation: add
 Package: rdbModel
