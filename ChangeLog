@@ -1,5 +1,76 @@
 ------------------------------------------------------------
 TAG
+Tag name: GlastRelease-17-35-24-gr03, operation: add
+Package: rdbModel
+User: heather  Wed Aug 17 20:53:19 2011
+Files:
+  rdbModel/.cvsignore  1.3
+  rdbModel/ChangeLog  1.636
+  rdbModel/rdbModelLib.py  1.2
+  rdbModel/SConscript  1.13
+  rdbModel/cmt/.cvsignore  1.1.1.1
+  rdbModel/cmt/requirements  1.80
+  rdbModel/doc/release.notes  1.70
+  rdbModel/rdbModel/Rdb.h  1.17
+  rdbModel/rdbModel/RdbException.h  1.4
+  rdbModel/rdbModel/Db/MysqlResults.h  1.5
+  rdbModel/rdbModel/Db/ResultHandle.h  1.3
+  rdbModel/rdbModel/Db/MysqlConnection.h  1.28
+  rdbModel/rdbModel/Db/Connection.h  1.26
+  rdbModel/rdbModel/Management/Visitor.h  1.7
+  rdbModel/rdbModel/Management/XercesBuilder.h  1.9
+  rdbModel/rdbModel/Management/Manager.h  1.2
+  rdbModel/rdbModel/Management/Builder.h  1.5
+  rdbModel/rdbModel/Tables/Set.h  1.2
+  rdbModel/rdbModel/Tables/Supersede.h  1.2
+  rdbModel/rdbModel/Tables/Column.h  1.27
+  rdbModel/rdbModel/Tables/InterRow.h  1.1
+  rdbModel/rdbModel/Tables/Query.h  1.1
+  rdbModel/rdbModel/Tables/Table.h  1.19
+  rdbModel/rdbModel/Tables/Datatype.h  1.15
+  rdbModel/rdbModel/Tables/InsertNew.h  1.1
+  rdbModel/rdbModel/Tables/Index.h  1.4
+  rdbModel/rdbModel/Tables/Assertion.h  1.17
+  rdbModel/src/mainpage.h  1.1
+  rdbModel/src/Rdb.cxx  1.16
+  rdbModel/src/Db/MysqlResults.cxx  1.10
+  rdbModel/src/Db/MysqlConnection.cxx  1.64
+  rdbModel/src/Db/Connection.cxx  1.1
+  rdbModel/src/Db/ResultHandle.cxx  1.2
+  rdbModel/src/Management/XercesBuilder.cxx  1.32
+  rdbModel/src/Management/Manager.cxx  1.3
+  rdbModel/src/Tables/Supersede.cxx  1.2
+  rdbModel/src/Tables/Column.cxx  1.18
+  rdbModel/src/Tables/Table.cxx  1.23
+  rdbModel/src/Tables/InsertNew.cxx  1.1
+  rdbModel/src/Tables/Assertion.cxx  1.19
+  rdbModel/src/Tables/Set.cxx  1.1
+  rdbModel/src/Tables/InterRow.cxx  1.1
+  rdbModel/src/Tables/Datatype.cxx  1.16
+  rdbModel/src/Tables/Query.cxx  1.2
+  rdbModel/src/Tables/Index.cxx  1.4
+  rdbModel/src/test/test_build.cxx  1.25
+  rdbModel/src/test/initRdbMain.cxx  1.3
+  rdbModel/src/test/InitRdb.h  1.4
+  rdbModel/src/test/test_errors.cxx  1.7
+  rdbModel/src/test/InitRdb.cxx  1.10
+  rdbModel/xml/rdbmsInit.xsd  1.2
+  rdbModel/xml/rdbmsDescrip.xsd  1.15
+  rdbModel/xml/rdbmsDescrip.dtd  1.6
+  rdbModel/xml/calib_user.xml  1.11
+  rdbModel/xml/calib_test_S.xml  1.2
+  rdbModel/xml/calib_test.xml  1.13
+  rdbModel/xml/calib.xml  1.11
+  rdbModel/xml/junk.xml  1.1
+  rdbModel/xml/addjunk.xml  1.1
+  rdbModel/xml/connect/mysqlSlac.xml  1.2
+  rdbModel/xml/connect/mysqlConnection.dtd  1.1
+  rdbModel/xml/connect/mysqlSlacT.xml  1.2
+  rdbModel/xml/maint/calibMaint.xml  1.2
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: GlastRelease-17-35-24-gr02, operation: add
 Package: rdbModel
 User: heather  Sat Aug 13 10:15:57 2011
