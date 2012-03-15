@@ -2,6 +2,14 @@
 TAG
 Tag name: GlastRelease-17-35-24-lp19, operation: add
 Package: rdbModel
+User: heather  Thu Mar 15 12:39:09 2012
+Files:
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-17-35-24-lp19, operation: add
+Package: rdbModel
 User: heather  Thu Mar 15 11:43:11 2012
 Files:
   rdbModel/.cvsignore  1.3
