@@ -4,6 +4,16 @@ Tag name: GlastRelease-17-35-24-rp05, operation: add
 Package: rdbModel
 User: heather  Tue Apr 17 10:32:56 2012
 Files:
+  rdbModel/src/Management/XercesBuilder.cxx  1.32
+  rdbModel/src/Management/Manager.cxx  1.3
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-17-35-24-rp05, operation: add
+Package: rdbModel
+User: heather  Tue Apr 17 10:32:56 2012
+Files:
   rdbModel/src/mainpage.h  1.1
   rdbModel/src/Rdb.cxx  1.16
 
