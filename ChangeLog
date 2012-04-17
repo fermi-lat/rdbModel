@@ -4,6 +4,24 @@ Tag name: GlastRelease-17-35-24-rp05, operation: add
 Package: rdbModel
 User: heather  Tue Apr 17 10:32:56 2012
 Files:
+  rdbModel/rdbModel/Tables/Set.h  1.2
+  rdbModel/rdbModel/Tables/Supersede.h  1.2
+  rdbModel/rdbModel/Tables/Column.h  1.27
+  rdbModel/rdbModel/Tables/InterRow.h  1.1
+  rdbModel/rdbModel/Tables/Query.h  1.1
+  rdbModel/rdbModel/Tables/Table.h  1.19
+  rdbModel/rdbModel/Tables/Datatype.h  1.15
+  rdbModel/rdbModel/Tables/InsertNew.h  1.1
+  rdbModel/rdbModel/Tables/Index.h  1.4
+  rdbModel/rdbModel/Tables/Assertion.h  1.17
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-17-35-24-rp05, operation: add
+Package: rdbModel
+User: heather  Tue Apr 17 10:32:56 2012
+Files:
   rdbModel/rdbModel/Management/Visitor.h  1.7
   rdbModel/rdbModel/Management/XercesBuilder.h  1.9
   rdbModel/rdbModel/Management/Manager.h  1.2
