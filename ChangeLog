@@ -4,6 +4,16 @@ Tag name: GlastRelease-17-35-24-rp05, operation: add
 Package: rdbModel
 User: heather  Tue Apr 17 10:32:55 2012
 Files:
+  rdbModel/rdbModel/Rdb.h  1.17
+  rdbModel/rdbModel/RdbException.h  1.4
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-17-35-24-rp05, operation: add
+Package: rdbModel
+User: heather  Tue Apr 17 10:32:55 2012
+Files:
   rdbModel/cmt/.cvsignore  1.1.1.1
   rdbModel/cmt/requirements  1.80
 
