@@ -4,6 +4,24 @@ Tag name: GlastRelease-17-35-24-rp05, operation: add
 Package: rdbModel
 User: heather  Tue Apr 17 10:32:56 2012
 Files:
+  rdbModel/src/Tables/Supersede.cxx  1.2
+  rdbModel/src/Tables/Column.cxx  1.18
+  rdbModel/src/Tables/Table.cxx  1.23
+  rdbModel/src/Tables/InsertNew.cxx  1.1
+  rdbModel/src/Tables/Assertion.cxx  1.19
+  rdbModel/src/Tables/Set.cxx  1.1
+  rdbModel/src/Tables/InterRow.cxx  1.1
+  rdbModel/src/Tables/Datatype.cxx  1.16
+  rdbModel/src/Tables/Query.cxx  1.2
+  rdbModel/src/Tables/Index.cxx  1.4
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-17-35-24-rp05, operation: add
+Package: rdbModel
+User: heather  Tue Apr 17 10:32:56 2012
+Files:
   rdbModel/src/Management/XercesBuilder.cxx  1.32
   rdbModel/src/Management/Manager.cxx  1.3
 
