@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Db/MysqlConnection.cxx,v 1.63 2009/09/11 00:34:54 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Db/MysqlConnection.cxx,v 1.64 2011/04/21 19:44:06 jrb Exp $
 #ifdef  WIN32
 #include <windows.h>
 #endif
@@ -36,10 +36,12 @@ namespace {
       return (1 << 24) -1;
     if ((sqlString == "longtext") || (sqlString == "longblob"))
       return 0x7fffffff;
-    unsigned leftLoc = sqlString.find("(");
+    //unsigned leftLoc = sqlString.find("(");
+    std::string::size_type leftLoc = sqlString.find("(");
     if (leftLoc == std::string::npos) return 0;
     leftLoc++;           // now is at start of m
-    unsigned rightLoc = sqlString.find(",");
+    //unsigned rightLoc = sqlString.find(",");
+    std::string::size_type rightLoc = sqlString.find(",");
     if (rightLoc == std::string::npos) {
       rightLoc = sqlString.find(")");
     }
@@ -61,7 +63,8 @@ void addArg(bool literal, const std::string arg, std::string& sqlString) {
   bool compareEnumList(const std::vector<std::string>& choices, 
                        std::string sqlType, rdbModel::MATCH& match) {
     // # of sql values has to be >= # of schema-specified values
-    unsigned locComma = sqlType.find(",");
+    //unsigned locComma = sqlType.find(",");
+    std::string::size_type locComma = sqlType.find(",");
     unsigned nComma = 0;
     while (locComma != std::string::npos) {
       nComma++;
@@ -77,7 +80,8 @@ void addArg(bool literal, const std::string arg, std::string& sqlString) {
     }
 
     for (unsigned iChoice = 0; iChoice < nChoice; iChoice++) {
-      unsigned loc = sqlType.find(choices[iChoice]);
+      //unsigned loc = sqlType.find(choices[iChoice]);
+      std::string::size_type loc = sqlType.find(choices[iChoice]);
       if (loc == std::string::npos) {
         match = rdbModel::MATCHfail;
         return false;
@@ -193,7 +197,8 @@ namespace rdbModel {
     // default port.
     std::string hostOnly;
     int port = 0;
-    unsigned int colonLoc = host.find(":");
+    //unsigned int colonLoc = host.find(":");
+    std::string::size_type colonLoc = host.find(":");
     if (colonLoc == std::string::npos) {
       hostOnly = host;
     }

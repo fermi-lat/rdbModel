@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Management/XercesBuilder.cxx,v 1.31 2006/12/14 23:07:35 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Management/XercesBuilder.cxx,v 1.32 2007/01/08 19:44:40 jrb Exp $
 #include "rdbModel/Management/XercesBuilder.h"
 #include "rdbModel/Management/Manager.h"
 #include "rdbModel/Tables/Table.h"
@@ -80,7 +80,7 @@ namespace rdbModel {
 
 
     std::string minorStr = "UNKNOWN";
-    unsigned dotPos = versionString.find('.');
+    std::string::size_type dotPos = versionString.find('.');
     if (dotPos != std::string::npos)
       {
 	minorStr = std::string(versionString, dotPos+1);
@@ -338,7 +338,7 @@ namespace rdbModel {
         std::string enums = Dom::getAttribute(rtype, "values");
 
         unsigned int start = 0;
-        unsigned int blankLoc = enums.find(std::string(" "), start);
+        std::string::size_type blankLoc = enums.find(std::string(" "), start);
 
         while (blankLoc != std::string::npos) {
           newEnum->m_choices.push_back(enums.substr(start, blankLoc-start));
@@ -392,7 +392,7 @@ namespace rdbModel {
       }
 
       unsigned int start = 0;
-      unsigned int blankLoc = cols.find(std::string(" "), start);
+      std::string::size_type blankLoc = cols.find(std::string(" "), start);
 
       while (blankLoc != std::string::npos) {
         newIndex->m_indexCols.push_back(cols.substr(start, blankLoc-start));
