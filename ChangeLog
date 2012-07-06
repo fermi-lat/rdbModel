@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Fri Jul  6 12:18:28 PDT 2012
+GlastRelease-scons/rdbModel/src/Management
+
+Modified Files:
+	XercesBuilder.cxx 
+Log Message:
+patches for 64-bit
+    *
+------------------------------------------------------------
 User: jrb  Fri Jul  6 12:18:27 PDT 2012
 GlastRelease-scons/rdbModel/src/Db
 
