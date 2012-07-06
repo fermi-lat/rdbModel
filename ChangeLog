@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Fri Jul  6 12:18:27 PDT 2012
+GlastRelease-scons/rdbModel/src/Db
+
+Modified Files:
+	MysqlConnection.cxx 
+Log Message:
+patches for 64-bit
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-04-00, operation: add
 Package: rdbModel
