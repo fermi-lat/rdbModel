@@ -1,8 +1,8 @@
 # -*- python -*-
-# $Id: SConscript,v 1.13 2011/04/21 19:48:07 jrb Exp $
+# $Id: SConscript,v 1.14 2012/07/06 19:18:59 jrb Exp $
 # rdbModel SConscript file
 # Authors: Joanne Bogart <jrb@slac.stanford.edu>
-# Version: rdbModel-02-14-06
+# Version: rdbModel-02-15-00
 Import('baseEnv')
 Import('listFiles')
 progEnv = baseEnv.Clone()
