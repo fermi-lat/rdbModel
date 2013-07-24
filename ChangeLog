@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Wed Jul 24 14:47:45 PDT 2013
+GlastRelease-scons/rdbModel
+
+Modified Files:
+	SConscript 
+Log Message:
+add standalone program copyCalibration
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-lp50, operation: add
 Package: rdbModel
