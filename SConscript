@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Id: SConscript,v 1.14 2012/07/06 19:18:59 jrb Exp $
+# $Id: SConscript,v 1.15 2012/08/17 18:59:47 jrb Exp $
 # rdbModel SConscript file
 # Authors: Joanne Bogart <jrb@slac.stanford.edu>
 # Version: rdbModel-02-15-00
@@ -15,11 +15,12 @@ progEnv.Tool('rdbModelLib')
 test_build = progEnv.Program('test_build', ['src/test/test_build.cxx'])
 test_errors = progEnv.Program('test_errors', ['src/test/test_errors.cxx'])
 initRdb = progEnv.Program('initRdb', ['src/test/initRdbMain.cxx','src/test/InitRdb.cxx'])
+copyCalib = progEnv.Program('copyCalibration', ['src/test/copyCalibration.cxx'])
 
 progEnv.Tool('registerTargets', package = 'rdbModel',
              libraryCxts = [[rdbModelLib,libEnv]],
              testAppCxts = [[test_build, progEnv], [test_errors, progEnv],
-                            [initRdb,progEnv]],
+                            [initRdb,progEnv], [copyCalib,progEnv]],
              includes = listFiles(['rdbModel/*'], recursive = True),
              xml = listFiles(['xml/*'], recursive=True))
 
