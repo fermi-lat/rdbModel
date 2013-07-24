@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Wed Jul 24 14:47:46 PDT 2013
+GlastRelease-scons/rdbModel/src/Tables
+
+Modified Files:
+	Table.cxx 
+Log Message:
+add standalone program copyCalibration
+    *
+------------------------------------------------------------
 User: jrb  Wed Jul 24 14:47:45 PDT 2013
 GlastRelease-scons/rdbModel
 
