@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/rdbModel/src/Tables/Table.cxx,v 1.22 2007/01/09 01:51:41 decot Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/Tables/Table.cxx,v 1.23 2008/02/07 22:13:27 jrb Exp $
 
 #include "rdbModel/Tables/Table.h"
 #include "rdbModel/Tables/Column.h"
@@ -539,10 +539,14 @@ namespace rdbModel {
         return false;    // unrecognized type
       }
       // look for this field in Row input. If there, overwrite value
+      // EXCEPT for CONTENTSserviceName (col="creator") in which case
+      // input is left alone
       FieldVal* f = row.find(col->getName());
-      if (f) {
-        f->m_val = val;
-        f->m_null = false;
+      if (f)  {
+        if (col->getContentsType() != Column::CONTENTSserviceName) {
+          f->m_val = val;
+          f->m_null = false;
+        }
       } 
       else {
         FieldVal g(col->getName(), val, false);
