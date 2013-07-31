@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Tue Jul 30 18:40:00 PDT 2013
+GlastRelease-scons/rdbModel/src/test
+
+Modified Files:
+	copyCalibration.cxx 
+Log Message:
+minor improvements
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-09-02, operation: add
 Package: rdbModel
