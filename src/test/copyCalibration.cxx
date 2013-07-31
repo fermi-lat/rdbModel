@@ -1,4 +1,4 @@
-// $Header: $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/test/copyCalibration.cxx,v 1.1 2013/07/24 21:47:46 jrb Exp $
 // Make copies of existing calib. metadata, substituting values for flavor
 // as specified.   Arguments are
 //   filepath for file containing list of serial numbers
@@ -26,35 +26,42 @@
 
 
 int copyOneByFlavor(rdbModel::Rdb* rdb, const std::string& serial, 
-                    const std::string& newFlavor);
+                    const std::string& newFlavor, bool doWrite);
 
-rdbModel::Rdb* makeConnection(bool isProduction);
+rdbModel::Rdb* makeConnection(bool isProduction, bool forWrite=false);
 
 int main(int argc, char* argv[]) {
   using rdbModel::FieldVal;
 
   if (argc < 3) {
     std::cout << "CopyCalibration call looks like this:" << std::cout;
-    std::cout << "CopyCalibration FILEPATH FLAVOR [Prod]" << std::cout;
+    std::cout << "CopyCalibration FILEPATH FLAVOR [Test | Prod]" << std::cout;
     std::cout << "FILEPATH is path to file containing list of serial numbers"
               << std::endl;
     std::cout << "of calibrations to be copied";
-    std::cout << "By default inserts go to calib_test (unless Prod is"
-              << std::endl;
-    std::cout << "supplied as third argument" << std::endl;
+    std::cout << "By default no actual inserts are done unless optional third arg." << std::endl;
+    std::cout << "is Prod or Test" << std::endl;
     exit(0);
   }
   std::string infile = std::string(argv[1]);
   std::string newFlavor = std::string(argv[2]);
   
-  // Set isProduction to true if so requested
-  bool isProduction = false;
+  // Set doWrite to true if so requested
+  bool doWrite = false;
+  bool useProduction = true;
   if (argc > 3) {
     std::string a3 = std::string(argv[3]).substr(0, 4);
-    if ((a3 == "Prod") || (a3 == "prod")) isProduction = true;
+    if ((a3 == "Test") || (a3 == "test")) {
+      // really do write, but to test db
+      useProduction = false;
+      doWrite = true;
+    }
+    else if ((a3 == "Prod") || (a3 == "prod")) { // write to production db
+      doWrite = true;
+    }
   }
 
-  rdbModel::Rdb* rdb = makeConnection(isProduction);
+  rdbModel::Rdb* rdb = makeConnection(useProduction, doWrite);
   if (!rdb) {
     std::cerr << "FATAL: unable to connect " << std::endl;
     exit(1);
@@ -83,7 +90,7 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       continue;
     }
-    copyOneByFlavor(rdb, num, newFlavor);
+    copyOneByFlavor(rdb, num, newFlavor, doWrite);
   }
   // Close file
   f.close();
@@ -91,7 +98,7 @@ int main(int argc, char* argv[]) {
 }
 
 int copyOneByFlavor(rdbModel::Rdb* rdb, const std::string& serial, 
-                    const std::string& newFlavor)  {
+                    const std::string& newFlavor, bool doWrite)  {
   // check value read is a valid integer
   // select almost all columns for the serial number
   //   if fails, put out message and continue
@@ -141,60 +148,88 @@ int copyOneByFlavor(rdbModel::Rdb* rdb, const std::string& serial,
       //      std::cerr << "Code " << ex.getCode() << std::endl;
   }
   // fetch results
+  if (res->getNRows() == 0) {
+    std::cerr << "No existing entry with ser_no=" << serial << std::endl;
+    std::cerr << "Skipping this item" << std::endl;
+    delete res;
+    return 0;
+  }
   std::vector<std::string> oldVals;
+  
   bool ok = res->getRow(oldVals);
-
+  delete res;
 
   ///////////   needs revision; stolen from old test program
-  using rdbModel::FieldVal;
-  using rdbModel::Row;
+  if (doWrite) {
+    using rdbModel::FieldVal;
+    using rdbModel::Row;
 
-  std::vector<FieldVal> fields;
-  fields.reserve(15);
+    std::vector<FieldVal> fields;
+    fields.reserve(15);
 
-  fields.push_back(FieldVal("instrument", oldVals[0]));      // copied
-  fields.push_back(FieldVal("calib_type",oldVals[1]));  // copied
-  fields.push_back(FieldVal("data_fmt", oldVals[2]));     // copied
-  fields.push_back(FieldVal("data_ident",oldVals[3]));
-  fields.push_back(FieldVal("vstart", oldVals[4]));  // copied
-  fields.push_back(FieldVal("vend", oldVals[5]));  // copied
-  fields.push_back(FieldVal("proc_level", oldVals[6]));  // copied
-  fields.push_back(FieldVal("completion", oldVals[7]));   // copied
-  fields.push_back(FieldVal("locale", oldVals[8]));       // copied
-  fields.push_back(FieldVal("input_desc", oldVals[9]));
-  fields.push_back(FieldVal("fmt_version", oldVals[10]));
-  fields.push_back(FieldVal("notes", 
-                            oldVals[11] + " near-copy of " + serial));
-  fields.push_back(FieldVal("flavor",  newFlavor));          // use arg
-  fields.push_back(FieldVal("creator", "CopyCalibration"));
-  int  newSerial = 0;
+    fields.push_back(FieldVal("instrument", oldVals[0]));      // copied
+    fields.push_back(FieldVal("calib_type",oldVals[1]));  // copied
+    fields.push_back(FieldVal("data_fmt", oldVals[2]));     // copied
+    fields.push_back(FieldVal("data_ident",oldVals[3]));
+    fields.push_back(FieldVal("vstart", oldVals[4]));  // copied
+    fields.push_back(FieldVal("vend", oldVals[5]));  // copied
+    fields.push_back(FieldVal("proc_level", oldVals[6]));  // copied
+    fields.push_back(FieldVal("completion", oldVals[7]));   // copied
+    fields.push_back(FieldVal("locale", oldVals[8]));       // copied
+    fields.push_back(FieldVal("input_desc", oldVals[9]));
+    fields.push_back(FieldVal("fmt_version", oldVals[10]));
+    fields.push_back(FieldVal("notes", 
+                              oldVals[11] + " near-copy of " + serial));
+    fields.push_back(FieldVal("flavor",  newFlavor));          // use arg
+    fields.push_back(FieldVal("creator", "CopyCalibration"));
+    int  newSerial = 0;
   
-  Row row(fields);
+    Row row(fields);
 
-  int ret = rdb->insertRow("metadata_v2r1", row, &newSerial);
-  if (ret) {
-    unsigned errcode = rdb->getConnection()->getLastError();
-    std::cerr << "From doBadInsert.  Last error code was " << errcode 
-              << std::endl;
-    if (rdb->duplicateError() ) {
-      std::cerr << "Last error was duplicate insert " << std::endl;
+    int ret = rdb->insertRow("metadata_v2r1", row, &newSerial);
+    if (ret) {
+      unsigned errcode = rdb->getConnection()->getLastError();
+      std::cerr << "From doBadInsert.  Last error code was " << errcode 
+                << std::endl;
+      if (rdb->duplicateError() ) {
+        std::cerr << "Last error was duplicate insert " << std::endl;
+      }
+      else {
+        std::cerr << "Last error was NOT duplicate insert " << std::endl;
+      }
+    }  else {
+      std::cout << "Inserted near-copy of  " << serial << " with ser_no="
+                << newSerial << std::endl;
     }
-    else {
-      std::cerr << "Last error was NOT duplicate insert " << std::endl;
-    }
-  }  else {
-    std::cout << "Inserted near-copy of  " << serial << " with ser_no="
-              << newSerial << std::endl;
-  }
     
-  return newSerial;
+    return newSerial;
+  }   else {
+    std::cout << "Would write new row with " << std::endl;
+    std::cout << "instrument=" << oldVals[0] << ", calib_type=" << oldVals[1]
+              << std::endl;
+    std::cout << "data_fmt=" << oldVals[2] << ", data_ident=" << oldVals[3]
+              << std::endl;
+    std::cout << "vstart=" << oldVals[4] << ", vend=" <<  oldVals[5] 
+              << std::endl;
+    std::cout << "proc_level=" << oldVals[6] << ", completion=" << oldVals[7]
+              << std::endl;
+    std::cout << "locale=" << oldVals[8] << ", input_desc=" << oldVals[9]
+              << std::endl;
+    std::cout << "fmt_version="  << oldVals[10] << std::endl;
+    std::cout << "notes=" << oldVals[11] << " near-copy of " << serial 
+              << std::endl;
+    std::cout << "flavor=" << newFlavor << ", creator=CopyCalibration"
+              << std::endl;
+    return 0;
+  }
 }
 
-rdbModel::Rdb* makeConnection(bool isProduction) {
+rdbModel::Rdb* makeConnection(bool isProduction, bool forWrite) {
 
   facilities::commonUtilities::setupEnvironment();
   std::string xmlPath = facilities::commonUtilities::getXmlPath("rdbModel");
   std::string infile = xmlPath + std::string("/calib.xml");
+  std::string readOnly("glastreader");
 
   rdbModel::Builder* b = new rdbModel::XercesBuilder;
   rdbModel::Rdb* rdb = new rdbModel::Rdb;
@@ -212,7 +247,12 @@ rdbModel::Rdb* makeConnection(bool isProduction) {
   con->init();
   if (isProduction) {
     con->setOption(rdbModel::DBreadDefaultGroup, "copyCalibration");
-    con->open("glastCalibDB.slac.stanford.edu", 0, 0, "calib");
+    if (forWrite) {
+      con->open("glastCalibDB.slac.stanford.edu", 0, 0, "calib");
+    } else {
+      con->open("glastCalibDB.slac.stanford.edu", readOnly.c_str(), 
+                readOnly.c_str(), "calib");
+    }
   } else {
     con->setOption(rdbModel::DBreadDefaultGroup, "copyCalibration_test");
     con->open("glastCalibDB.slac.stanford.edu", 0, 0, "calib_test");
