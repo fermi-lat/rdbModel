@@ -6,6 +6,7 @@
 
    *  EOH  *
 
+ rdbModel-02-16-00 02-Aug-2013    jrb Add copyCalibration (i.e., copy metadata) application
  rdbModel-02-15-00 17-Aug-2012    jrb for Windows no-install-headers
  rdbModel-02-14-06 06-Jul-2012    jrb patches for 64-bit
  rdbModel-02-14-05 21-Apr-2011    jrb Loosen match criteria for TIMESTAMP columns
