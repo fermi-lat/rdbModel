@@ -1,0 +1,70 @@
+Purpose
+-------
+To copy metadata for calibrations to new entries, nearly identical to the
+originals except for flavor.
+
+Prerequisites
+-------------
+In order for copyCalibration to know how to connect to the database you need
+a file .my.cnf in your home directory, readable and writable only by you,
+containing database host, username and password.  Since files in your home
+afs directory cannot be suitably protected, the actual file .my.cnf goes 
+in your .ssh directory.  You then create a symbolic link to it in your home
+directory.  In detail:
+
+1. In ~/.ssh create the file .my.cnf (unless it already exists, in which
+case you'll add to it)
+2. For connection to the production database, add the following 4 lines
+
+[copyCalibration]
+host=glastCalibDB.slac.stanford.edu
+user=<mysql-account-name>
+password=<mysql-account-password>
+
+where <mysql-account-name> is replaced by the actual account and
+<mysql-account-password> is replaced by the actual password.
+It will be in plain text, but this is ok since the file is readable only
+by you.
+
+
+
+3. Create a symbolic link to the file in your home directory:
+
+$   cd
+$   ln -s .ssh/.my.cnf  .my.cnf
+
+Usage
+-----
+copyCalibration can be found in recent GR builds under
+
+<top-of-build>/bin/<variant-directory>/copyCalibration
+
+where <variant-directory> is something like
+redhat5-i686-32bit-gcc41-Debug  or
+redhat6-x86_64-64bit-gcc44-Debug
+or either of those with "Debug" replaced by "Optimized".
+
+This file is a wrapper script: it first defines environment variables such
+as LD_LIBRARY_PATH appropriately, then invokes the program.  Do not
+source this file; just run it by typing the full path.
+
+
+It takes as input 
+* a file containing a list of serial numbers of calibration metadata to be
+  copied to entries with a different flavor.  Each line in the file should
+  consist of an integer followed by a carriage return.  Other lines will
+  be ignored.
+* the new flavor
+* Prod or Test (optional)
+
+If the last argument is omitted, copyCalibration will search the production
+database to confirm that calibrations of the specified serial numbers do
+exist there, but will not write new entries.  Specify 'Prod' to write to 
+the production database (calib); 'Test' to write to calib_test.
+
+To connect to calib_test you would need a section in your .my.cnf
+starting with [copyCalibration_test] and appropriate account name and
+password (they're not the same as for the production database).
+I don't think anyone has a reason to write to calib_test except me.
+
+
