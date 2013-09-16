@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Mon Sep 16 15:55:00 PDT 2013
+GlastRelease-scons/rdbModel/doc
+
+Added Files:
+	copyCalibration_instructions.txt 
+Log Message:
+Add instructions for copyCalibration; clean up help output
+    *
+------------------------------------------------------------
 User: jrb  Mon Sep 16 14:15:59 PDT 2013
 GlastRelease-scons/rdbModel/src/test
 
