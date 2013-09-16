@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/test/copyCalibration.cxx,v 1.2 2013/07/31 01:40:00 jrb Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/rdbModel/src/test/copyCalibration.cxx,v 1.3 2013/09/16 21:15:59 jrb Exp $
 // Make copies of existing calib. metadata, substituting values for flavor
 // as specified.   Arguments are
 //   filepath for file containing list of serial numbers
@@ -31,8 +31,8 @@ int main(int argc, char* argv[]) {
   using rdbModel::FieldVal;
 
   if (argc < 3) {
-    std::cout << "CopyCalibration call looks like this:" << std::endl;
-    std::cout << "CopyCalibration FILEPATH FLAVOR [Test | Prod]" << std::endl;
+    std::cout << "copyCalibration call looks like this:" << std::endl;
+    std::cout << "copyCalibration FILEPATH FLAVOR [Test | Prod]" << std::endl;
     std::cout << "FILEPATH is path to file containing list of serial numbers"
               << std::endl;
     std::cout << "of calibrations to be copied" << std::endl;
@@ -41,6 +41,8 @@ int main(int argc, char* argv[]) {
     std::cout << "For prod inserts, add group [copyCalibration] with suitable values"
               << std::endl;
     std::cout << "for host, user, password to .my.cnf" << std::endl;
+    std::cout << "See also rdbModel/doc/copyCalibration_instructions.txt." 
+              << std::endl;
     exit(0);
   }
   std::string infile = std::string(argv[1]);
